@@ -1,232 +1,190 @@
 # Clínica Aurora: sitio web con embudo de captación
 
-Sitio web de **Clínica Aurora** hecho con **Next.js 15 + TypeScript**. Lleva al visitante por un embudo pensado para **promocionar a los médicos** antes que a los servicios:
+Sitio **100 % estático** de Clínica Aurora, hecho con **Next.js 15 + TypeScript**. Lleva al visitante por un embudo que **promociona a los médicos** antes que a los servicios, y la reserva termina en **WhatsApp**:
 
 ```
-Visitante  →  ¿Qué te duele?  →  Especialista recomendado  →  Perfil del médico  →  Reserva  →  Cita confirmada
-   /          /encuentra-tu-dolor     (resultado)          /especialistas/[slug]   /reservar      (paso 5)
+Visitante → ¿Qué te duele? → Especialista recomendado → Perfil del médico → Reserva → WhatsApp
+   /        /encuentra-tu-dolor/   (resultado)        /especialistas/[slug]/  /reservar/  (mensaje listo)
 ```
 
-Es la versión en código del wireframe de alta fidelidad: tiene las 5 páginas y las animaciones con **three.js** (partículas 3D) y **anime.js** (entradas, scroll, botones magnéticos, tarjetas 3D, celebración).
+- **No hay servidor ni base de datos.** `npm run build` genera la carpeta `out/` (HTML, CSS, JS e imágenes), que se publica en un hosting compartido de Hostinger.
+- **Las citas no se guardan en la web.** El último paso abre WhatsApp hacia el número de la clínica con un mensaje que incluye el médico, el motivo, la fecha, la hora y los datos del paciente, y la recepción confirma por ese chat.
+- **Animaciones** con three.js (partículas 3D) y anime.js (entradas, scroll, botones magnéticos, celebración).
 
 ---
 
-## 1. Requisitos e instalación
+## 1. Puesta en marcha
 
 | Herramienta | Versión |
 |---|---|
-| Node.js | 18.18 o superior (recomendado 20 o 22) |
-| npm | el que viene con Node |
+| Node.js | 20 o superior (22 recomendado, ver `.nvmrc`) |
 
 ```bash
-npm install          # instala dependencias
-cp .env.example .env.local   # variables de entorno (opcional en local)
-npm run dev          # http://localhost:3000
+npm install
+npm run dev        # http://localhost:3000
 ```
 
 | Script | Para qué sirve |
 |---|---|
-| `npm run dev` | Servidor de desarrollo con recarga en caliente |
-| `npm run build` | Compila para producción (también revisa tipos y lint) |
-| `npm start` | Sirve lo compilado (después de `build`) |
-| `npm run lint` | ESLint (reglas de Next.js + TypeScript) |
-| `npm run typecheck` | Solo revisión de tipos TypeScript |
+| `npm run dev` | Desarrollo con recarga en caliente |
+| `npm run build` | Genera el sitio estático en `out/` |
+| `npm run preview` | Sirve `out/` en local para revisarlo como en el hosting |
+| `npm test` | Tests unitarios (Vitest) |
+| `npm run check` | Tipos + lint + tests (lo mismo que corre GitHub Actions) |
 
-## 2. Tecnologías
+> No ejecutes `npm run dev` y `npm run build` a la vez: los dos escriben en `.next/` y se corrompen entre sí.
 
-| Librería | Uso |
-|---|---|
-| **Next.js 15** (App Router) | Páginas, rutas, SEO, API de citas, optimización de imágenes y fuentes |
-| **React 19 + TypeScript** (estricto) | Componentes tipados |
-| **Tailwind CSS 3** | Estilos. Los tokens de marca están en `tailwind.config.ts` |
-| **three.js** | Ola de partículas "aurora" y partículas que cambian de forma |
-| **anime.js 3** | Todas las animaciones de interfaz |
-| **zod** | Validación de la reserva (la misma en navegador y servidor) |
-| **clsx** | Unión de clases condicionales |
+## 2. Arquitectura
 
-## 3. Estructura de carpetas
+Es una arquitectura por capas que sigue SOLID. Cada capa solo depende de las que están por debajo:
+
+```
+app/           CONTROLADORES  rutas delgadas: piden datos a los servicios y componen la vista
+  │
+components/    VISTA          componentes React por funcionalidad (sin lógica de negocio)
+hooks/                        hooks de cliente reutilizables (disponibilidad, animación)
+  │
+services/      NEGOCIO        reglas del embudo: agenda, recomendación, búsqueda, mensaje de WhatsApp
+  │
+repositories/  DATOS          interfaces + implementaciones (hoy en memoria / simuladas)
+  │
+data/          CONTENIDO      médicos, molestias, motivos (lo que edita la clínica)
+models/        DOMINIO        tipos (Doctor, PainZone, DayAvailability…) + esquema zod de la reserva
+config/        CONFIGURACIÓN  datos de la clínica, rutas, variables de entorno, reglas de agenda
+utils/         UTILIDADES     funciones puras (fechas, texto, formato, .ics, WhatsApp)
+lib/           INFRA CLIENTE  motores de animación (three.js, anime.js) y analítica
+```
 
 ```
 src/
-├── app/                          ← RUTAS (cada carpeta = una URL)
-│   ├── layout.tsx                  layout raíz: fuentes, SEO, script de animación
-│   ├── globals.css                 base + estados iniciales de animación
-│   ├── (site)/                     grupo con header + footer (no aparece en la URL)
-│   │   ├── layout.tsx
-│   │   ├── page.tsx                01 · Inicio                      /
-│   │   ├── encuentra-tu-dolor/     02 · Cuestionario                /encuentra-tu-dolor
-│   │   ├── especialistas/          03 · Directorio                  /especialistas
-│   │   └── especialistas/[slug]/   04 · Perfil del médico           /especialistas/valeria-quispe
-│   ├── (checkout)/                 grupo con cabecera mínima (sin distracciones)
-│   │   └── reservar/               05 · Reserva + confirmación      /reservar
-│   ├── api/appointments/route.ts   POST que registra la cita
-│   ├── sitemap.ts · robots.ts      SEO automático
-│   └── not-found.tsx               404 que devuelve al embudo
-│
+├── app/
+│   ├── layout.tsx                 fuentes, SEO por defecto, script de animación
+│   ├── (site)/                    páginas con header + footer
+│   │   ├── page.tsx               01 · Inicio
+│   │   ├── encuentra-tu-dolor/    02 · Cuestionario
+│   │   ├── especialistas/         03 · Directorio
+│   │   └── especialistas/[slug]/  04 · Perfil (un HTML por médico)
+│   ├── (checkout)/reservar/       05 · Reserva (cabecera mínima)
+│   ├── sitemap.ts · robots.ts     SEO generado en el build
+│   └── not-found.tsx              404 (sale como 404.html)
 ├── components/
-│   ├── brand/Logo.tsx              sello circular "CLÍNICA AURORA" (anillos animados)
-│   ├── layout/                     Header, Footer, CheckoutHeader
-│   ├── ui/                         Button, Icon, DoctorPortrait, SectionHeading, styles
-│   ├── doctors/                    tarjetas de médico (inicio, directorio, relacionados, destacado)
-│   ├── home/                       Hero, buscador, secciones del inicio, botón de video
-│   ├── pain-finder/PainFinder.tsx  cuestionario de 3 pasos + resultado
-│   ├── specialists/                directorio con filtros
-│   ├── profile/BookingWidget.tsx   selector día/hora del perfil
-│   ├── booking/                    flujo de reserva, resumen, confirmación
-│   ├── motion/                     componentes anime.js (Reveal, Intro, SplitLines, Magnetic, Tilt)
-│   └── three/                      componentes three.js (AuroraWave, MorphParticles)
-│
-├── data/                           ← CONTENIDO EDITABLE
-│   ├── doctors.ts                  médicos (nombre, especialidad, bio, precios…)
-│   └── pains.ts                    molestias → médico, opciones del cuestionario y de la reserva
-│
-├── services/                       ← CONEXIÓN CON SISTEMAS EXTERNOS
-│   ├── availability.ts             horarios libres (hoy SIMULADOS)
-│   └── appointments.ts             registro de citas (servidor)
-│
-├── lib/
-│   ├── site.ts                     teléfono, dirección, WhatsApp, rutas
-│   ├── validation.ts               esquema zod de la reserva
-│   ├── analytics.ts                eventos del embudo (GA4 / Meta Pixel)
-│   ├── motion.ts                   reglas de animación y movimiento reducido
-│   ├── calendar.ts                 genera el .ics "Agregar a mi calendario"
-│   └── three/                      setup común, shaders GLSL, formas de partículas
-│
-└── types/index.ts                  tipos del dominio (Doctor, PainZone, …)
+│   ├── availability/              "islas" que calculan horarios en el navegador
+│   ├── booking/                   BookingFlow + useBookingForm + steps/ + resumen + confirmación
+│   ├── pain-finder/               PainFinder + usePainFinder + pasos + resultado
+│   ├── home/  home/sections/      Hero, buscador y una sección por archivo
+│   ├── profile/                   ProfileHero, secciones del perfil, BookingWidget
+│   ├── specialists/  doctors/     directorio y tarjetas de médico
+│   ├── layout/  brand/  ui/  seo/ cabeceras, logo, botones/iconos/estilos, JSON-LD
+│   ├── motion/  three/            componentes de animación
+├── hooks/                         useAvailability, useStaggeredEntrance
+├── services/                      *.service.ts + container.ts (composición)
+├── repositories/                  doctor, pain-zone, availability
+├── models/  data/  config/  utils/  lib/
 ```
 
-Cada archivo empieza con un comentario que explica **qué hace, por qué y cómo modificarlo**.
+**Reglas que mantienen el orden:**
 
-## 4. Cómo funciona el embudo
+1. **Inversión de dependencias.** Los servicios reciben sus repositorios por parámetro (`createDoctorService(repo, …)`) y nunca importan una implementación concreta. La conexión se hace en dos puntos de composición:
+   - `services/container.ts`: médicos y molestias. Lo usan las páginas al compilar y lleva `server-only`, así que no puede colarse en el JavaScript del navegador.
+   - `hooks/useAvailability.ts`: horarios. Se calculan en el navegador porque dependen de la hora actual.
+2. **Las páginas no tienen lógica**: piden a los servicios y pasan datos por props.
+3. **Los componentes no leen `data/` de médicos ni de molestias**: los reciben por props. Solo leen listas de textos fijos (`PAIN_KINDS`, `BOOKING_REASONS`, `QUICK_PAINS`).
+4. **Todo lo que depende de "ahora"** (horarios, "Disponible hoy") se calcula tras montar el componente. El HTML estático muestra un estado de carga, así que no hay errores de hidratación.
+5. **Los parámetros de URL** (`?zona=`, `?molestia=`, `?medico=`…) se leen en el navegador con `useSearchParams` dentro de `<Suspense>`. El HTML estático lleva la versión sin parámetros, que es la que leen los buscadores.
 
-| Paso | Página | Qué hace | CTA principal |
-|---|---|---|---|
-| Atracción | Inicio | Titular "Cuéntanos qué te duele", buscador, médica destacada con horarios de hoy, médicos, video, molestias, testimonios | Buscar especialista / Reservar con la médica destacada |
-| Diagnóstico | Encuentra tu dolor | 3 preguntas (zona, tipo, tiempo). Las partículas 3D cambian de forma según la zona | Reservar con el médico recomendado |
-| Comparación | Especialistas | Buscador y filtros por molestia | Reservar cita / Ver perfil |
-| Decisión | Perfil | Foto, video, enfoque, credenciales, lo que trata, formación, reseñas, selector de horario fijo | Reservar [día] a las [hora] |
-| Conversión | Reservar | 4 pasos con resumen en vivo, sin menú para no distraer | Confirmar cita |
+## 3. Cómo editar el contenido
 
-**Parámetros de URL entre pasos** (así nadie tiene que volver a elegir lo mismo):
-
-| URL | Efecto |
+| Qué | Dónde |
 |---|---|
-| `/encuentra-tu-dolor?zona=espalda` | Empieza en el paso 2 con la zona elegida |
-| `/encuentra-tu-dolor?q=me duele la espalda` | Reconoce la zona por palabras clave (`matchZoneFromText`) |
-| `/especialistas?molestia=cabeza&q=migraña` | Directorio ya filtrado |
-| `/reservar?medico=valeria-quispe&dia=2026-11-12&hora=10:30&motivo=Lumbalgia` | Reserva con todo preseleccionado |
+| Teléfono, **WhatsApp**, correo, dirección, horario, aseguradoras | `src/config/site.ts` (`SITE`) |
+| Días cerrados, zona horaria, margen para reservar hoy | `src/config/site.ts` (`SCHEDULE`) |
+| Médicos (y quiénes destacan en el inicio) | `src/data/doctors.ts` (`DOCTORS`, `HOME_HIGHLIGHTS`) |
+| Molestias, palabras clave, médico por zona, opciones del cuestionario | `src/data/pains.ts` |
+| Motivos de consulta de la reserva | `src/data/booking.ts` |
+| Colores y tipografías | `tailwind.config.ts` y `src/app/layout.tsx` |
+| Dominio público | `.env.production` (`NEXT_PUBLIC_SITE_URL`) |
 
-Construye estas URL siempre con `ROUTES` de `src/lib/site.ts`.
+- **Añadir un médico**: copia un bloque en `data/doctors.ts`. Su `slug` será su URL (`/especialistas/<slug>/`).
+- **Fotos**: `public/doctors/<slug>.webp` y `photo: "/doctors/<slug>.webp"`. Como no hay optimizador de imágenes en el servidor, súbelas ya comprimidas (unos 1200 px de alto y menos de 250 KB).
+- **Video de 60 s**: rellena `videoUrl` con un MP4 propio o un enlace *embed* de YouTube o Vimeo.
+- **Datos pendientes**: busca `[` en el proyecto (`[PRECIO]`, `[N.º]`, `[TELÉFONO]`…). Son datos que no se deben inventar.
 
-## 5. Cómo editar el contenido
+## 4. Reserva por WhatsApp
 
-### Datos de contacto
-`src/lib/site.ts`: teléfono, WhatsApp, correo, dirección, horario y aseguradoras.
+1. El paciente elige motivo, especialista, modalidad, día y hora, y escribe su nombre (el DNI es opcional).
+2. El formulario se valida con zod (`models/booking.ts`). El consentimiento empieza **desmarcado**, como exige la Ley N.º 29733.
+3. `services/booking.service.ts` arma el mensaje y abre `https://wa.me/<SITE.whatsapp>?text=…`.
+4. La pantalla final permite volver a abrir WhatsApp y descargar un `.ics` con la cita marcada "por confirmar".
 
-### Médicos
-`src/data/doctors.ts`. Cada médico es un objeto con tipo `Doctor`. Para añadir uno:
-1. Copia un bloque existente y cambia `slug`, que es su URL: `/especialistas/<slug>`.
-2. Pon su `zone` (la molestia que atiende) y sus `related` (médicos sugeridos en su perfil).
-3. Rellena `photo` y `videoUrl` cuando los tengas (ver abajo).
+> ⚠️ **`SITE.whatsapp` es obligatorio** (solo dígitos, con código de país; por ejemplo `51987654321`). Mientras no lo configures, el build muestra un aviso y los mensajes no llegarán a la clínica.
 
-> ⚠️ Los 6 médicos actuales son **de muestra** (nombres ficticios). Reemplázalos por los reales antes de publicar.
+**Horarios:** hoy son **simulados** (`repositories/availability.repository.ts`): son falsos pero estables por médico y día, y la clínica confirma la hora real por WhatsApp. Para conectar una agenda real, crea otra implementación de `AvailabilityRepository` (por ejemplo, una API que el navegador pueda consultar) y cámbiala en `hooks/useAvailability.ts`. Nada más tiene que cambiar.
 
-### Fotos de los médicos
-Guárdalas en `public/doctors/<slug>.jpg` (verticales, mismo fondo y luz para todos) y pon `photo: "/doctors/<slug>.jpg"`. Mientras no haya foto se muestran las iniciales con la etiqueta "FOTO".
+## 5. Animaciones
 
-### Video de presentación (60 s)
-Rellena `videoUrl` con un MP4 propio (`/videos/x.mp4`) o un enlace *embed* de YouTube o Vimeo. El botón ▶ abre un modal accesible (`components/home/VideoButton.tsx`).
+| Efecto | Archivo |
+|---|---|
+| Ola de partículas "aurora" (hero y perfil) | `components/three/AuroraWave.tsx`, `lib/three/shaders.ts` |
+| Partículas que cambian de forma (cuestionario) | `components/three/MorphParticles.tsx`, `lib/three/shapes.ts` |
+| Titulares línea a línea · aparición al hacer scroll | `components/motion/Intro.tsx`, `SplitLines.tsx`, `Reveal.tsx` |
+| Botones magnéticos · tarjetas 3D | `components/motion/Magnetic.tsx`, `Tilt.tsx` |
+| Cascada de horarios | `hooks/useStaggeredEntrance.ts` |
+| Celebración final | `components/booking/Confirmation.tsx` |
 
-### Molestias y cuestionario
-`src/data/pains.ts`: zonas, iconos, palabras clave del buscador, médico de cada zona, opciones de "¿Cómo la describirías?", "¿Desde cuándo?" y los motivos de la reserva.
+Todas respetan "reducir movimiento" del sistema y se apagan con `NEXT_PUBLIC_ENABLE_MOTION=false`. Las escenas 3D se pausan cuando no se ven, y sin WebGL la página funciona igual.
 
-### Colores, tipografías y logo
-- **Colores**: solo en `tailwind.config.ts` (salen del logo: teal `#17616B` y verde `#4C7942`).
-- **Fuentes**: `src/app/layout.tsx`. Inter para el texto, Instrument Serif para los titulares y Cinzel para la marca.
-- **Logo**: `components/brand/Logo.tsx` recrea el sello con el árbol original (`public/brand/aurora-tree.png`) y el texto curvo "CLÍNICA / AURORA". Cuando tengas el logo final en SVG, cámbialo ahí.
+## 6. Publicar en Hostinger (hosting compartido + GitHub)
 
-### Datos pendientes
-Busca `[` en el proyecto para ver lo que falta. Estas marcas indican datos que **no se deben inventar**: `[PRECIO]`, `[N.º]` (CMP/RNE), `[DURACIÓN]`, `[IDIOMAS]`, `[AÑO]`, `[X]` (años de experiencia), `[TELÉFONO]`, `[DIRECCIÓN]`, `[ASEGURADORAS]`, testimonios y reseñas.
+```
+git push (main) ──► GitHub Actions: check + build ──► rama "deploy" (= contenido de out/)
+                                                          │ webhook
+                                                          ▼
+                                     hPanel › Git: copia la rama a public_html
+```
 
-## 6. Animaciones (three.js + anime.js)
+**Una sola vez:**
 
-| Efecto | Librería | Archivo | Dónde aparece |
-|---|---|---|---|
-| Ola de partículas "aurora" que sigue al cursor | three.js + anime.js (la ola "sube" al cargar) | `three/AuroraWave.tsx`, `lib/three/shaders.ts` | Hero de inicio y perfil |
-| Partículas que cambian de forma (esfera → columna → toros → nudo → hélice → anillos del logo) | three.js + anime.js (explosión, color, giro) | `three/MorphParticles.tsx`, `lib/three/shapes.ts` | Encuentra tu dolor |
-| Titulares que suben línea a línea | anime.js | `motion/Intro.tsx` + `motion/SplitLines.tsx` | Todas las cabeceras |
-| Aparición al hacer scroll, en cascada, con trazos SVG que se dibujan | anime.js + IntersectionObserver | `motion/Reveal.tsx` | Secciones |
-| Botones magnéticos | anime.js | `motion/Magnetic.tsx` | CTA principales |
-| Tarjetas con inclinación 3D | anime.js | `motion/Tilt.tsx` | Directorio |
-| Anillos del logo que se dibujan | anime.js | `brand/Logo.tsx` | Header y CTA final |
-| Celebración (círculo, check y partículas) | anime.js (timeline) | `booking/Confirmation.tsx` | Cita confirmada |
+1. **Configura el dominio** en `.env.production` (`NEXT_PUBLIC_SITE_URL=https://www.tudominio.pe`) y el **WhatsApp** en `src/config/site.ts`.
+2. **Sube el código a GitHub** en un repositorio privado:
+   ```bash
+   git remote add origin git@github.com:<usuario>/clinica-aurora.git
+   git push -u origin main
+   ```
+3. En GitHub, revisa **Settings › Actions › General › Workflow permissions** y elige *Read and write permissions*, para que el workflow pueda escribir la rama `deploy`.
+4. Espera a que termine la acción **Deploy** (pestaña *Actions*). Al acabar, aparece la rama `deploy`.
+5. En **hPanel › Sitios web › (tu dominio) › Avanzado › GIT**:
+   - Deja **vacía** la carpeta `public_html` (borra el `default.php` de Hostinger).
+   - Repositorio: tu repo. Si es privado, usa la URL SSH y agrega en GitHub la *deploy key* que muestra hPanel.
+   - Rama: **`deploy`**. Directorio: vacío (= `public_html`).
+   - Crea el despliegue y activa **Auto Deployment**. Si hPanel te da una URL de webhook, agrégala en GitHub (*Settings › Webhooks*, evento *push*).
+6. En **hPanel › Seguridad › SSL**, instala el certificado y activa **Forzar HTTPS**. Después descomenta la línea `Strict-Transport-Security` de `public/.htaccess`.
 
-**Reglas que siguen todas** (`src/lib/motion.ts`):
-- Respetan **"reducir movimiento"** del sistema operativo: se muestra todo sin animar.
-- Se apagan en todo el sitio con `NEXT_PUBLIC_ENABLE_MOTION=false`.
-- Las escenas 3D **se pausan** cuando no están en pantalla o la pestaña está oculta, y limitan el *pixel ratio* a 2.
-- Si el navegador no tiene WebGL, el efecto no aparece y la página funciona igual.
-- Para que no haya parpadeo, un script en `<head>` añade la clase `js-motion` y `globals.css` oculta los elementos antes de animarlos.
+**Desde entonces:** cada `git push` a `main` verifica, compila y publica solo, en unos 2 minutos.
 
-Para **crear una animación nueva** de aparición al hacer scroll, envuelve el bloque en `<Reveal>` y marca los hijos con `data-reveal-item`. Para la entrada de una página, usa `<Intro>` y marca los elementos con `data-fade`.
+`public/.htaccess` (va dentro de `out/`) configura la página 404, bloquea archivos ocultos (incluida la carpeta `.git` que deja el despliegue), añade cabeceras de seguridad y define la caché (1 año para JS/CSS con hash, sin caché para el HTML).
 
-## 7. Reservas: de la simulación a producción
+**Alternativa manual:** ejecuta `npm run build` y sube el **contenido** de `out/` a `public_html` con el Administrador de archivos.
 
-Hoy el flujo funciona de punta a punta con **horarios simulados**:
+## 7. SEO y accesibilidad
 
-1. `services/availability.ts` genera horarios estables por médico y día, en hora de Lima y sin domingos.
-2. `/reservar` valida con zod y hace `POST /api/appointments`.
-3. `services/appointments.ts` comprueba que el horario siga libre (si no, responde 409 y la interfaz te devuelve al paso de fecha), genera un código `AUR-XXXX` y, si existe `APPOINTMENTS_WEBHOOK_URL`, envía la cita a ese webhook.
-
-**Para conectarlo a tu sistema real:**
-
-| Qué | Dónde | Cómo |
-|---|---|---|
-| Horarios reales | `getDoctorAvailability()` en `services/availability.ts` | Llama a tu agenda (Supabase, Google Calendar, tu sistema clínico…) y devuelve `DayAvailability[]` |
-| Guardar citas | `createAppointment()` en `services/appointments.ts` | Inserta en tu base de datos (ver el `TODO`) |
-| WhatsApp y correo | Webhook (n8n, Make o Zapier) o directamente en `createAppointment()` | WhatsApp Business API |
-| Protección anti-spam | `app/api/appointments/route.ts` | Límite de peticiones y Cloudflare Turnstile |
-
-> El consentimiento de datos empieza **desmarcado** porque la Ley N.º 29733 exige aceptación expresa. Enlaza tu política de privacidad real en `BookingFlow.tsx` (`TODO`).
-
-## 8. Analítica del embudo
-
-`src/lib/analytics.ts` define los eventos: `cta_click`, `search_pain`, `quiz_step`, `quiz_complete`, `directory_filter`, `booking_step` y `booking_confirmed` (que en Meta Pixel se envía como `Schedule`). En desarrollo se imprimen en la consola. Para medir en producción, carga GA4 o Meta Pixel en `app/layout.tsx` con tus IDs y los eventos llegarán solos.
-
-Así podrás ver en qué paso abandona la gente.
-
-## 9. SEO y accesibilidad
-
-- Metadatos por página, `sitemap.xml` y `robots.txt` automáticos. La página `/reservar` está marcada `noindex`.
-- Datos estructurados **schema.org/Physician** en cada perfil.
-- Los perfiles se generan como HTML estático y se regeneran cada 5 minutos (`revalidate = 300`).
-- Botones y enlaces reales, `aria-pressed` en las opciones, foco visible y objetivos táctiles de al menos 44 px.
-- Etiquetas en todos los campos y errores anunciados (`aria-invalid`, `role="alert"`).
-- Contrastes de color comprobados (AA).
+- Metadatos por página, `sitemap.xml` y `robots.txt` generados en el build. `/reservar/` es `noindex`.
+- Datos estructurados `schema.org/Physician` en cada perfil, escapados contra inyección de HTML (`components/seo/JsonLd.tsx`).
+- Botones y enlaces reales, `aria-pressed`, foco visible, objetivos táctiles de al menos 44 px, errores anunciados con `role="alert"`.
 - Aviso de urgencias en el resultado del cuestionario y en el pie de página.
 
-## 10. Despliegue
+## 8. Tests
 
-La forma más simple es **Vercel**: importa el repositorio, añade las variables de `.env.example` y despliega. También funciona en cualquier servidor con Node (`npm run build && npm start`) o en Docker.
+`npm test` cubre la lógica de negocio: reglas de agenda (domingos, margen de hoy, etiquetas), mensaje de WhatsApp, preselección desde la URL, reconocimiento de molestias, búsqueda del directorio y validación de la reserva. Los tests usan los datos reales y repositorios en memoria, sin mocks de lo que se puede probar de verdad.
 
-## 11. Checklist antes de publicar
+## 9. Checklist antes de publicar
 
+- [ ] **Número de WhatsApp** en `src/config/site.ts`
+- [ ] Dominio en `.env.production`
 - [ ] Médicos reales en `data/doctors.ts`, con CMP y RNE verificados
-- [ ] Fotos profesionales y videos de 60 s
-- [ ] Teléfono, WhatsApp, dirección, horario y aseguradoras en `lib/site.ts`
-- [ ] Precios y duración de consulta
+- [ ] Fotos profesionales comprimidas y videos de 60 s
+- [ ] Teléfono, dirección, horario y aseguradoras en `config/site.ts`
+- [ ] Precios y duración de la consulta
 - [ ] Testimonios y reseñas reales, con consentimiento escrito
-- [ ] Agenda real conectada (`services/availability.ts`) y guardado de citas (`services/appointments.ts`)
-- [ ] Página de política de privacidad enlazada
-- [ ] `NEXT_PUBLIC_SITE_URL` con el dominio final
-- [ ] GA4 o Meta Pixel cargados
-- [ ] Imagen para redes sociales en `public/og.jpg`
-
-## 12. Diferencias con el wireframe (a propósito)
-
-- **Responsive real**: márgenes de 16 px en móvil, columnas que se apilan y el botón del buscador abreviado ("Buscar").
-- **Fechas reales**: los días y horarios se calculan desde hoy en hora de Lima, en lugar de ser texto fijo.
-- **Consentimiento** desmarcado por defecto (exigencia legal).
-- **"Agregar a mi calendario"** descarga un archivo `.ics` que funciona.
-- **Ola 3D del perfil** se desvanece hacia la derecha para no pasar por detrás del texto.
-- Cada perfil tiene su propia URL y se pueden añadir médicos sin tocar código de páginas.
+- [ ] Página de política de privacidad enlazada (`components/booking/steps/PatientStep.tsx`, `TODO`)
+- [ ] Imagen para redes sociales en `public/og.jpg` (`TODO` en `app/layout.tsx`)
+- [ ] GA4 o Meta Pixel, si se quiere medir el embudo (`lib/analytics.ts`)

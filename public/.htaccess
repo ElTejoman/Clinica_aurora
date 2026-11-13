@@ -1,0 +1,43 @@
+# =============================================================================
+# Clínica Aurora · reglas del servidor web (Hostinger: LiteSpeed, compatible
+# con Apache). Next.js copia este archivo a la raíz de public_html en cada build.
+# =============================================================================
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Bloquea archivos y carpetas ocultos (.git del despliegue, .env…),
+  # salvo /.well-known/ que usa el certificado SSL.
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule (^|/)\. - [F,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  # Actívalo cuando el SSL ya funcione en el dominio (obliga a usar HTTPS):
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # JS/CSS/fuentes llevan un hash en el nombre: se pueden cachear 1 año.
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Imágenes y videos de public/: 1 semana (no llevan hash).
+  <FilesMatch "\.(png|jpe?g|webp|avif|svg|ico|mp4)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  # HTML y datos de navegación: siempre la versión más reciente.
+  <FilesMatch "\.(html|txt|xml)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/javascript application/json image/svg+xml
+</IfModule>

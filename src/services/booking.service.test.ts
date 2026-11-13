@@ -1,0 +1,65 @@
+import { describe, expect, it } from "vitest";
+import type { BookingRequest, DayAvailability } from "@/models";
+import { DOCTORS } from "@/data/doctors";
+import { buildBookingMessage, parseBookingPreselection, resolveInitialSlot } from "./booking.service";
+
+const doctor = DOCTORS[0]!;
+const request: BookingRequest = {
+  doctorSlug: doctor.slug,
+  reason: "Lumbalgia",
+  details: "Desde hace 3 semanas",
+  mode: "presencial",
+  date: "2026-11-13",
+  time: "10:15",
+  patient: { fullName: "María Pérez", documentId: "12345678" },
+  consent: true,
+};
+
+const day = (date: string, slots: string[]): DayAvailability => ({ date, slots, isToday: false, dow: "", dayNumber: "", label: "" });
+
+describe("buildBookingMessage", () => {
+  it("should_include_doctor_reason_date_and_patient_when_all_data_is_present", () => {
+    const message = buildBookingMessage({ request, doctor });
+    expect(message).toContain(`*Especialista:* ${doctor.name} (${doctor.specialty})`);
+    expect(message).toContain("*Motivo:* Lumbalgia");
+    expect(message).toContain("*Detalle:* Desde hace 3 semanas");
+    expect(message).toContain("*Fecha y hora:* viernes, 13 de noviembre · 10:15");
+    expect(message).toContain("*Nombre:* María Pérez");
+    expect(message).toContain("*DNI/CE:* 12345678");
+  });
+
+  it("should_omit_optional_lines_when_details_and_document_are_missing", () => {
+    const message = buildBookingMessage({ request: { ...request, details: undefined, patient: { fullName: "Ana" } }, doctor });
+    expect(message).not.toContain("Detalle");
+    expect(message).not.toContain("DNI");
+  });
+});
+
+describe("resolveInitialSlot", () => {
+  const days = [day("2026-11-13", ["09:00", "10:15"]), day("2026-11-14", ["11:00"])];
+
+  it("should_keep_the_preselected_slot_when_it_is_still_free", () => {
+    expect(resolveInitialSlot(days, { date: "2026-11-14", time: "11:00" })).toEqual({ date: "2026-11-14", time: "11:00" });
+  });
+
+  it("should_fallback_to_first_day_without_time_when_the_slot_is_taken", () => {
+    expect(resolveInitialSlot(days, { date: "2026-11-14", time: "18:00" })).toEqual({ date: "2026-11-13", time: null });
+  });
+
+  it("should_return_empty_date_when_there_is_no_availability", () => {
+    expect(resolveInitialSlot([], {})).toEqual({ date: "", time: null });
+  });
+});
+
+describe("parseBookingPreselection", () => {
+  it("should_map_url_params_and_trim_the_reason_when_reading_the_url", () => {
+    const params = new URLSearchParams({ medico: "valeria-quispe", dia: "2026-11-13", hora: "10:15", motivo: `  ${"x".repeat(200)}` });
+    const result = parseBookingPreselection((k) => params.get(k));
+    expect(result).toMatchObject({ doctorSlug: "valeria-quispe", date: "2026-11-13", time: "10:15" });
+    expect(result.reason).toHaveLength(120);
+  });
+
+  it("should_leave_fields_undefined_when_params_are_missing", () => {
+    expect(parseBookingPreselection(() => null)).toEqual({ doctorSlug: undefined, date: undefined, time: undefined, reason: undefined });
+  });
+});

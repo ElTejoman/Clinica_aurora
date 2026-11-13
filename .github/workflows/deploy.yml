@@ -1,0 +1,53 @@
+# =============================================================================
+# Despliegue a Hostinger (hosting compartido, sin Node)
+#
+#   push a main → verifica y compila el sitio estático (out/)
+#               → publica out/ en la rama "deploy"
+#               → hPanel › Git (auto-deploy) copia esa rama a public_html
+#
+# El dominio se configura en .env.production (NEXT_PUBLIC_SITE_URL).
+# =============================================================================
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar tipos y lint
+        run: npm run check
+
+      - name: Compilar sitio estático
+        run: npm run build
+
+      - name: Publicar out/ en la rama "deploy"
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: deploy
+          publish_dir: ./out
+          force_orphan: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          full_commit_message: "deploy: ${{ github.sha }}"

@@ -2,13 +2,15 @@
   "name": "clinica-aurora",
   "version": "1.0.0",
   "private": true,
-  "description": "Sitio web de Clínica Aurora: embudo de captación centrado en médicos (visitante → dolor → especialista → perfil → reserva).",
+  "description": "Sitio web estático de Clínica Aurora: embudo de captación centrado en médicos (visitante → dolor → especialista → perfil → reserva por WhatsApp).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "preview": "npx --yes serve@14.2.4 out",
+    "test": "vitest run",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint && npm test"
   },
   "dependencies": {
     "animejs": "3.2.2",
@@ -32,9 +34,10 @@
     "eslint-config-next": "15.5.29",
     "postcss": "^8.4.49",
     "tailwindcss": "3.4.19",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12"
   },
   "engines": {
-    "node": ">=18.18"
+    "node": ">=20"
   }
 }

@@ -1,7 +1,14 @@
+# Dependencias y builds
 node_modules
 .next
 out
-.env*.local
 *.tsbuildinfo
 next-env.d.ts
+
+# Variables locales (las públicas de producción sí se versionan: .env.production)
+.env
+.env*.local
+
+# Sistema
 .DS_Store
+Thumbs.db
