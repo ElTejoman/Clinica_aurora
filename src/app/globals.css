@@ -1,0 +1,89 @@
+/* =============================================================================
+ * ESTILOS GLOBALES
+ * -----------------------------------------------------------------------------
+ * Casi todo el estilo vive en clases de Tailwind dentro de cada componente.
+ * Aquí solo va:
+ *   1. La base (fondo, color de texto, foco accesible).
+ *   2. Utilidades reutilizables que Tailwind no cubre con una sola clase
+ *      (líneas que "suben" en los titulares, ocultar visualmente, etc.).
+ *   3. El modo "movimiento reducido" global.
+ * ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ground font-sans text-ink antialiased;
+    overflow-x: hidden;
+  }
+  a {
+    @apply text-teal transition-colors hover:text-teal-deep;
+  }
+  /* Anillo de foco visible para teclado en TODO el sitio (accesibilidad). */
+  :focus-visible {
+    outline: 2px solid theme("colors.teal.DEFAULT");
+    outline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Línea de un titular animado por <SplitLines />: el contenedor recorta,
+     el <span> interno sube desde abajo (ver src/components/motion/SplitLines.tsx). */
+  .split-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+  }
+  .split-line > span {
+    display: inline-block;
+  }
+
+  /* Etiqueta pequeña en mayúsculas sobre los títulos de sección ("NUESTROS MÉDICOS"). */
+  .eyebrow {
+    @apply text-[13px] font-semibold uppercase tracking-[1.6px] text-leaf;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+ * Estados iniciales de las animaciones de entrada.
+ * Solo se aplican si el script de <head> añadió `js-motion` a <html>
+ * (o sea: hay JavaScript y la persona no pidió reducir movimiento).
+ * Ver src/lib/motion.ts.
+ * -------------------------------------------------------------------------- */
+.js-motion [data-reveal],
+.js-motion [data-fade],
+.js-motion [data-tilt] {
+  opacity: 0;
+}
+.js-motion [data-intro] .split-line > span {
+  transform: translateY(110%);
+}
+
+/* -----------------------------------------------------------------------------
+ * Movimiento reducido: si la persona lo pidió en su sistema operativo,
+ * apagamos las animaciones CSS. Las animaciones JS (anime.js / three.js)
+ * ya lo respetan a través de `motionAllowed()` (src/lib/motion.ts).
+ * -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
