@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import type { Doctor } from "@/types";
-import { cn } from "@/lib/cn";
+import type { Doctor } from "@/models";
+import { cn } from "@/utils/cn";
 
 /**
  * <DoctorPortrait> — Foto del médico (o marcador con iniciales)
@@ -11,10 +11,11 @@ import { cn } from "@/lib/cn";
  * con las iniciales y la etiqueta "FOTO".
  *
  * 📸 Para usar fotos reales:
- *   1. Guarda la foto en /public/doctors/<slug>.jpg (vertical, ≥ 1200px de alto,
+ *   1. Guarda la foto en /public/doctors/<slug>.webp (vertical, ~1200px de alto,
  *      fondo neutro, misma luz para todos los médicos).
- *   2. Pon `photo: "/doctors/<slug>.jpg"` en src/data/doctors.ts.
- *   Listo: este componente usará <Image> optimizada automáticamente.
+ *   2. Pon `photo: "/doctors/<slug>.webp"` en src/data/doctors.ts.
+ *   El sitio es estático (sin optimizador de imágenes en el servidor):
+ *   comprime la foto antes de subirla (WebP, < 250 KB).
  *
  * El contenedor define el tamaño (pásalo en `className`, ej. "aspect-[4/4.4]").
  */

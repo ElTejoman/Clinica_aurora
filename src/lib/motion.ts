@@ -1,3 +1,5 @@
+import { env } from "@/config/env";
+
 /**
  * =============================================================================
  * UTILIDADES DE MOVIMIENTO
@@ -6,7 +8,7 @@
  *
  *   1. Respetan "reducir movimiento" del sistema operativo.
  *   2. Se pueden apagar en todo el sitio con NEXT_PUBLIC_ENABLE_MOTION=false
- *      (equivale al interruptor "Animación" del diseño).
+ *      (ver src/config/env.ts).
  *   3. Solo corren en el navegador (dentro de useEffect) y SIEMPRE devuelven
  *      una función de limpieza para no dejar loops ni listeners vivos.
  *
@@ -20,7 +22,7 @@
  *   y los componentes de animación los llevan a su estado final.
  */
 
-export const MOTION_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MOTION !== "false";
+export const MOTION_ENABLED = env.motionEnabled;
 
 /** ¿Podemos animar ahora mismo? Llamar solo en el navegador. */
 export function motionAllowed(): boolean {

@@ -1,4 +1,4 @@
-import type { PainZone, PainZoneId } from "@/types";
+import type { PainZone, QuickPain } from "@/models";
 
 /**
  * =============================================================================
@@ -10,7 +10,7 @@ import type { PainZone, PainZoneId } from "@/types";
  *   visitante escribe/elige molestia → PainZone → doctorSlug → perfil/reserva
  *
  * Para añadir una especialidad nueva:
- *   1. Añade el id en `PainZoneId` (src/types/index.ts).
+ *   1. Añade el id en `PainZoneId` (src/models/pain-zone.ts).
  *   2. Añade aquí su entrada con icono, palabras clave y médico.
  *   3. Añade su forma 3D en src/lib/three/shapes.ts (opcional; si no, usa la esfera).
  */
@@ -92,7 +92,7 @@ export const PAIN_KINDS = [
 export const PAIN_DURATIONS = ["Unos días", "Algunas semanas", "Varios meses", "Más de un año"] as const;
 
 /** Chips "Lo más consultado" del hero: texto + zona a la que llevan. */
-export const QUICK_PAINS: { label: string; zone: PainZoneId }[] = [
+export const QUICK_PAINS: QuickPain[] = [
   { label: "Dolor de espalda", zone: "espalda" },
   { label: "Migraña", zone: "cabeza" },
   { label: "Dolor de rodilla", zone: "articulaciones" },
@@ -100,37 +100,3 @@ export const QUICK_PAINS: { label: string; zone: PainZoneId }[] = [
   { label: "Ansiedad", zone: "mente" },
   { label: "Alergias en la piel", zone: "piel" },
 ];
-
-/** Motivos de consulta del paso 1 de la reserva. */
-export const BOOKING_REASONS = [
-  "Dolor de espalda o cuello",
-  "Dolor de rodilla",
-  "Lesión deportiva",
-  "Dolor de cabeza",
-  "Dolor articular",
-  "Molestia digestiva",
-  "Control o resultados",
-  "Otro motivo",
-] as const;
-
-export function getPainZone(id: string | null | undefined): PainZone | undefined {
-  return PAIN_ZONES.find((z) => z.id === id);
-}
-
-/** Quita tildes y pasa a minúsculas para comparar texto libre. */
-export function normalizeText(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-}
-
-/**
- * Intenta adivinar la zona a partir de lo que el visitante escribió en el
- * buscador del hero ("me duele la espalda al despertar" → "espalda").
- * Es una coincidencia por palabras clave, simple y predecible.
- * Si más adelante quieres algo más inteligente, este es el punto a cambiar
- * (por ejemplo, llamar a un endpoint de clasificación).
- */
-export function matchZoneFromText(text: string): PainZone | undefined {
-  const q = normalizeText(text);
-  if (!q.trim()) return undefined;
-  return PAIN_ZONES.find((z) => z.keywords.some((k) => q.includes(normalizeText(k))));
-}

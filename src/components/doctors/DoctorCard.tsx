@@ -1,12 +1,13 @@
 import Link from "next/link";
-import type { Doctor } from "@/types";
+import type { Doctor } from "@/models";
 import { DoctorPortrait } from "@/components/ui/DoctorPortrait";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { liftCardClass, tagClass } from "@/components/ui/styles";
-import { formatModes } from "@/data/doctors";
-import { ROUTES } from "@/lib/site";
-import { cn } from "@/lib/cn";
+import { NextAvailableText } from "@/components/availability/NextAvailableText";
+import { formatModes } from "@/utils/format";
+import { ROUTES } from "@/config/routes";
+import { cn } from "@/utils/cn";
 
 /**
  * Tarjetas de médico
@@ -18,11 +19,10 @@ import { cn } from "@/lib/cn";
  *   <RelatedDoctorCard>   compacta — "También te puede ayudar" (perfil)
  *
  * Todas llevan a la misma decisión: "Reservar" (primaria) o "Ver perfil".
- * `nextAvailable` se calcula en el servidor (services/availability.ts) y
- * llega como texto ("Hoy · 16:00").
+ * "Próxima cita" se calcula en el navegador (<NextAvailableText>).
  */
 
-export function DoctorCard({ doctor, nextAvailable }: { doctor: Doctor; nextAvailable: string }) {
+export function DoctorCard({ doctor }: { doctor: Doctor }) {
   return (
     <article data-reveal-item="" className={cn(liftCardClass, "flex flex-col overflow-hidden")}>
       <DoctorPortrait doctor={doctor} className="aspect-[4/4.4]">
@@ -40,7 +40,7 @@ export function DoctorCard({ doctor, nextAvailable }: { doctor: Doctor; nextAvai
         </p>
         <div className="mt-auto flex items-center gap-2 text-[13px] font-medium text-subink">
           <Icon name="clock" className="text-leaf" strokeWidth={1.8} />
-          Próxima cita: {nextAvailable}
+          Próxima cita: <NextAvailableText slug={doctor.slug} />
         </div>
         <div className="flex gap-2">
           <ButtonLink
@@ -61,7 +61,7 @@ export function DoctorCard({ doctor, nextAvailable }: { doctor: Doctor; nextAvai
   );
 }
 
-export function DirectoryCard({ doctor, nextAvailable }: { doctor: Doctor; nextAvailable: string }) {
+export function DirectoryCard({ doctor }: { doctor: Doctor }) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[26px] border border-line-soft bg-white transition-shadow duration-500 hover:shadow-lift">
       <div className="flex gap-[18px] p-[18px]">
@@ -80,7 +80,7 @@ export function DirectoryCard({ doctor, nextAvailable }: { doctor: Doctor; nextA
           </span>
           <span className="mt-auto inline-flex items-center gap-2 text-[13px] font-semibold text-leaf-ink">
             <span className="h-2 w-2 rounded-full bg-leaf" aria-hidden="true" />
-            Próxima cita: {nextAvailable}
+            Próxima cita: <NextAvailableText slug={doctor.slug} />
           </span>
         </div>
       </div>

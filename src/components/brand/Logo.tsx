@@ -4,7 +4,7 @@ import anime from "animejs";
 import Image from "next/image";
 import { useEffect, useId, useRef } from "react";
 import { motionAllowed } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * <LogoMark> — Sello circular de Clínica Aurora

@@ -1,12 +1,12 @@
 import Link from "next/link";
-import type { DayAvailability, Doctor } from "@/types";
+import type { Doctor } from "@/models";
 import { AuroraWave } from "@/components/three/AuroraWave";
 import { Intro } from "@/components/motion/Intro";
 import { SplitLines } from "@/components/motion/SplitLines";
 import { FeaturedDoctorCard } from "@/components/doctors/FeaturedDoctorCard";
 import { HeroSearch } from "./HeroSearch";
 import { QUICK_PAINS } from "@/data/pains";
-import { ROUTES } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
 
 /**
  * <Hero> — Primera pantalla del inicio
@@ -20,7 +20,7 @@ import { ROUTES } from "@/lib/site";
  * Fondo: <AuroraWave variant="hero"> (three.js) anclado abajo.
  * Entrada: <Intro> anima las líneas del titular y los elementos `data-fade`.
  */
-export function Hero({ doctor, day }: { doctor: Doctor; day: DayAvailability | undefined }) {
+export function Hero({ doctor }: { doctor: Doctor }) {
   return (
     <section className="relative min-h-[760px]">
       <AuroraWave variant="hero" className="absolute inset-x-0 bottom-0 h-[520px] w-full" />
@@ -63,7 +63,7 @@ export function Hero({ doctor, day }: { doctor: Doctor; day: DayAvailability | u
                 {QUICK_PAINS.map((p) => (
                   <Link
                     key={p.label}
-                    href={`${ROUTES.painFinder}?zona=${p.zone}`}
+                    href={ROUTES.painFinder({ zona: p.zone })}
                     className="inline-flex h-11 items-center rounded-full border border-line-field bg-white/60 px-4 text-sm !text-ink no-underline transition-colors hover:border-teal hover:bg-white"
                   >
                     {p.label}
@@ -74,7 +74,7 @@ export function Hero({ doctor, day }: { doctor: Doctor; day: DayAvailability | u
           </div>
 
           <div data-fade="" className="flex justify-center">
-            <FeaturedDoctorCard doctor={doctor} day={day} />
+            <FeaturedDoctorCard doctor={doctor} />
           </div>
         </div>
       </Intro>

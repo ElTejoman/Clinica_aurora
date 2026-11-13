@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LogoLockup } from "@/components/brand/Logo";
 import { Icon } from "@/components/ui/Icon";
-import { ROUTES } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
 
 /**
  * <CheckoutHeader> — Cabecera mínima del paso de reserva

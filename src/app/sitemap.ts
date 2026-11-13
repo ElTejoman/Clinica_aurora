@@ -1,18 +1,22 @@
 import type { MetadataRoute } from "next";
-import { getDoctors } from "@/data/doctors";
-import { SITE } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
+import { SITE } from "@/config/site";
+import { doctorService } from "@/services/container";
 
 /**
- * /sitemap.xml generado automáticamente: incluye cada perfil de médico.
+ * /sitemap.xml generado en el build: incluye cada perfil de médico.
  * Envíalo a Google Search Console cuando publiques el sitio.
- * (La página /reservar se excluye a propósito: no debe indexarse.)
+ * (/reservar/ se excluye a propósito: no debe indexarse.)
  */
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const lastModified = new Date();
+  const page = (path: string, priority: number) => ({ url: `${SITE.url}${path}`, lastModified, priority });
   return [
-    { url: `${SITE.url}/`, lastModified: now, priority: 1 },
-    { url: `${SITE.url}/encuentra-tu-dolor`, lastModified: now, priority: 0.9 },
-    { url: `${SITE.url}/especialistas`, lastModified: now, priority: 0.9 },
-    ...getDoctors().map((d) => ({ url: `${SITE.url}/especialistas/${d.slug}`, lastModified: now, priority: 0.8 })),
+    page(ROUTES.home, 1),
+    page(ROUTES.painFinder(), 0.9),
+    page(ROUTES.specialists(), 0.9),
+    ...doctorService.getAll().map((d) => page(ROUTES.doctor(d.slug), 0.8)),
   ];
 }

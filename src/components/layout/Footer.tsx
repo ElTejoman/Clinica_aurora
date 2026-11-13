@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { ROUTES, SITE } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
+import { SITE } from "@/config/site";
 
 /**
  * <Footer> — Pie de página con datos de contacto
  * =============================================================================
  * Tiene id="contacto" para que el enlace "Contacto" del menú salte aquí
- * desde cualquier página. Los datos salen de src/lib/site.ts.
+ * desde cualquier página. Los datos salen de src/config/site.ts.
  * Incluye el aviso de urgencias (importante en sitios de salud).
  */
 export function Footer() {
@@ -37,10 +38,10 @@ export function Footer() {
 
         <nav aria-label="Pie de página" className="flex flex-col gap-2.5 text-sm">
           <span className="font-semibold">Explora</span>
-          <Link href={ROUTES.painFinder} className="no-underline">
+          <Link href={ROUTES.painFinder()} className="no-underline">
             Encuentra tu dolor
           </Link>
-          <Link href={ROUTES.specialists} className="no-underline">
+          <Link href={ROUTES.specialists()} className="no-underline">
             Especialistas
           </Link>
           <Link href={ROUTES.booking()} className="no-underline">
@@ -50,7 +51,9 @@ export function Footer() {
       </div>
 
       <div className="mx-auto flex max-w-page flex-wrap justify-between gap-3 border-t border-[#E6ECE9] px-4 sm:px-8 pb-8 pt-5 text-[13px] text-muted">
-        <span>© {new Date().getFullYear()} Clínica Aurora</span>
+        <span>
+          © {new Date().getFullYear()} {SITE.name}
+        </span>
         <span>En caso de emergencia, acude al servicio de urgencias más cercano.</span>
       </div>
     </footer>

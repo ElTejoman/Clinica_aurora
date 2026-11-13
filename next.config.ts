@@ -1,21 +1,24 @@
 import type { NextConfig } from "next";
 
 /**
- * Configuración de Next.js.
+ * Configuración de Next.js para un sitio 100 % estático (hosting compartido).
  *
- * - `reactStrictMode`: monta los componentes dos veces en desarrollo para detectar
- *   efectos sin limpieza. Todas las escenas de three.js y animaciones de anime.js
- *   de este proyecto devuelven su función de limpieza, así que es seguro dejarlo activo.
- * - `images.remotePatterns`: cuando subas las fotos reales de los médicos a un CDN
- *   (Cloudinary, S3, Supabase Storage…), agrega aquí su dominio para usar <Image />.
+ * - `output: "export"`: `npm run build` genera la carpeta `out/` con HTML, CSS,
+ *   JS e imágenes. Eso es lo único que se sube a public_html (no hay Node en el
+ *   servidor). Por eso no hay rutas /api ni renderizado por petición.
+ * - `trailingSlash: true`: cada página sale como carpeta con index.html
+ *   (/especialistas/index.html), que Apache/LiteSpeed sirve sin reglas extra.
+ * - `images.unoptimized`: sin servidor no hay optimizador de imágenes; sube
+ *   las fotos ya comprimidas (WebP/JPG ~1200 px) a public/doctors/.
+ * - `reactStrictMode`: todas las escenas three.js y animaciones anime.js
+ *   devuelven su limpieza, así que es seguro dejarlo activo.
  */
 const nextConfig: NextConfig = {
+  output: "export",
+  trailingSlash: true,
+  images: { unoptimized: true },
   reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      // { protocol: "https", hostname: "res.cloudinary.com" },
-    ],
-  },
+  poweredByHeader: false,
 };
 
 export default nextConfig;

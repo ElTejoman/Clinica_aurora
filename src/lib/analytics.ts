@@ -1,3 +1,5 @@
+import { env } from "@/config/env";
+
 /**
  * =============================================================================
  * ANALÍTICA DEL EMBUDO
@@ -42,7 +44,7 @@ declare global {
 export function track(event: FunnelEvent, props: Props = {}): void {
   if (typeof window === "undefined") return;
 
-  if (process.env.NODE_ENV !== "production") {
+  if (!env.isProduction) {
     console.info("[embudo]", event, props);
   }
 

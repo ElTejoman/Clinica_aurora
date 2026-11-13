@@ -2,13 +2,13 @@
 
 import anime from "animejs";
 import { useEffect, useRef } from "react";
-import { Button, ButtonLink } from "@/components/ui/Button";
+import { Button, ButtonLink, buttonClasses } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { ROUTES } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
 import { motionAllowed } from "@/lib/motion";
 
 /**
- * <Confirmation> — Pantalla final "Tu cita está reservada"
+ * <Confirmation> — Pantalla final: la solicitud sale por WhatsApp
  * =============================================================================
  * Celebración con una línea de tiempo de anime.js:
  *   1. El círculo crece con rebote.
@@ -16,8 +16,8 @@ import { motionAllowed } from "@/lib/motion";
  *   3. 16 partículas estallan en direcciones aleatorias y se desvanecen.
  *   4. Los textos aparecen en cascada.
  *
- * Es el momento de mayor satisfacción del embudo: aprovecha para reducir
- * ausencias (instrucciones previas + agregar al calendario).
+ * La cita queda confirmada cuando la clínica responde el chat de WhatsApp.
+ * Si el navegador no abrió WhatsApp, el botón principal lo vuelve a abrir.
  */
 
 const SPARK_COLORS = ["#17616B", "#4C7942", "#86B98F", "#9FC1B6"];
@@ -26,13 +26,14 @@ export function Confirmation({
   firstName,
   doctorShortName,
   when,
-  appointmentId,
+  whatsAppUrl,
   onAddToCalendar,
 }: {
   firstName: string;
   doctorShortName: string;
+  /** "hoy a las 09:30" / "el jue 12 a las 10:15" */
   when: string;
-  appointmentId: string;
+  whatsAppUrl: string;
   onAddToCalendar: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -77,15 +78,17 @@ export function Confirmation({
       </div>
 
       <h1 data-c-text="" className="m-0 font-serif text-[clamp(42px,4.6vw,64px)] font-normal leading-[1.02]">
-        Listo, {firstName}. Tu cita está reservada.
+        Listo, {firstName}. Envía tu solicitud por WhatsApp.
       </h1>
       <p data-c-text="" className="m-0 max-w-[560px] text-[17px] leading-relaxed text-muted">
-        Te enviamos la confirmación por WhatsApp. {doctorShortName.charAt(0).toUpperCase() + doctorShortName.slice(1)} te espera {when}.
-        <br />
-        <span className="text-sm">Código de cita: {appointmentId}</span>
+        Abrimos WhatsApp con tu mensaje listo. Envíalo y te confirmaremos la cita con {doctorShortName}
+        {when && ` ${when}`} en ese mismo chat.
       </p>
       <div data-c-text="" className="flex flex-wrap gap-3">
-        <Button onClick={onAddToCalendar}>
+        <a href={whatsAppUrl} target="_blank" rel="noopener noreferrer" className={buttonClasses()}>
+          Abrir WhatsApp
+        </a>
+        <Button variant="ghost" onClick={onAddToCalendar}>
           <Icon name="calendar" />
           Agregar a mi calendario
         </Button>

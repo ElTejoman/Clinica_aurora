@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Instrument_Serif, Inter } from "next/font/google";
 import { MOTION_BOOT_SCRIPT } from "@/lib/motion";
-import { SITE } from "@/lib/site";
+import { SITE } from "@/config/site";
 import "./globals.css";
 
 /**

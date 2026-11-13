@@ -1,38 +1,31 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { SpecialistsDirectory } from "@/components/specialists/SpecialistsDirectory";
+import { SpecialistsDirectoryFromUrl } from "@/components/specialists/SpecialistsDirectoryFromUrl";
 import { Intro } from "@/components/motion/Intro";
 import { SplitLines } from "@/components/motion/SplitLines";
 import { ButtonLink } from "@/components/ui/Button";
-import { getDoctors } from "@/data/doctors";
-import { getPainZone } from "@/data/pains";
-import { getNextAvailableMap } from "@/services/availability";
-import { ROUTES } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
+import { doctorService, painFinderService } from "@/services/container";
 
 /**
- * =============================================================================
- * PÁGINA 03 · ESPECIALISTAS   (ruta: /especialistas)
- * =============================================================================
+ * PÁGINA 03 · ESPECIALISTAS   (ruta: /especialistas/)
  * Directorio filtrable. Para quien ya sabe lo que busca, o quiere comparar.
  *
  * Parámetros de URL:
  *   ?molestia=espalda   → abre con ese filtro activo
  *   ?q=migraña          → abre con esa búsqueda escrita
- * (El componente cliente actualiza la URL al filtrar, así se puede compartir
- *  un enlace ya filtrado.)
+ * Los parámetros se leen en el navegador (<SpecialistsDirectoryFromUrl>):
+ * el HTML estático trae el directorio completo sin filtrar.
  */
 export const metadata: Metadata = {
   title: "Especialistas",
   description: "Elige a tu médico por lo que te duele. Mira quién atiende antes y reserva directo.",
 };
 
-export default async function SpecialistsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ molestia?: string; q?: string }>;
-}) {
-  const { molestia, q } = await searchParams;
-  const doctors = getDoctors();
-  const nextAvailable = await getNextAvailableMap(doctors.map((d) => d.slug));
+export default function SpecialistsPage() {
+  const doctors = doctorService.getAll();
+  const zones = painFinderService.getZones();
 
   return (
     <>
@@ -56,12 +49,9 @@ export default async function SpecialistsPage({
         </section>
       </Intro>
 
-      <SpecialistsDirectory
-        doctors={doctors}
-        nextAvailable={nextAvailable}
-        initialFilter={getPainZone(molestia)?.id ?? "todos"}
-        initialQuery={q ?? ""}
-      />
+      <Suspense fallback={<SpecialistsDirectory doctors={doctors} zones={zones} />}>
+        <SpecialistsDirectoryFromUrl doctors={doctors} zones={zones} />
+      </Suspense>
 
       {/* Rescate: quien no sabe a quién elegir vuelve al cuestionario */}
       <section className="mx-auto max-w-page px-4 sm:px-8 pb-[100px]">
@@ -70,7 +60,7 @@ export default async function SpecialistsPage({
             <span className="font-serif text-4xl leading-[1.1]">¿No sabes a quién elegir?</span>
             <span className="text-base text-night-muted">Responde tres preguntas y te decimos qué especialista te conviene.</span>
           </div>
-          <ButtonLink href={ROUTES.painFinder} variant="light" trackAs={{ event: "cta_click", props: { location: "directory_rescue" } }}>
+          <ButtonLink href={ROUTES.painFinder()} variant="light" trackAs={{ event: "cta_click", props: { location: "directory_rescue" } }}>
             Encontrar mi especialista
           </ButtonLink>
         </div>

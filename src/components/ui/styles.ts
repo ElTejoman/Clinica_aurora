@@ -1,9 +1,19 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * Clases compartidas que se repiten en muchos componentes.
  * (Archivo sin "use client" para poder usarlo también en componentes de servidor.)
  */
+
+/** Contenedor centrado de ancho máximo de página, con márgenes laterales. */
+export const pageContainer = "mx-auto max-w-page px-4 sm:px-8";
+
+/** Botón seleccionable compacto (días y horarios de la agenda). */
+export const toggleClass = (selected = false) =>
+  cn(
+    "cursor-pointer border transition-colors",
+    selected ? "border-teal bg-teal text-white" : "border-line bg-white text-ink hover:border-teal",
+  );
 
 /** Chip/píldora clicable (horarios, molestias rápidas). */
 export const chipClass = (selected = false) =>

@@ -1,4 +1,4 @@
-import type { Doctor } from "@/types";
+import type { Doctor } from "@/models";
 
 /**
  * =============================================================================
@@ -12,13 +12,12 @@ import type { Doctor } from "@/types";
  *       4. Sube el video de 60 s y rellena `videoUrl`.
  *
  * ¿CÓMO PASAR A UN CMS / BASE DE DATOS?
- *   Las páginas nunca importan este array directamente: usan las funciones
- *   de abajo (`getDoctors`, `getDoctorBySlug`…). Cambia el cuerpo de esas
- *   funciones para leer de Supabase/Sanity/etc. (pueden volverse `async`)
- *   y mantén el tipo `Doctor`.
+ *   Nadie importa este array salvo el repositorio
+ *   (src/repositories/doctor.repository.ts). Crea otra implementación de
+ *   `DoctorRepository` que lea de tu CMS y devuelva el tipo `Doctor`.
  *
- * El ORDEN del array es el orden en que aparecen en el directorio. Los cuatro
- * primeros son los que se destacan en la página de inicio.
+ * El ORDEN del array es el orden en que aparecen en el directorio y en el inicio
+ * (ver `HOME_HIGHLIGHTS` al final).
  */
 
 /** Formación genérica mientras no haya datos reales. */
@@ -177,46 +176,12 @@ export const DOCTORS: Doctor[] = [
   },
 ];
 
-/* -----------------------------------------------------------------------------
- * Funciones de acceso. Úsalas siempre en lugar del array.
- * -------------------------------------------------------------------------- */
-
-/** Todos los médicos, en el orden del directorio. */
-export function getDoctors(): Doctor[] {
-  return DOCTORS;
-}
-
-/** Médicos destacados en la página de inicio. Cambia el criterio si quieres. */
-export function getFeaturedDoctors(limit = 4): Doctor[] {
-  return DOCTORS.slice(0, limit);
-}
-
-/** Un médico por slug, o `undefined` si no existe (la página mostrará 404). */
-export function getDoctorBySlug(slug: string): Doctor | undefined {
-  return DOCTORS.find((d) => d.slug === slug);
-}
-
-/** Médico destacado del hero ("Disponible hoy"). */
-export function getHeroDoctor(): Doctor {
-  return DOCTORS[0]!;
-}
-
-/** Médico del bloque de video en la página de inicio. */
-export function getSpotlightDoctor(): Doctor {
-  return getDoctorBySlug("martin-salazar") ?? DOCTORS[0]!;
-}
-
-/** Médicos relacionados que se sugieren en un perfil. */
-export function getRelatedDoctors(doctor: Doctor): Doctor[] {
-  return doctor.related.map(getDoctorBySlug).filter((d): d is Doctor => Boolean(d));
-}
-
-/** Texto legible de las modalidades: "Presencial · Video" */
-export function formatModes(modes: Doctor["modes"]): string {
-  return modes.map((m) => (m === "presencial" ? "Presencial" : "Video")).join(" · ");
-}
-
-/** "de la Dra. Quispe" / "del Dr. Salazar" (contracción correcta en español). */
-export function ofDoctor(doctor: Pick<Doctor, "shortName">): string {
-  return doctor.shortName.startsWith("el ") ? `del ${doctor.shortName.slice(3)}` : `de ${doctor.shortName}`;
-}
+/** Médicos que protagonizan la página de inicio (por slug). */
+export const HOME_HIGHLIGHTS = {
+  /** Tarjeta "Disponible hoy" del hero. */
+  heroDoctor: "valeria-quispe",
+  /** Bloque de video "Conoce a … en 60 segundos". */
+  spotlightDoctor: "martin-salazar",
+  /** Cuántos médicos (en el orden del array) se muestran en "Nuestros médicos". */
+  featuredCount: 4,
+} as const;

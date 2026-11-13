@@ -1,14 +1,17 @@
 "use client";
 
-import anime from "animejs";
-import { useEffect, useRef, useState } from "react";
-import type { DayAvailability, Doctor } from "@/types";
+import { useRef, useState } from "react";
+import type { DayAvailability, Doctor } from "@/models";
+import { Magnetic } from "@/components/motion/Magnetic";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { Magnetic } from "@/components/motion/Magnetic";
-import { ROUTES, SITE } from "@/lib/site";
-import { motionAllowed } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { toggleClass } from "@/components/ui/styles";
+import { ROUTES } from "@/config/routes";
+import { SITE } from "@/config/site";
+import { useDoctorDays } from "@/hooks/useAvailability";
+import { useStaggeredEntrance } from "@/hooks/useStaggeredEntrance";
+import { cn } from "@/utils/cn";
+import { describeModes } from "@/utils/format";
 
 /**
  * <BookingWidget> — Panel "Reserva tu cita" del perfil (columna derecha, fija)
@@ -17,47 +20,50 @@ import { cn } from "@/lib/cn";
  * texto ("Reservar jue 12 a las 10:30") y lleva a /reservar con todo
  * preseleccionado. Así el paso de reserva solo pide motivo y datos.
  *
- * Al cambiar de día, los horarios entran con un pequeño rebote (anime.js).
- * Es `position: sticky` en escritorio: acompaña el scroll del perfil.
+ * Los horarios se calculan en el navegador; al cambiar de día entran con un
+ * pequeño rebote (anime.js). Es `position: sticky` en escritorio.
  */
-export function BookingWidget({ doctor, days }: { doctor: Doctor; days: DayAvailability[] }) {
-  const [dayIdx, setDayIdx] = useState(0);
-  const [slotIdx, setSlotIdx] = useState(0);
-  const slotsRef = useRef<HTMLDivElement>(null);
+const VISIBLE_DAYS = 5;
 
-  const day = days[dayIdx];
-  const time = day?.slots[Math.min(slotIdx, (day?.slots.length ?? 1) - 1)];
-
-  useEffect(() => {
-    if (!slotsRef.current || !motionAllowed()) return;
-    const buttons = slotsRef.current.querySelectorAll("button");
-    anime({ targets: buttons, opacity: [0, 1], translateY: [12, 0], scale: [0.94, 1], duration: 600, delay: anime.stagger(40), easing: "easeOutBack" });
-  }, [dayIdx]);
-
-  if (!day || !time) {
-    return (
-      <div className="rounded-[28px] border border-[#DCE6E2] bg-white p-6 shadow-float">
-        <p className="m-0 text-base">Por ahora no hay horarios publicados. Escríbenos y te avisamos.</p>
-      </div>
-    );
-  }
-
-  const toggle = (on: boolean) =>
-    cn("cursor-pointer border transition-colors", on ? "border-teal bg-teal text-white" : "border-line bg-white text-ink hover:border-teal");
+export function BookingWidget({ doctor }: { doctor: Doctor }) {
+  const days = useDoctorDays(doctor.slug, VISIBLE_DAYS);
 
   return (
     <div className="flex flex-col gap-5 rounded-[28px] border border-[#DCE6E2] bg-white p-6 shadow-float">
       <div className="flex flex-col gap-1">
         <span className="font-serif text-3xl leading-[1.1]">Reserva tu cita</span>
         <span className="text-sm text-muted">
-          S/ {doctor.price} · {doctor.durationMin} min · {doctor.modes.length > 1 ? "Presencial o video" : doctor.modes[0] === "video" ? "Por video" : "Presencial"}
+          S/ {doctor.price} · {doctor.durationMin} min · {describeModes(doctor.modes)}
         </span>
       </div>
 
+      {days === undefined && <p className="m-0 min-h-[260px] text-sm text-muted">Buscando horarios…</p>}
+      {days?.length === 0 && <p className="m-0 text-base">Por ahora no hay horarios publicados. Escríbenos y te avisamos.</p>}
+      {days && days.length > 0 && <SlotPicker doctor={doctor} days={days} />}
+
+      <span className="flex items-center gap-2 text-[13px] text-muted">
+        <Icon name="check" className="flex-none text-leaf" />
+        {SITE.reschedulePolicy}
+      </span>
+    </div>
+  );
+}
+
+function SlotPicker({ doctor, days }: { doctor: Doctor; days: DayAvailability[] }) {
+  const [dayIdx, setDayIdx] = useState(0);
+  const [slotIdx, setSlotIdx] = useState(0);
+  const slotsRef = useRef<HTMLDivElement>(null);
+  useStaggeredEntrance(slotsRef, "button", dayIdx);
+
+  const day = days[Math.min(dayIdx, days.length - 1)]!;
+  const time = day.slots[Math.min(slotIdx, day.slots.length - 1)]!;
+
+  return (
+    <>
       <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
         <legend className="mb-2.5 p-0 text-[13px] font-semibold">Día</legend>
         <div className="grid grid-cols-5 gap-1.5">
-          {days.slice(0, 5).map((d, i) => (
+          {days.map((d, i) => (
             <button
               key={d.date}
               type="button"
@@ -66,7 +72,7 @@ export function BookingWidget({ doctor, days }: { doctor: Doctor; days: DayAvail
                 setDayIdx(i);
                 setSlotIdx(0);
               }}
-              className={cn(toggle(i === dayIdx), "flex h-16 flex-col items-center justify-center gap-0.5 rounded-[14px]")}
+              className={cn(toggleClass(i === dayIdx), "flex h-16 flex-col items-center justify-center gap-0.5 rounded-[14px]")}
             >
               <span className="text-[11px] font-semibold tracking-[.6px]">{d.dow}</span>
               <span className="text-lg font-semibold">{d.dayNumber}</span>
@@ -84,7 +90,7 @@ export function BookingWidget({ doctor, days }: { doctor: Doctor; days: DayAvail
               type="button"
               aria-pressed={t === time}
               onClick={() => setSlotIdx(i)}
-              className={cn(toggle(t === time), "h-[46px] rounded-xl text-sm font-medium")}
+              className={cn(toggleClass(t === time), "h-[46px] rounded-xl text-sm font-medium")}
             >
               {t}
             </button>
@@ -103,11 +109,6 @@ export function BookingWidget({ doctor, days }: { doctor: Doctor; days: DayAvail
           Reservar {day.label} a las {time}
         </ButtonLink>
       </Magnetic>
-
-      <span className="flex items-center gap-2 text-[13px] text-muted">
-        <Icon name="check" className="flex-none text-leaf" />
-        {SITE.reschedulePolicy}
-      </span>
-    </div>
+    </>
   );
 }

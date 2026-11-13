@@ -1,4 +1,4 @@
-import type { PainZoneId } from "@/types";
+import type { PainZoneId } from "@/models";
 
 /**
  * =============================================================================

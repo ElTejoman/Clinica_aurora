@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { createScene } from "@/lib/three/setup";
 import { auroraHeroVertex, auroraProfileVertex, softPointFragment } from "@/lib/three/shaders";
 import { motionAllowed } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * <AuroraWave> — Ola de partículas "aurora" (three.js + anime.js)

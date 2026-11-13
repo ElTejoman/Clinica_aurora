@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { PlayIcon } from "@/components/ui/Icon";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { track } from "@/lib/analytics";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * <VideoButton> — Botón "play" + reproductor en ventana modal

@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Doctor, PainZoneId } from "@/types";
+import type { Doctor, PainZone } from "@/models";
 import { DirectoryCard } from "@/components/doctors/DoctorCard";
 import { Tilt } from "@/components/motion/Tilt";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { PAIN_ZONES, normalizeText } from "@/data/pains";
-import { ROUTES } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
 import { track } from "@/lib/analytics";
-import { cn } from "@/lib/cn";
+import { filterDoctors, type DoctorFilter } from "@/services/doctor.service";
+import { cn } from "@/utils/cn";
 
 /**
  * <SpecialistsDirectory> — Buscador + filtros + grilla de médicos
@@ -19,34 +19,25 @@ import { cn } from "@/lib/cn";
  * - Cada tarjeta va dentro de <Tilt>: inclinación 3D con el cursor y
  *   reentrada animada al cambiar el filtro (anime.js).
  * - La URL se mantiene sincronizada (?molestia=…&q=…) sin recargar,
- *   para poder compartir un enlace filtrado.
+ *   para poder compartir un enlace filtrado. Los valores iniciales de la URL
+ *   los lee <SpecialistsDirectoryFromUrl>.
  * - Estado vacío que devuelve al cuestionario (nunca un callejón sin salida).
  */
 
-type Filter = PainZoneId | "todos";
+type Filter = DoctorFilter["zone"];
 
-export function SpecialistsDirectory({
-  doctors,
-  nextAvailable,
-  initialFilter,
-  initialQuery,
-}: {
+export interface SpecialistsDirectoryProps {
   doctors: Doctor[];
-  nextAvailable: Record<string, string>;
-  initialFilter: Filter;
-  initialQuery: string;
-}) {
+  zones: PainZone[];
+  initialFilter?: Filter;
+  initialQuery?: string;
+}
+
+export function SpecialistsDirectory({ doctors, zones, initialFilter = "todos", initialQuery = "" }: SpecialistsDirectoryProps) {
   const [filter, setFilter] = useState<Filter>(initialFilter);
   const [query, setQuery] = useState(initialQuery);
 
-  const list = useMemo(() => {
-    const q = normalizeText(query.trim());
-    return doctors.filter((d) => {
-      const zoneOk = filter === "todos" || d.zone === filter;
-      const text = normalizeText([d.name, d.specialty, ...d.treats, ...d.conditions].join(" "));
-      return zoneOk && (!q || text.includes(q));
-    });
-  }, [doctors, filter, query]);
+  const list = useMemo(() => filterDoctors(doctors, { zone: filter, query }), [doctors, filter, query]);
 
   // Sincroniza la URL (sin navegación) y mide el uso de filtros.
   useEffect(() => {
@@ -54,14 +45,14 @@ export function SpecialistsDirectory({
     if (filter !== "todos") params.set("molestia", filter);
     if (query.trim()) params.set("q", query.trim());
     const qs = params.toString();
-    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
     const t = setTimeout(() => track("directory_filter", { filter, query: query.trim().slice(0, 60) }), 600);
     return () => clearTimeout(t);
   }, [filter, query]);
 
   const filters: { id: Filter; label: string }[] = [
     { id: "todos", label: "Todos" },
-    ...PAIN_ZONES.map((z) => ({ id: z.id, label: z.filterLabel })),
+    ...zones.map((z) => ({ id: z.id, label: z.filterLabel })),
   ];
   const enterKey = `${filter}|${query}`;
 
@@ -114,7 +105,7 @@ export function SpecialistsDirectory({
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(360px,100%),1fr))] gap-6">
             {list.map((d, i) => (
               <Tilt key={d.slug} enterKey={enterKey} index={i}>
-                <DirectoryCard doctor={d} nextAvailable={nextAvailable[d.slug] ?? "Consultar"} />
+                <DirectoryCard doctor={d} />
               </Tilt>
             ))}
           </div>
@@ -122,7 +113,7 @@ export function SpecialistsDirectory({
           <div className="flex flex-col items-start gap-4 rounded-[26px] border border-dashed border-line-strong p-6 sm:p-12">
             <span className="font-serif text-[34px]">No encontramos un especialista con ese término.</span>
             <span className="text-base text-muted">Cuéntanos qué sientes y te orientamos en un minuto.</span>
-            <ButtonLink href={ROUTES.painFinder} size="md">
+            <ButtonLink href={ROUTES.painFinder()} size="md">
               Encuentra tu dolor
             </ButtonLink>
           </div>

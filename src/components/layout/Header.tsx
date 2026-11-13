@@ -6,9 +6,10 @@ import { LogoLockup } from "@/components/brand/Logo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { Magnetic } from "@/components/motion/Magnetic";
-import { ROUTES, SITE } from "@/lib/site";
+import { ROUTES, isCurrentSection } from "@/config/routes";
+import { SITE } from "@/config/site";
 import { track } from "@/lib/analytics";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * <Header> — Cabecera de las páginas de contenido
@@ -26,9 +27,9 @@ import { cn } from "@/lib/cn";
  */
 
 const NAV = [
-  { href: ROUTES.painFinder, label: "Encuentra tu dolor" },
-  { href: ROUTES.specialists, label: "Especialistas" },
-  { href: "/#como", label: "Cómo funciona" },
+  { href: ROUTES.painFinder(), label: "Encuentra tu dolor" },
+  { href: ROUTES.specialists(), label: "Especialistas" },
+  { href: ROUTES.howItWorks, label: "Cómo funciona" },
   { href: "#contacto", label: "Contacto" },
 ];
 
@@ -43,7 +44,7 @@ export function Header() {
 
       <nav aria-label="Principal" className="flex flex-wrap items-center gap-8 text-[15px] font-medium">
         {NAV.map((item) => {
-          const active = !item.href.includes("#") && pathname.startsWith(item.href);
+          const active = !item.href.includes("#") && isCurrentSection(pathname, item.href);
           return (
             <Link
               key={item.href}

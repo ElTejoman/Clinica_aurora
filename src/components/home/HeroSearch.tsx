@@ -4,17 +4,17 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { buttonClasses } from "@/components/ui/Button";
-import { ROUTES } from "@/lib/site";
+import { ROUTES } from "@/config/routes";
 import { track } from "@/lib/analytics";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * <HeroSearch> — "¿Qué sientes?" (primer paso del embudo)
  * =============================================================================
  * El visitante escribe con sus palabras ("me duele la espalda al despertar")
  * y lo llevamos al cuestionario con el texto en la URL:
- *   /encuentra-tu-dolor?q=me%20duele%20la%20espalda
- * Allí `matchZoneFromText` (data/pains.ts) intenta reconocer la zona y salta
+ *   /encuentra-tu-dolor/?q=me%20duele%20la%20espalda
+ * Allí `matchZoneFromText` (services/pain-finder.service.ts) reconoce la zona y salta
  * directamente al paso 2.
  *
  * Es un <form method="get"> real: funciona incluso si JavaScript falla.
@@ -26,13 +26,13 @@ export function HeroSearch() {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     track("search_pain", { query: q.slice(0, 80) });
-    const url = q.trim() ? `${ROUTES.painFinder}?q=${encodeURIComponent(q.trim())}` : ROUTES.painFinder;
+    const url = ROUTES.painFinder({ q: q.trim() || undefined });
     router.push(url);
   };
 
   return (
     <form
-      action={ROUTES.painFinder}
+      action={ROUTES.painFinder()}
       method="get"
       onSubmit={onSubmit}
       role="search"

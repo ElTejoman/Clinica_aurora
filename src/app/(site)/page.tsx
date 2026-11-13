@@ -1,49 +1,34 @@
 import { Hero } from "@/components/home/Hero";
-import {
-  DoctorsSection,
-  FinalCta,
-  HowItWorks,
-  PainGrid,
-  Testimonials,
-  TrustStrip,
-  VideoSpotlight,
-} from "@/components/home/HomeSections";
-import { getFeaturedDoctors, getHeroDoctor, getSpotlightDoctor } from "@/data/doctors";
-import { getDoctorAvailability, getNextAvailableMap } from "@/services/availability";
+import { DoctorsSection } from "@/components/home/sections/DoctorsSection";
+import { FinalCta } from "@/components/home/sections/FinalCta";
+import { HowItWorks } from "@/components/home/sections/HowItWorks";
+import { PainGrid } from "@/components/home/sections/PainGrid";
+import { Testimonials } from "@/components/home/sections/Testimonials";
+import { TrustStrip } from "@/components/home/sections/TrustStrip";
+import { VideoSpotlight } from "@/components/home/sections/VideoSpotlight";
+import { doctorService, painFinderService } from "@/services/container";
 
 /**
- * =============================================================================
  * PÁGINA 01 · INICIO   (ruta: /)
- * =============================================================================
- * Componente de SERVIDOR: obtiene datos (médicos + disponibilidad) y los pasa
- * a las secciones. Las partes interactivas (3D, animaciones, buscador) son
- * componentes cliente dentro de esas secciones.
  *
- * `revalidate`: la página se genera estática y se regenera cada 5 minutos,
- * para que "Próxima cita" y "Disponible hoy" no queden desactualizados.
- * Si conectas una agenda en tiempo real y necesitas exactitud al minuto,
- * cambia a `export const dynamic = "force-dynamic"`.
+ * Orden pensado como embudo, de "me interesa" a "reservo":
+ *   Hero → TrustStrip → HowItWorks → DoctorsSection (las personas, no los
+ *   servicios) → VideoSpotlight → PainGrid → Testimonials → FinalCta
+ *
+ * Se genera como HTML estático en el build. Lo que depende de la hora
+ * ("Disponible hoy", "Próxima cita") lo calculan islas cliente en el navegador.
  */
-export const revalidate = 300;
-
-export default async function HomePage() {
-  const heroDoctor = getHeroDoctor();
-  const featured = getFeaturedDoctors(4);
-  const spotlight = getSpotlightDoctor();
-
-  const [heroDays, nextAvailable] = await Promise.all([
-    getDoctorAvailability(heroDoctor.slug, 1),
-    getNextAvailableMap(featured.map((d) => d.slug)),
-  ]);
+export default function HomePage() {
+  const featured = doctorService.getFeatured();
 
   return (
     <>
-      <Hero doctor={heroDoctor} day={heroDays[0]} />
+      <Hero doctor={doctorService.getHeroDoctor()} />
       <TrustStrip />
       <HowItWorks />
-      <DoctorsSection doctors={featured} nextAvailable={nextAvailable} />
-      <VideoSpotlight doctor={spotlight} />
-      <PainGrid />
+      <DoctorsSection doctors={featured} />
+      <VideoSpotlight doctor={doctorService.getSpotlightDoctor()} />
+      <PainGrid zones={painFinderService.getZones()} recommendations={painFinderService.getRecommendations()} />
       <Testimonials doctors={featured} />
       <FinalCta />
     </>

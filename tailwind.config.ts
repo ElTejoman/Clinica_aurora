@@ -100,10 +100,16 @@ const config: Config = {
           "0%,100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.04)" },
         },
+        // Contenido que llega después de la carga (p. ej. disponibilidad)
+        fadeIn: {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
       },
       animation: {
         "pulse-dot": "pulseDot 2.2s ease-in-out infinite",
         breathe: "breathe 6.4s ease-in-out infinite",
+        "fade-in": "fadeIn .5s ease-out",
       },
     },
   },

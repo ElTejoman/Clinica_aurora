@@ -2,9 +2,9 @@
 
 import anime from "animejs";
 import { useEffect, useRef } from "react";
-import type { Doctor } from "@/types";
+import type { Doctor } from "@/models";
 import { DoctorPortrait } from "@/components/ui/DoctorPortrait";
-import { SITE } from "@/lib/site";
+import { SITE } from "@/config/site";
 import { motionAllowed } from "@/lib/motion";
 
 /**

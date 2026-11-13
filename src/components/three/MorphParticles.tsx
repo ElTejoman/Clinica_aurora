@@ -7,7 +7,7 @@ import { createScene } from "@/lib/three/setup";
 import { morphVertex, softPointFragment } from "@/lib/three/shaders";
 import { buildShapes, SHAPE_COLORS, type ShapeKey } from "@/lib/three/shapes";
 import { motionAllowed } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { cn } from "@/utils/cn";
 
 /**
  * <MorphParticles> — Partículas que cambian de forma (three.js + anime.js)
