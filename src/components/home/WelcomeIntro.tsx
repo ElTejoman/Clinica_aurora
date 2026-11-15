@@ -7,8 +7,8 @@ import { Icon } from "@/components/ui/Icon";
 import { ROUTES } from "@/config/routes";
 
 /**
- * Titular principal del inicio (H1) bajo el carrusel, sobre la ola de
- * partículas 3D. Da a Google y a los lectores de pantalla el tema de la página,
+ * Titular principal del inicio (H1) bajo el carrusel, con la ola de
+ * partículas 3D detrás del texto en opacidad baja. Da a Google y a los lectores de pantalla el tema de la página,
  * que en los banners está dentro de la imagen.
  */
 export function WelcomeIntro() {
@@ -16,10 +16,10 @@ export function WelcomeIntro() {
     <section className="relative overflow-hidden">
       <AuroraWave
         variant="hero"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[220px] w-full opacity-70 [mask-image:linear-gradient(to_bottom,transparent,#000_55%)]"
+        className="pointer-events-none absolute inset-0 h-full w-full opacity-30 [mask-image:linear-gradient(to_bottom,transparent,#000_25%,#000_75%,transparent)]"
       />
       <Intro>
-        <div className="relative mx-auto flex max-w-[860px] flex-col items-center gap-5 px-4 pb-[170px] pt-14 text-center">
+        <div className="relative z-10 mx-auto flex max-w-[860px] flex-col items-center gap-5 px-4 py-16 text-center">
           <span data-fade="" className="eyebrow">
             Clínica de medicina integrativa · Miraflores
           </span>

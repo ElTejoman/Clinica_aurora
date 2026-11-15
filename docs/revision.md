@@ -20,7 +20,7 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 | Código | Sección | Archivo principal | Estado |
 |---|---|---|---|
 | I1 | Carrusel de banners | `components/home/HeroSlider.tsx` · banners en `data/clinic.ts` | ⬜ |
-| I2 | Titular + ola 3D | `components/home/WelcomeIntro.tsx` | ⬜ |
+| I2 | Titular + ola 3D | `components/home/WelcomeIntro.tsx` | 🔄 |
 | I3 | Nuestros servicios | `components/home/sections/ServicesGrid.tsx` | ⬜ |
 | I4 | ¿Qué deseas realizar hoy? | `components/home/sections/QuickActions.tsx` | ⬜ |
 | I5 | Tenemos el respaldo de | `components/home/sections/Affiliations.tsx` | ⬜ |
@@ -82,4 +82,4 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 
 | Fecha | Código | Comentario | Cambio realizado | Verificación | Commit |
 |---|---|---|---|---|---|
-| | | | | | |
+| 2026-11-15 | I2 | La ola 3D debe ir detrás de las letras con opacidad leve | La ola ocupa toda la sección detrás del texto (antes, franja inferior), opacidad 70 % → 30 %, desvanecida arriba y abajo; se quitó el espacio inferior reservado para la ola | Playwright: capturas escritorio 1400 px y móvil 390 px; tsc + eslint | ver git log |
