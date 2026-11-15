@@ -18,10 +18,15 @@ test.describe("Inicio", () => {
   });
 
   test("lista los 6 servicios con enlace a su página", async ({ page }) => {
-    const cards = page.locator('a[href^="/servicios/"][data-reveal-item]');
+    const cards = page.locator("[data-service-card]");
     await expect(cards).toHaveCount(6);
-    await cards.filter({ hasText: "Acupuntura" }).click();
+    await cards.filter({ hasText: "Acupuntura" }).getByRole("link", { name: /Conocer más/ }).click();
     await expect(page).toHaveURL(/\/servicios\/acupuntura\/$/);
+  });
+
+  test("agenda desde la tarjeta con el servicio ya elegido", async ({ page }) => {
+    const card = page.locator('[data-service-card="sueroterapia"]');
+    await expect(card.getByRole("link", { name: /Agendar/ })).toHaveAttribute("href", "/reservar/?servicio=sueroterapia");
   });
 
   test("tiene los accesos rápidos de ¿Qué deseas realizar hoy?", async ({ page }) => {
