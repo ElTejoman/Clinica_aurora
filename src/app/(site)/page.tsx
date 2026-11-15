@@ -20,7 +20,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSlider banners={HOME_BANNERS} />
-      <WelcomeIntro />
+      <WelcomeIntro services={catalogService.getServices()} />
       <ServicesGrid services={catalogService.getServices()} />
       <QuickActions />
       <Affiliations />
