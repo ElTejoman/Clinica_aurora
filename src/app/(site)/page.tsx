@@ -8,7 +8,7 @@ import { WhyChoose } from "@/components/home/sections/WhyChoose";
 import { WelcomeIntro } from "@/components/home/WelcomeIntro";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { HOME_BANNERS } from "@/data/clinic";
-import { catalogService } from "@/services/container";
+import { catalogService, doctorService } from "@/services/container";
 
 /**
  * PÁGINA 01 · INICIO   (ruta: /)
@@ -22,7 +22,7 @@ export default function HomePage() {
       <HeroSlider banners={HOME_BANNERS} />
       <WelcomeIntro services={catalogService.getServices()} />
       <ServicesGrid services={catalogService.getServices()} />
-      <QuickActions />
+      <QuickActions staff={doctorService.getAll()} />
       <Affiliations />
       <Gallery />
       <WhyChoose />

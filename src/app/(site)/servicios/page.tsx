@@ -3,7 +3,7 @@ import { QuickActions } from "@/components/home/sections/QuickActions";
 import { ServicesGrid } from "@/components/home/sections/ServicesGrid";
 import { Intro } from "@/components/motion/Intro";
 import { SplitLines } from "@/components/motion/SplitLines";
-import { catalogService } from "@/services/container";
+import { catalogService, doctorService } from "@/services/container";
 
 /** PÁGINA · SERVICIOS   (ruta: /servicios/) */
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export default function ServicesPage() {
         </section>
       </Intro>
       <ServicesGrid services={catalogService.getServices()} heading="Elige tu tratamiento" />
-      <QuickActions />
+      <QuickActions staff={doctorService.getAll()} />
     </>
   );
 }
