@@ -28,6 +28,10 @@ export interface Service {
   tagline: string;
   /** Path SVG del icono (viewBox 0 0 24 24, trazo). */
   icon: string;
+  /** Foto de la tarjeta del servicio: 4:3, 1200 × 900, en public/images/services/. */
+  card: { src: string; alt: string };
+  /** Tres condiciones que atiende, mostradas en la tarjeta. */
+  highlights: [string, string, string];
   /** Párrafo de presentación de la página del servicio. */
   intro: string;
   hero: {

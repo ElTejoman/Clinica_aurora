@@ -21,7 +21,7 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 |---|---|---|---|
 | I1 | Carrusel de banners | `components/home/HeroSlider.tsx` · banners en `data/clinic.ts` | ⬜ |
 | I2 | Titular + ola 3D | `components/home/WelcomeIntro.tsx` | 🔄 |
-| I3 | Nuestros servicios | `components/home/sections/ServicesGrid.tsx` | ⬜ |
+| I3 | Nuestros servicios | `components/services/ServiceCard.tsx` · fotos en `public/images/services/` | 🔄 |
 | I4 | ¿Qué deseas realizar hoy? | `components/home/sections/QuickActions.tsx` | ⬜ |
 | I5 | Tenemos el respaldo de | `components/home/sections/Affiliations.tsx` | ⬜ |
 | I6 | Galería de fotos | `components/home/sections/Gallery.tsx` | ⬜ |
@@ -72,6 +72,7 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 
 ## Pendientes del cliente
 
+- [ ] Fotos de las tarjetas de servicios (I3, S1): 6 imágenes 4:3 (1200 × 900) que reemplazan a las provisionales en `public/images/services/` con el mismo nombre: `ozonoterapia`, `acupuntura`, `sueroterapia`, `nutricion`, `medicina-funcional`, `medicina-general` (.webp)
 - [ ] Código del widget de Trustindex (I8, S5)
 - [ ] Razón social, RUC y domicilio para el Libro de Reclamaciones (L1, L2)
 - [ ] Qué WhatsApp recibe las citas y cuál las consultas (G4, C1, R5)
@@ -83,4 +84,5 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 | Fecha | Código | Comentario | Cambio realizado | Verificación | Commit |
 |---|---|---|---|---|---|
 | 2026-11-15 | I2 | La ola 3D debe ir detrás de las letras con opacidad leve | La ola ocupa toda la sección detrás del texto (antes, franja inferior), opacidad 70 % → 30 %, desvanecida arriba y abajo; se quitó el espacio inferior reservado para la ola | Playwright: capturas escritorio 1400 px y móvil 390 px; tsc + eslint | 29116f3 |
-| 2026-11-15 | I2 | Pills para que cada especialidad destaque | La lista de servicios del párrafo pasa a pills con icono que enlazan a cada servicio (datos desde `catalogService`); el párrafo queda en "Consultas de 30 minutos y atención en español, inglés y chino."; contenedor 860 → 1040 px para que las 6 entren en una fila en escritorio | Playwright: capturas escritorio 1400 px (1 fila) y móvil 390 px; tsc + eslint | ver git log |
+| 2026-11-15 | I2 | Pills para que cada especialidad destaque | La lista de servicios del párrafo pasa a pills con icono que enlazan a cada servicio (datos desde `catalogService`); el párrafo queda en "Consultas de 30 minutos y atención en español, inglés y chino."; contenedor 860 → 1040 px para que las 6 entren en una fila en escritorio | Playwright: capturas escritorio 1400 px (1 fila) y móvil 390 px; tsc + eslint | d1363ac |
+| 2026-11-15 | I3 | Mejorar "Nuestros servicios"; dejar mapeados los espacios de foto para imágenes generadas con IA | Tarjeta nueva: foto 4:3 arriba con el icono encima, nombre, frase y 3 condiciones que atiende (tomadas de la página de cada servicio). Campos `card` y `highlights` en `data/services.ts`; fotos provisionales "Imagen pendiente" en `public/images/services/<slug>.webp`. También cambia el índice /servicios/ (S1), que usa la misma grilla | Playwright: capturas escritorio 1400 px y móvil 390 px; tsc + eslint + 36 unit tests | ver git log |

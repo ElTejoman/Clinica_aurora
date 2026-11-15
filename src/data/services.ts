@@ -29,6 +29,8 @@ export const SERVICES: Service[] = [
     cardTitle: "Ozonoterapia",
     tagline: "Oxigenación celular",
     icon: ICONS.molecule,
+    card: { src: "/images/services/ozonoterapia.webp", alt: "Ozonoterapia en Clínica Aurora" },
+    highlights: ["Dolor lumbar y articular", "Inflamación crónica", "Estrés oxidativo y fatiga"],
     intro:
       "La ozonoterapia es una terapia médica que utiliza una mezcla controlada de oxígeno y ozono para estimular procesos naturales de recuperación del organismo. Aplicada bajo protocolos clínicos, puede ayudar a mejorar la oxigenación celular, modular procesos inflamatorios y apoyar la regeneración de tejidos.",
     hero: { src: "/images/banners/banner-ozonoterapia-1600.webp", srcMobile: "/images/banners/banner-ozonoterapia-800.webp", alt: "Servicio de ozonoterapia en Clínica Aurora", banner: true },
@@ -70,6 +72,8 @@ export const SERVICES: Service[] = [
     cardTitle: "Acupuntura",
     tagline: "Alivio del dolor",
     icon: ICONS.needle,
+    card: { src: "/images/services/acupuntura.webp", alt: "Acupuntura en Clínica Aurora" },
+    highlights: ["Colon irritable", "Insomnio", "Dolores menstruales"],
     intro:
       "Técnica de la medicina tradicional china que estimula puntos específicos del cuerpo con agujas finas y descartables. Desde problemas digestivos y hormonales hasta mejoras estéticas, alivia dolencias y restablece tu bienestar con técnicas tradicionales personalizadas.",
     hero: { src: "/images/banners/banner-acupuntura-1600.webp", srcMobile: "/images/banners/banner-acupuntura-800.webp", alt: "Servicio de acupuntura en Clínica Aurora", banner: true },
@@ -106,6 +110,8 @@ export const SERVICES: Service[] = [
     cardTitle: "Sueroterapia",
     tagline: "Nutrición intravenosa",
     icon: ICONS.drip,
+    card: { src: "/images/services/sueroterapia.webp", alt: "Sueroterapia en Clínica Aurora" },
+    highlights: ["Defensas e inmunidad", "Energía y vitalidad", "Desintoxicación"],
     intro:
       "Sueros vitamínicos y nutricionales administrados por vía intravenosa, con indicación y supervisión médica, para apoyar tu energía, tus defensas y tu recuperación.",
     hero: { src: "/images/clinic/sueroterapia.webp", alt: "Paciente recibiendo sueroterapia en un sillón reclinable", banner: false },
@@ -132,6 +138,8 @@ export const SERVICES: Service[] = [
     cardTitle: "Nutrición",
     tagline: "Bienestar interno",
     icon: ICONS.apple,
+    card: { src: "/images/services/nutricion.webp", alt: "Nutrición en Clínica Aurora" },
+    highlights: ["Sobrepeso y obesidad", "Diabetes y prediabetes", "Salud hormonal y menstrual"],
     intro:
       "Planes de alimentación personalizados y basados en evidencia. Desde problemas digestivos y hormonales hasta mejoras en tu energía diaria, la nutrición te ayuda a restablecer tu bienestar.",
     hero: { src: "/images/banners/banner-nutricion-embarazadas-1600.webp", srcMobile: "/images/banners/banner-nutricion-embarazadas-800.webp", alt: "Servicio de nutrición para embarazadas en Clínica Aurora", banner: true },
@@ -177,6 +185,8 @@ export const SERVICES: Service[] = [
     cardTitle: "Med. Funcional y Microbiota",
     tagline: "Salud digestiva y hormonal",
     icon: ICONS.plusCircle,
+    card: { src: "/images/services/medicina-funcional.webp", alt: "Medicina funcional en Clínica Aurora" },
+    highlights: ["Salud digestiva y microbiota", "Salud hormonal", "Salud metabólica"],
     intro:
       "Abordamos la salud desde una perspectiva integral, buscando los factores que pueden estar detrás de tus síntomas. Con una evaluación médica personalizada, análisis clínicos y un enfoque en la salud digestiva, la microbiota, el equilibrio hormonal y el metabolismo, diseñamos planes que integran nutrición, suplementación y hábitos de vida.",
     hero: { src: "/images/clinic/clinica-moderna.webp", alt: "Profesional de la clínica junto a una paciente en el consultorio", banner: false },
@@ -200,6 +210,8 @@ export const SERVICES: Service[] = [
     cardTitle: "Medicina General",
     tagline: "Evaluación y prevención",
     icon: ICONS.plusSquare,
+    card: { src: "/images/services/medicina-general.webp", alt: "Medicina general en Clínica Aurora" },
+    highlights: ["Problemas respiratorios", "Infecciones comunes", "Prevención y chequeos"],
     intro:
       "Nuestros médicos generales realizan una evaluación integral de tu estado de salud, identifican posibles problemas, te orientan en la prevención de enfermedades y te ayudan a encontrar el tratamiento adecuado. Dedicamos 30 minutos a cada consulta para escuchar tus molestias, conocer tus antecedentes y resolver tus dudas.",
     hero: { src: "/images/clinic/consultorio.webp", alt: "Médica de la clínica en su consultorio", banner: false },
