@@ -14,8 +14,8 @@ import { Confirmation } from "./Confirmation";
 import { DateTimeStep } from "./steps/DateTimeStep";
 import { DoctorStep } from "./steps/DoctorStep";
 import { PatientStep } from "./steps/PatientStep";
-import { ReasonStep } from "./steps/ReasonStep";
-import { useBookingForm } from "./useBookingForm";
+import { ServiceStep } from "./steps/ServiceStep";
+import { useBookingForm, type BookingService } from "./useBookingForm";
 
 /**
  * <BookingFlow> — Reserva en 4 pasos + envío por WhatsApp
@@ -24,8 +24,16 @@ import { useBookingForm } from "./useBookingForm";
  * y el mensaje de WhatsApp se arma en services/booking.service.ts.
  * El resumen de la derecha refleja todo en vivo (confianza).
  */
-export function BookingFlow({ doctors, preselection = {} }: { doctors: Doctor[]; preselection?: BookingPreselection }) {
-  const form = useBookingForm({ doctors, preselection });
+export interface BookingFlowProps {
+  doctors: Doctor[];
+  services: BookingService[];
+  preselection?: BookingPreselection;
+}
+
+const NO_PRESELECTION: BookingPreselection = {};
+
+export function BookingFlow({ doctors, services, preselection = NO_PRESELECTION }: BookingFlowProps) {
+  const form = useBookingForm({ doctors, services, preselection });
   const { step } = form;
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -50,17 +58,17 @@ export function BookingFlow({ doctors, preselection = {} }: { doctors: Doctor[];
 
         <div ref={panelRef} key={step} className="flex flex-col gap-6">
           {step === 1 && (
-            <ReasonStep
-              reasons={form.reasons}
-              selected={form.reason}
-              onSelect={form.setReason}
+            <ServiceStep
+              services={form.services}
+              selected={form.service?.slug}
+              onSelect={form.chooseService}
               details={form.details}
               onDetailsChange={form.setDetails}
             />
           )}
           {step === 2 && (
             <DoctorStep
-              doctors={form.doctors}
+              doctors={form.serviceDoctors}
               selected={form.doctor}
               recommendedSlug={form.recommendedSlug}
               availability={form.availability}
@@ -123,7 +131,7 @@ export function BookingFlow({ doctors, preselection = {} }: { doctors: Doctor[];
       <aside aria-label="Resumen de tu cita" className="top-6 min-w-0 flex-[1_1_340px] lg:sticky">
         <BookingSummary
           doctor={form.doctor}
-          reason={form.reason ?? ""}
+          serviceName={form.service?.name ?? ""}
           modeLabel={CONSULT_MODE_LABEL[form.mode]}
           when={form.whenLabel}
           place={form.place}

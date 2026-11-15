@@ -1,9 +1,10 @@
 /**
  * Tipos de dominio. Si conectas un CMS o una base de datos, haz que tus
  * repositorios devuelvan EXACTAMENTE estos tipos y el resto no cambiará.
- * El esquema de reserva (zod) se importa aparte desde "@/models/booking".
+ * Los esquemas zod (reserva, contacto) se importan aparte desde sus archivos.
  */
 export type * from "./doctor";
-export type * from "./pain-zone";
+export type * from "./service";
+export type * from "./review";
 export type * from "./availability";
 export type { BookingPreselection, BookingRequest, BookingRequestInput } from "./booking";

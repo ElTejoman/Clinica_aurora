@@ -2,37 +2,35 @@ import type { ReactNode } from "react";
 import { cn } from "@/utils/cn";
 
 /**
- * Encabezado de sección: etiqueta pequeña ("NUESTROS MÉDICOS") + título serif.
- * Para resaltar una parte del título en cursiva teal, usa <Accent>.
- *
- *   <SectionHeading eyebrow="Nuestros médicos">
- *     Primero, las personas. <Accent>quien te va a atender.</Accent>
- *   </SectionHeading>
+ * Encabezado de sección: etiqueta pequeña opcional + título (Poppins).
+ * Centrado por defecto, como en el sitio de referencia.
+ * Para resaltar una parte del título en color de marca, usa <Accent>.
  */
 export function SectionHeading({
   eyebrow,
   children,
+  intro,
   className,
+  align = "center",
   as: Tag = "h2",
 }: {
   eyebrow?: string;
   children: ReactNode;
+  intro?: ReactNode;
   className?: string;
+  align?: "center" | "left";
   as?: "h1" | "h2";
 }) {
+  const centered = align === "center";
   return (
-    <div className={cn("flex max-w-[720px] flex-col gap-3.5", className)}>
+    <div className={cn("flex flex-col gap-3", centered ? "mx-auto max-w-[760px] items-center text-center" : "max-w-[760px]", className)}>
       {eyebrow && <span className="eyebrow">{eyebrow}</span>}
-      <Tag className="m-0 font-serif text-[clamp(38px,4.4vw,60px)] font-normal leading-[1.04] tracking-[-1px]">
+      <Tag className="m-0 font-display text-[clamp(28px,3.4vw,42px)] font-semibold leading-[1.15] tracking-[-0.5px] text-ink">
         {children}
       </Tag>
+      {intro && <p className="m-0 max-w-[640px] text-[17px] leading-relaxed text-muted">{intro}</p>}
     </div>
   );
-}
-
-/** Fragmento del título en cursiva y color de marca. */
-export function Accent({ children, tone = "teal" }: { children: ReactNode; tone?: "teal" | "mint" }) {
-  return <em className={cn("italic", tone === "teal" ? "text-teal" : "text-leaf-mint")}>{children}</em>;
 }
 
 /** Punto verde que late ("Disponible hoy"). */

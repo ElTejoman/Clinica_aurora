@@ -1,11 +1,8 @@
-import type { PainZoneId } from "@/models";
-
 /**
  * Rutas del sitio. Úsalas siempre en lugar de escribir URLs a mano.
  *
  * Terminan en "/" porque el sitio se exporta como carpetas con index.html
  * (`trailingSlash: true`): así el hosting las sirve sin reglas de reescritura.
- * Los parámetros viajan entre pasos del embudo para no volver a preguntar.
  */
 
 type QueryParams = Record<string, string | undefined>;
@@ -18,16 +15,20 @@ function withQuery(path: string, params?: QueryParams): string {
 
 export const ROUTES = {
   home: "/",
-  howItWorks: "/#como",
-  painFinder: (params?: { zona?: PainZoneId; q?: string }) => withQuery("/encuentra-tu-dolor/", params),
-  specialists: (params?: { molestia?: PainZoneId; q?: string }) => withQuery("/especialistas/", params),
-  doctor: (slug: string) => `/especialistas/${slug}/`,
-  booking: (params?: { medico?: string; motivo?: string; dia?: string; hora?: string }) => withQuery("/reservar/", params),
+  services: "/servicios/",
+  service: (slug: string) => `/servicios/${slug}/`,
+  staff: (params?: { servicio?: string; q?: string }) => withQuery("/staff-de-profesionales/", params),
+  doctor: (slug: string) => `/staff-de-profesionales/${slug}/`,
+  contact: (section?: "agendar" | "escribenos" | "sede") => (section ? `/contacto/#${section}` : "/contacto/"),
+  complaints: "/libro-de-reclamaciones/",
+  complaintForm: "/libro-de-reclamaciones/hoja/",
+  booking: (params?: { servicio?: string; medico?: string; dia?: string; hora?: string; motivo?: string }) =>
+    withQuery("/reservar/", params),
 } as const;
 
 /** ¿La ruta actual corresponde a `href`? Ignora la barra final y la query. */
 export function isCurrentSection(pathname: string, href: string): boolean {
   const strip = (p: string) => p.split(/[?#]/)[0]!.replace(/\/+$/, "");
   const target = strip(href);
-  return target !== "" && strip(pathname).startsWith(target);
+  return target === "" ? strip(pathname) === "" : strip(pathname).startsWith(target);
 }

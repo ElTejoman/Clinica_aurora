@@ -10,7 +10,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "check": "npm run typecheck && npm run lint && npm test",
+    "test:e2e": "next build && playwright test"
   },
   "dependencies": {
     "animejs": "3.2.2",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "1.56",
     "@types/animejs": "3.1.13",
     "@types/node": "^22",
     "@types/react": "^19",

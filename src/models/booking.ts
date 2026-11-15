@@ -2,13 +2,12 @@ import { z } from "zod";
 
 /**
  * Solicitud de cita que el paciente envía por WhatsApp.
- * El esquema se usa en el formulario para habilitar el botón y mostrar errores.
- * El celular no se pide: la clínica lo recibe al llegar el mensaje de WhatsApp.
+ * El celular no se pide: la clínica lo recibe al llegar el mensaje.
  */
 export const bookingRequestSchema = z.object({
-  doctorSlug: z.string().min(1, "Elige un especialista"),
-  reason: z.string().trim().min(1, "Elige un motivo").max(120),
+  serviceSlug: z.string().min(1, "Elige un servicio"),
   details: z.string().trim().max(500, "Máximo 500 caracteres").optional(),
+  doctorSlug: z.string().min(1, "Elige un profesional"),
   mode: z.enum(["presencial", "video"]),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Elige un día"),
   time: z.string().regex(/^\d{2}:\d{2}$/, "Elige una hora"),
@@ -28,10 +27,12 @@ export const bookingRequestSchema = z.object({
 export type BookingRequestInput = z.input<typeof bookingRequestSchema>;
 export type BookingRequest = z.output<typeof bookingRequestSchema>;
 
-/** Lo que el visitante ya eligió en pasos anteriores del embudo (llega por URL). */
+/** Lo que el visitante ya eligió en otra página (llega por URL). */
 export interface BookingPreselection {
+  serviceSlug?: string;
   doctorSlug?: string;
   date?: string;
   time?: string;
-  reason?: string;
+  /** Texto libre que precarga "Cuéntanos un poco más" (p. ej. una condición del perfil). */
+  details?: string;
 }

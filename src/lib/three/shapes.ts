@@ -1,38 +1,36 @@
-import type { PainZoneId } from "@/models";
-
 /**
  * =============================================================================
- * FORMAS DE PARTÍCULAS DEL CUESTIONARIO "ENCUENTRA TU DOLOR"
+ * FORMAS DE PARTÍCULAS (sección "¿Por qué elegirnos?")
  * =============================================================================
- * Cada zona del cuerpo tiene una forma hecha de N puntos. Al elegir una zona,
- * las partículas viajan de la forma actual a la nueva (morphing).
+ * Cada forma está hecha de N puntos; las partículas viajan de una forma a
+ * otra (morphing) en un ciclo automático.
  *
- *   base            esfera (estado inicial)
- *   cabeza          esfera con pliegues (cerebro)
- *   espalda         columna de 22 discos con curva (vértebras)
- *   articulaciones  dos toros entrelazados (articulación)
- *   estomago        nudo toroidal (intestino)
- *   piel            superficie ondulada
- *   mente           doble hélice con peldaños
- *   result          los dos anillos del logo (pantalla de resultado)
+ *   sphere  esfera (estado inicial)
+ *   brain   esfera con pliegues
+ *   spine   columna de 22 discos con curva
+ *   joints  dos toros entrelazados
+ *   knot    nudo toroidal
+ *   wave    superficie ondulada
+ *   helix   doble hélice con peldaños
+ *   rings   los dos anillos del logo
  *
  * Todas devuelven Float32Array de N*3 (x, y, z) para usar como
  * BufferAttribute. Para añadir una forma: crea la función con la misma
  * firma y regístrala en `buildShapes`.
  */
 
-export type ShapeKey = "base" | PainZoneId | "result";
+export type ShapeKey = "sphere" | "brain" | "spine" | "joints" | "knot" | "wave" | "helix" | "rings";
 
 /** Color "acento" (uB) de cada forma; uA siempre es el teal de marca. */
 export const SHAPE_COLORS: Record<ShapeKey, string> = {
-  base: "#86B98F",
-  cabeza: "#6FB3A8",
-  espalda: "#86B98F",
-  articulaciones: "#A3C27A",
-  estomago: "#5FA39A",
-  piel: "#9CC9B0",
-  mente: "#7FA7C9",
-  result: "#7FB08A",
+  sphere: "#86B98F",
+  brain: "#6FB3A8",
+  spine: "#86B98F",
+  joints: "#A3C27A",
+  knot: "#5FA39A",
+  wave: "#9CC9B0",
+  helix: "#7FA7C9",
+  rings: "#7FB08A",
 };
 
 type PointFn = (i: number, a: number, b: number) => [number, number, number];
@@ -61,18 +59,18 @@ export function buildShapes(n: number): Record<ShapeKey, Float32Array> {
   };
 
   return {
-    base: fill(n, (i) => {
+    sphere: fill(n, (i) => {
       const [x, y, z] = fib(i);
       return [x * 2, y * 2, z * 2];
     }),
 
-    cabeza: fill(n, (i) => {
+    brain: fill(n, (i) => {
       const [x, y, z] = fib(i);
       const folds = 1 + 0.1 * Math.sin(x * 10) * Math.sin(y * 8) * Math.sin(z * 9);
       return [x * 2.2 * folds, y * 1.85 * folds + 0.1, z * 1.9 * folds];
     }),
 
-    espalda: fill(n, (i, a, b) => {
+    spine: fill(n, (i, a, b) => {
       const disc = Math.floor((i * 22) / n);              // vértebra 0..21
       const y = (disc / 21 - 0.5) * 4.4;
       const t = a * TAU;
@@ -81,7 +79,7 @@ export function buildShapes(n: number): Record<ShapeKey, Float32Array> {
       return [Math.cos(t) * r + curve, y + (b - 0.5) * 0.09, Math.sin(t) * r * 0.75];
     }),
 
-    articulaciones: fill(n, (i, a, b) => {
+    joints: fill(n, (i, a, b) => {
       const u = a * TAU, v = b * TAU, R = 1.15, r = 0.32;
       const x = (R + r * Math.cos(v)) * Math.cos(u);
       const y = (R + r * Math.cos(v)) * Math.sin(u);
@@ -89,7 +87,7 @@ export function buildShapes(n: number): Record<ShapeKey, Float32Array> {
       return i % 2 ? [x + 0.95, z, y] : [x - 0.95, y, z];  // dos toros perpendiculares
     }),
 
-    estomago: fill(n, (_i, a, b) => {
+    knot: fill(n, (_i, a, b) => {
       const t = a * TAU, p = 2, q = 3, r = Math.cos(q * t) + 2;   // nudo (2,3)
       const v = b * TAU, tube = 0.2;
       return [
@@ -99,12 +97,12 @@ export function buildShapes(n: number): Record<ShapeKey, Float32Array> {
       ];
     }),
 
-    piel: fill(n, (_i, a, b) => {
+    wave: fill(n, (_i, a, b) => {
       const x = (a - 0.5) * 5.2, z = (b - 0.5) * 5.2;
       return [x, Math.sin(x * 1.3) * 0.35 + Math.cos(z * 1.1) * 0.35, z];
     }),
 
-    mente: fill(n, (i, a, b) => {
+    helix: fill(n, (i, a, b) => {
       const y = (a - 0.5) * 4.6, t = a * TAU * 2.4;
       if (i % 7 === 0) {
         // peldaños entre las dos hebras
@@ -116,7 +114,7 @@ export function buildShapes(n: number): Record<ShapeKey, Float32Array> {
       return [Math.cos(t + offset) * 1.1, y, Math.sin(t + offset) * 1.1];
     }),
 
-    result: fill(n, (_i, a, b) => {
+    rings: fill(n, (_i, a, b) => {
       const t = a * TAU;
       const r = (b < 0.55 ? 2.25 : 1.5) + (Math.random() - 0.5) * 0.05; // anillo exterior / interior
       return [Math.cos(t) * r, Math.sin(t) * r, (Math.random() - 0.5) * 0.12];

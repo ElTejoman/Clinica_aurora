@@ -1,15 +1,17 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import type { Doctor } from "@/models";
+import { useMemo } from "react";
 import { parseBookingPreselection } from "@/services/booking.service";
-import { BookingFlow } from "./BookingFlow";
+import { BookingFlow, type BookingFlowProps } from "./BookingFlow";
 
 /**
- * Lee `?medico=…&dia=…&hora=…&motivo=…` en el navegador y abre la reserva
- * con todo preseleccionado. La página lo envuelve en <Suspense>.
+ * Lee `?servicio=…&medico=…&dia=…&hora=…&motivo=…` en el navegador y abre la
+ * reserva con todo preseleccionado. La página lo envuelve en <Suspense>.
  */
-export function BookingFlowFromUrl({ doctors }: { doctors: Doctor[] }) {
+export function BookingFlowFromUrl({ doctors, services }: Omit<BookingFlowProps, "preselection">) {
   const params = useSearchParams();
-  return <BookingFlow doctors={doctors} preselection={parseBookingPreselection((key) => params.get(key))} />;
+  const query = params.toString();
+  const preselection = useMemo(() => parseBookingPreselection((key) => new URLSearchParams(query).get(key)), [query]);
+  return <BookingFlow doctors={doctors} services={services} preselection={preselection} />;
 }

@@ -1,15 +1,21 @@
-# Clínica Aurora: sitio web con embudo de captación
+# Clínica Aurora: sitio web
 
-Sitio **100 % estático** de Clínica Aurora, hecho con **Next.js 15 + TypeScript**. Lleva al visitante por un embudo que **promociona a los médicos** antes que a los servicios, y la reserva termina en **WhatsApp**:
+Sitio **100 % estático** de Clínica Aurora (antes Lima Natural Health Clinic), hecho con **Next.js 15 + TypeScript**. Sigue la estructura del sitio actual de la clínica, con mejor diseño, mejor rendimiento y animaciones con three.js y anime.js.
 
 ```
-Visitante → ¿Qué te duele? → Especialista recomendado → Perfil del médico → Reserva → WhatsApp
-   /        /encuentra-tu-dolor/   (resultado)        /especialistas/[slug]/  /reservar/  (mensaje listo)
+Inicio ─┬─ Servicios ── /servicios/[servicio]/ ──┐
+        ├─ Staff de profesionales ── /staff-de-profesionales/[profesional]/ ─┼─► Agendar cita (/reservar/) ─► WhatsApp
+        ├─ Contacto (canales · formulario · sede) ─┘
+        └─ Libro de Reclamaciones (+ hoja imprimible)
 ```
 
 - **No hay servidor ni base de datos.** `npm run build` genera la carpeta `out/` (HTML, CSS, JS e imágenes), que se publica en un hosting compartido de Hostinger.
-- **Las citas no se guardan en la web.** El último paso abre WhatsApp hacia el número de la clínica con un mensaje que incluye el médico, el motivo, la fecha, la hora y los datos del paciente, y la recepción confirma por ese chat.
-- **Animaciones** con three.js (partículas 3D) y anime.js (entradas, scroll, botones magnéticos, celebración).
+- **Las citas no se guardan en la web.** La reserva y el formulario de contacto abren WhatsApp con el mensaje ya armado, y la clínica confirma por ese chat.
+- **Animaciones:**
+  - Carrusel de banners con fundido.
+  - Ola de partículas 3D bajo el titular del inicio y en los perfiles.
+  - Partículas que cambian de forma en "¿Por qué elegirnos?".
+  - Apariciones al hacer scroll, botones magnéticos y tarjetas con inclinación.
 
 ---
 
@@ -29,8 +35,9 @@ npm run dev        # http://localhost:3000
 | `npm run dev` | Desarrollo con recarga en caliente |
 | `npm run build` | Genera el sitio estático en `out/` |
 | `npm run preview` | Sirve `out/` en local para revisarlo como en el hosting |
-| `npm test` | Tests unitarios (Vitest) |
-| `npm run check` | Tipos + lint + tests (lo mismo que corre GitHub Actions) |
+| `npm test` | Tests unitarios de la lógica (Vitest) |
+| `npm run test:e2e` | Compila y prueba el sitio en el navegador (Playwright, escritorio y móvil) |
+| `npm run check` | Tipos + lint + tests unitarios (lo mismo que corre GitHub Actions) |
 
 > No ejecutes `npm run dev` y `npm run build` a la vez: los dos escriben en `.next/` y se corrompen entre sí.
 
@@ -44,13 +51,13 @@ app/           CONTROLADORES  rutas delgadas: piden datos a los servicios y comp
 components/    VISTA          componentes React por funcionalidad (sin lógica de negocio)
 hooks/                        hooks de cliente reutilizables (disponibilidad, animación)
   │
-services/      NEGOCIO        reglas del embudo: agenda, recomendación, búsqueda, mensaje de WhatsApp
+services/      NEGOCIO        catálogo (servicios, reseñas), staff, agenda, mensajes de WhatsApp
   │
-repositories/  DATOS          interfaces + implementaciones (hoy en memoria / simuladas)
+repositories/  DATOS          interfaces + implementaciones (hoy en memoria / agenda simulada)
   │
-data/          CONTENIDO      médicos, molestias, motivos (lo que edita la clínica)
-models/        DOMINIO        tipos (Doctor, PainZone, DayAvailability…) + esquema zod de la reserva
-config/        CONFIGURACIÓN  datos de la clínica, rutas, variables de entorno, reglas de agenda
+data/          CONTENIDO      servicios, staff, reseñas y textos institucionales (lo que edita la clínica)
+models/        DOMINIO        tipos (Service, Doctor, Review…) + esquemas zod (reserva, contacto)
+config/        CONFIGURACIÓN  datos de la clínica, horario, rutas, variables de entorno
 utils/         UTILIDADES     funciones puras (fechas, texto, formato, .ics, WhatsApp)
 lib/           INFRA CLIENTE  motores de animación (three.js, anime.js) y analítica
 ```
@@ -58,80 +65,77 @@ lib/           INFRA CLIENTE  motores de animación (three.js, anime.js) y anal�
 ```
 src/
 ├── app/
-│   ├── layout.tsx                 fuentes, SEO por defecto, script de animación
-│   ├── (site)/                    páginas con header + footer
-│   │   ├── page.tsx               01 · Inicio
-│   │   ├── encuentra-tu-dolor/    02 · Cuestionario
-│   │   ├── especialistas/         03 · Directorio
-│   │   └── especialistas/[slug]/  04 · Perfil (un HTML por médico)
-│   ├── (checkout)/reservar/       05 · Reserva (cabecera mínima)
-│   ├── sitemap.ts · robots.ts     SEO generado en el build
-│   └── not-found.tsx              404 (sale como 404.html)
+│   ├── layout.tsx                         fuentes (Poppins, Lato, Cinzel), SEO por defecto
+│   ├── (site)/                            páginas con barra superior, menú, pie y WhatsApp flotante
+│   │   ├── page.tsx                       Inicio
+│   │   ├── servicios/  servicios/[slug]/  Índice y una página por servicio
+│   │   ├── staff-de-profesionales/  …/[slug]/   Staff y un perfil por profesional
+│   │   ├── contacto/                      Canales (#agendar), formulario (#escribenos), sede (#sede)
+│   │   └── libro-de-reclamaciones/
+│   ├── (checkout)/reservar/               Agendar cita (cabecera mínima)
+│   ├── (print)/libro-de-reclamaciones/hoja/   Hoja de reclamación imprimible
+│   └── sitemap.ts · robots.ts · not-found.tsx
 ├── components/
-│   ├── availability/              "islas" que calculan horarios en el navegador
-│   ├── booking/                   BookingFlow + useBookingForm + steps/ + resumen + confirmación
-│   ├── pain-finder/               PainFinder + usePainFinder + pasos + resultado
-│   ├── home/  home/sections/      Hero, buscador y una sección por archivo
-│   ├── profile/                   ProfileHero, secciones del perfil, BookingWidget
-│   ├── specialists/  doctors/     directorio y tarjetas de médico
-│   ├── layout/  brand/  ui/  seo/ cabeceras, logo, botones/iconos/estilos, JSON-LD
-│   ├── motion/  three/            componentes de animación
-├── hooks/                         useAvailability, useStaggeredEntrance
-├── services/                      *.service.ts + container.ts (composición)
-├── repositories/                  doctor, pain-zone, availability
-├── models/  data/  config/  utils/  lib/
+│   ├── home/ (HeroSlider, WelcomeIntro, sections/)   services/   staff/   profile/
+│   ├── booking/ (BookingFlow, useBookingForm, steps/)  contact/  complaints/  reviews/
+│   ├── doctors/  availability/  layout/  brand/  ui/  seo/  motion/  three/
+├── hooks/  services/ (+ container.ts)  repositories/  models/  data/  config/  utils/  lib/
+tests/e2e/                                 pruebas Playwright
 ```
 
 **Reglas que mantienen el orden:**
 
-1. **Inversión de dependencias.** Los servicios reciben sus repositorios por parámetro (`createDoctorService(repo, …)`) y nunca importan una implementación concreta. La conexión se hace en dos puntos de composición:
-   - `services/container.ts`: médicos y molestias. Lo usan las páginas al compilar y lleva `server-only`, así que no puede colarse en el JavaScript del navegador.
+1. **Inversión de dependencias.** Los servicios reciben sus repositorios por parámetro y nunca importan una implementación concreta. La conexión se hace en dos puntos de composición:
+   - `services/container.ts`: catálogo y staff. Lo usan las páginas al compilar y lleva `server-only`.
    - `hooks/useAvailability.ts`: horarios. Se calculan en el navegador porque dependen de la hora actual.
 2. **Las páginas no tienen lógica**: piden a los servicios y pasan datos por props.
-3. **Los componentes no leen `data/` de médicos ni de molestias**: los reciben por props. Solo leen listas de textos fijos (`PAIN_KINDS`, `BOOKING_REASONS`, `QUICK_PAINS`).
-4. **Todo lo que depende de "ahora"** (horarios, "Disponible hoy") se calcula tras montar el componente. El HTML estático muestra un estado de carga, así que no hay errores de hidratación.
-5. **Los parámetros de URL** (`?zona=`, `?molestia=`, `?medico=`…) se leen en el navegador con `useSearchParams` dentro de `<Suspense>`. El HTML estático lleva la versión sin parámetros, que es la que leen los buscadores.
+3. **Los componentes no leen `data/` de servicios, staff ni reseñas**: los reciben por props. Solo leen textos institucionales fijos de `data/clinic.ts`.
+4. **Todo lo que depende de "ahora"** (próxima cita, "Atiende hoy") se calcula tras montar el componente. El HTML estático muestra un estado de carga, así que no hay errores de hidratación.
+5. **Los parámetros de URL** (`?servicio=`, `?medico=`…) se leen en el navegador con `useSearchParams` dentro de `<Suspense>`.
+6. **Una sección por archivo**, para que cada página cargue solo el JavaScript que usa (la escena 3D solo se carga donde aparece).
 
 ## 3. Cómo editar el contenido
 
 | Qué | Dónde |
 |---|---|
-| Teléfono, **WhatsApp**, correo, dirección, horario, aseguradoras | `src/config/site.ts` (`SITE`) |
-| Días cerrados, zona horaria, margen para reservar hoy | `src/config/site.ts` (`SCHEDULE`) |
-| Médicos (y quiénes destacan en el inicio) | `src/data/doctors.ts` (`DOCTORS`, `HOME_HIGHLIGHTS`) |
-| Molestias, palabras clave, médico por zona, opciones del cuestionario | `src/data/pains.ts` |
-| Motivos de consulta de la reserva | `src/data/booking.ts` |
+| Teléfonos, **WhatsApp** (citas y consultas), correo, dirección, redes | `src/config/site.ts` (`SITE`) |
+| Horario de atención (pie, contacto y agenda) | `src/config/site.ts` (`OPENING_HOURS`) |
+| Razón social, RUC y domicilio del Libro de Reclamaciones | `src/config/site.ts` (`SITE.legal`) |
+| Servicios: textos, condiciones que atiende, protocolos, imagen | `src/data/services.ts` |
+| Staff: bio, CMP/RNE, experiencia, especialidades, servicios que atiende | `src/data/doctors.ts` |
+| Reseñas de Google y cantidad total | `src/data/reviews.ts` |
+| Banners del carrusel, galería, respaldo, "por qué elegirnos", recomendaciones | `src/data/clinic.ts` |
 | Colores y tipografías | `tailwind.config.ts` y `src/app/layout.tsx` |
 | Dominio público | `.env.production` (`NEXT_PUBLIC_SITE_URL`) |
 
-- **Añadir un médico**: copia un bloque en `data/doctors.ts`. Su `slug` será su URL (`/especialistas/<slug>/`).
-- **Fotos**: `public/doctors/<slug>.webp` y `photo: "/doctors/<slug>.webp"`. Como no hay optimizador de imágenes en el servidor, súbelas ya comprimidas (unos 1200 px de alto y menos de 250 KB).
-- **Video de 60 s**: rellena `videoUrl` con un MP4 propio o un enlace *embed* de YouTube o Vimeo.
-- **Datos pendientes**: busca `[` en el proyecto (`[PRECIO]`, `[N.º]`, `[TELÉFONO]`…). Son datos que no se deben inventar.
+- **Imágenes:** viven en `public/images/` (`banners/`, `staff/`, `clinic/`, `respaldo/`) en formato WebP optimizado. Como no hay optimizador de imágenes en el servidor, comprime antes de subir:
+  - Banners: 1600×800, más una versión de 800×400 para móvil.
+  - Retratos: 720×900.
+  - Fotos: 1200×900.
+- **Añadir un servicio o profesional:** copia un bloque en su archivo de `data/`. El `slug` será su URL. Relaciónalos con `serviceSlugs` en el profesional; un test avisa si una relación queda rota.
+- **Reseñas:** usa solo reseñas reales y verificables (Google). Nunca inventes testimonios.
 
-## 4. Reserva por WhatsApp
+## 4. Reserva y contacto por WhatsApp
 
-1. El paciente elige motivo, especialista, modalidad, día y hora, y escribe su nombre (el DNI es opcional).
-2. El formulario se valida con zod (`models/booking.ts`). El consentimiento empieza **desmarcado**, como exige la Ley N.º 29733.
-3. `services/booking.service.ts` arma el mensaje y abre `https://wa.me/<SITE.whatsapp>?text=…`.
-4. La pantalla final permite volver a abrir WhatsApp y descargar un `.ics` con la cita marcada "por confirmar".
+- **`/reservar/`** sigue 4 pasos:
+  1. Servicio.
+  2. Profesional, solo los que atienden ese servicio.
+  3. Fecha y hora.
+  4. Nombre y DNI opcional, con consentimiento.
 
-> ⚠️ **`SITE.whatsapp` es obligatorio** (solo dígitos, con código de país; por ejemplo `51987654321`). Mientras no lo configures, el build muestra un aviso y los mensajes no llegarán a la clínica.
+  Al confirmar abre `wa.me/<SITE.whatsapp.booking>` con el servicio, el profesional, la fecha completa y los datos. Llega con todo preseleccionado desde un servicio, un perfil o una tarjeta.
+- **"Agenda aquí"**, en cada servicio, abre WhatsApp con el nombre del servicio ya escrito.
+- **El formulario de contacto** valida los datos y abre WhatsApp (`SITE.whatsapp.general`) con la consulta.
+- **Horarios:** son **simulados** pero siempre dentro del horario de atención (`repositories/availability.repository.ts`). Para conectar una agenda real, crea otra implementación de `AvailabilityRepository` y cámbiala en `hooks/useAvailability.ts`.
 
-**Horarios:** hoy son **simulados** (`repositories/availability.repository.ts`): son falsos pero estables por médico y día, y la clínica confirma la hora real por WhatsApp. Para conectar una agenda real, crea otra implementación de `AvailabilityRepository` (por ejemplo, una API que el navegador pueda consultar) y cámbiala en `hooks/useAvailability.ts`. Nada más tiene que cambiar.
+## 5. Libro de Reclamaciones
 
-## 5. Animaciones
+La página `/libro-de-reclamaciones/` (enlazada desde el pie) incluye:
+- Los canales de atención (WhatsApp y correo).
+- La **hoja de reclamación imprimible**, que se puede guardar como PDF, en `/libro-de-reclamaciones/hoja/`.
+- El texto legal (DS 002-2019-SA).
 
-| Efecto | Archivo |
-|---|---|
-| Ola de partículas "aurora" (hero y perfil) | `components/three/AuroraWave.tsx`, `lib/three/shaders.ts` |
-| Partículas que cambian de forma (cuestionario) | `components/three/MorphParticles.tsx`, `lib/three/shapes.ts` |
-| Titulares línea a línea · aparición al hacer scroll | `components/motion/Intro.tsx`, `SplitLines.tsx`, `Reveal.tsx` |
-| Botones magnéticos · tarjetas 3D | `components/motion/Magnetic.tsx`, `Tilt.tsx` |
-| Cascada de horarios | `hooks/useStaggeredEntrance.ts` |
-| Celebración final | `components/booking/Confirmation.tsx` |
-
-Todas respetan "reducir movimiento" del sistema y se apagan con `NEXT_PUBLIC_ENABLE_MOTION=false`. Las escenas 3D se pausan cuando no se ven, y sin WebGL la página funciona igual.
+Los datos del proveedor salen de `SITE.legal`. **Complétalos antes de publicar** (ver checklist).
 
 ## 6. Publicar en Hostinger (hosting compartido + GitHub)
 
@@ -144,47 +148,60 @@ git push (main) ──► GitHub Actions: check + build ──► rama "deploy" 
 
 **Una sola vez:**
 
-1. **Configura el dominio** en `.env.production` (`NEXT_PUBLIC_SITE_URL=https://www.tudominio.pe`) y el **WhatsApp** en `src/config/site.ts`.
+1. **Configura el dominio** en `.env.production`.
 2. **Sube el código a GitHub** en un repositorio privado:
    ```bash
    git remote add origin git@github.com:<usuario>/clinica-aurora.git
    git push -u origin main
    ```
-3. En GitHub, revisa **Settings › Actions › General › Workflow permissions** y elige *Read and write permissions*, para que el workflow pueda escribir la rama `deploy`.
-4. Espera a que termine la acción **Deploy** (pestaña *Actions*). Al acabar, aparece la rama `deploy`.
+3. En GitHub, revisa **Settings › Actions › General › Workflow permissions** y elige *Read and write permissions*.
+4. Espera a que termine la acción **Deploy**. Al acabar, aparece la rama `deploy`.
 5. En **hPanel › Sitios web › (tu dominio) › Avanzado › GIT**:
-   - Deja **vacía** la carpeta `public_html` (borra el `default.php` de Hostinger).
-   - Repositorio: tu repo. Si es privado, usa la URL SSH y agrega en GitHub la *deploy key* que muestra hPanel.
-   - Rama: **`deploy`**. Directorio: vacío (= `public_html`).
-   - Crea el despliegue y activa **Auto Deployment**. Si hPanel te da una URL de webhook, agrégala en GitHub (*Settings › Webhooks*, evento *push*).
-6. En **hPanel › Seguridad › SSL**, instala el certificado y activa **Forzar HTTPS**. Después descomenta la línea `Strict-Transport-Security` de `public/.htaccess`.
+   - Deja **vacía** la carpeta `public_html`.
+   - Repositorio: el tuyo. Si es privado, usa la URL SSH con la *deploy key* que muestra hPanel.
+   - Rama: **`deploy`**. Directorio: vacío.
+   - Activa **Auto Deployment**.
+6. En **hPanel › Seguridad › SSL**, instala el certificado y activa **Forzar HTTPS**. Después descomenta `Strict-Transport-Security` en `public/.htaccess`.
 
-**Desde entonces:** cada `git push` a `main` verifica, compila y publica solo, en unos 2 minutos.
+**Desde entonces:** cada `git push` a `main` publica solo, en unos 2 minutos.
 
-`public/.htaccess` (va dentro de `out/`) configura la página 404, bloquea archivos ocultos (incluida la carpeta `.git` que deja el despliegue), añade cabeceras de seguridad y define la caché (1 año para JS/CSS con hash, sin caché para el HTML).
+`public/.htaccess` configura la página 404, bloquea archivos ocultos (incluida la carpeta `.git`), añade cabeceras de seguridad y define la caché.
 
-**Alternativa manual:** ejecuta `npm run build` y sube el **contenido** de `out/` a `public_html` con el Administrador de archivos.
+**Alternativa manual:** ejecuta `npm run build` y sube el **contenido** de `out/` a `public_html`.
 
-## 7. SEO y accesibilidad
+## 7. SEO, accesibilidad y rendimiento
 
-- Metadatos por página, `sitemap.xml` y `robots.txt` generados en el build. `/reservar/` es `noindex`.
-- Datos estructurados `schema.org/Physician` en cada perfil, escapados contra inyección de HTML (`components/seo/JsonLd.tsx`).
-- Botones y enlaces reales, `aria-pressed`, foco visible, objetivos táctiles de al menos 44 px, errores anunciados con `role="alert"`.
-- Aviso de urgencias en el resultado del cuestionario y en el pie de página.
+- **SEO:**
+  - Un H1 real por página. El texto de los banners también se describe en su `alt`.
+  - Metadatos por página, `sitemap.xml`, `robots.txt` e imagen para redes (`public/og.jpg`).
+  - Datos estructurados `schema.org/Physician` en cada perfil, escapados contra inyección.
+- **Accesibilidad:**
+  - El carrusel se pausa al pasar el mouse o con el foco, y tiene controles etiquetados.
+  - Menú móvil real, foco visible y errores de formulario anunciados.
+  - Se respeta "reducir movimiento".
+- **Rendimiento:**
+  - Imágenes en WebP (unos 1,2 MB en total frente a los 35 MB del material original).
+  - El banner de móvil pesa la mitad.
+  - Cada página carga solo el JavaScript que usa.
 
 ## 8. Tests
 
-`npm test` cubre la lógica de negocio: reglas de agenda (domingos, margen de hoy, etiquetas), mensaje de WhatsApp, preselección desde la URL, reconocimiento de molestias, búsqueda del directorio y validación de la reserva. Los tests usan los datos reales y repositorios en memoria, sin mocks de lo que se puede probar de verdad.
+- **`npm test`** (Vitest, 36 tests) cubre:
+  - Reglas de agenda: domingos, margen de hoy y horas dentro del horario de atención.
+  - Mensajes de WhatsApp y preselección desde la URL.
+  - Búsqueda del staff, el catálogo y la integridad de los datos: ningún servicio sin profesional ni relación rota.
+- **`npm run test:e2e`** (Playwright, escritorio y móvil) recorre todas las páginas:
+  - Revisa el H1, que no haya elementos invisibles, scroll horizontal ni errores de consola.
+  - Prueba el carrusel, el menú, los filtros del staff, la reserva completa hasta WhatsApp, el formulario de contacto y el Libro de Reclamaciones.
+  - Usa el Chrome instalado y el puerto 4319.
 
 ## 9. Checklist antes de publicar
 
-- [ ] **Número de WhatsApp** en `src/config/site.ts`
-- [ ] Dominio en `.env.production`
-- [ ] Médicos reales en `data/doctors.ts`, con CMP y RNE verificados
-- [ ] Fotos profesionales comprimidas y videos de 60 s
-- [ ] Teléfono, dirección, horario y aseguradoras en `config/site.ts`
-- [ ] Precios y duración de la consulta
-- [ ] Testimonios y reseñas reales, con consentimiento escrito
-- [ ] Página de política de privacidad enlazada (`components/booking/steps/PatientStep.tsx`, `TODO`)
-- [ ] Imagen para redes sociales en `public/og.jpg` (`TODO` en `app/layout.tsx`)
-- [ ] GA4 o Meta Pixel, si se quiere medir el embudo (`lib/analytics.ts`)
+- [ ] **Razón social, RUC y domicilio** del Libro de Reclamaciones (`SITE.legal`). El formato que enviaron decía "ATMA PULSE CLINIC E.I.R.L.", con domicilio en Jesús María: confirmar si es la razón social correcta.
+- [ ] Dominio definitivo en `.env.production`.
+- [ ] Confirmar qué WhatsApp recibe citas (`SITE.whatsapp.booking`) y cuál consultas (`general`).
+- [ ] Correo corporativo con el dominio nuevo (hoy `admin@limanaturalhealth.com`).
+- [ ] Página de política de privacidad enlazada (`components/booking/steps/PatientStep.tsx`, `TODO`).
+- [ ] Renombrar la ficha de Google ("Lima Natural Health Clinic") para que las reseñas aparezcan con la marca nueva.
+- [ ] Nombres de los dos retratos sin identificar del material (uniforme verde y uniforme beige), si se suman al staff.
+- [ ] GA4 o Meta Pixel, si se quiere medir (`lib/analytics.ts`).

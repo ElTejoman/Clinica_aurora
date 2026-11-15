@@ -25,7 +25,7 @@ export function DoctorStep({
   return (
     <>
       <h1 data-ph="" className={stepTitleClass}>
-        Elige a tu especialista
+        Elige a tu profesional
       </h1>
       <div className="flex flex-col gap-2.5">
         {doctors.map((d) => {

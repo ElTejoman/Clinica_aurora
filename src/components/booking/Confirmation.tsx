@@ -77,7 +77,7 @@ export function Confirmation({
         </svg>
       </div>
 
-      <h1 data-c-text="" className="m-0 font-serif text-[clamp(42px,4.6vw,64px)] font-normal leading-[1.02]">
+      <h1 data-c-text="" className="m-0 font-display text-[clamp(42px,4.6vw,64px)] font-normal leading-[1.02]">
         Listo, {firstName}. Envía tu solicitud por WhatsApp.
       </h1>
       <p data-c-text="" className="m-0 max-w-[560px] text-[17px] leading-relaxed text-muted">

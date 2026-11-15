@@ -73,7 +73,7 @@ export function DoctorPortrait({
             </svg>
           )}
           <span
-            className="relative font-serif leading-none text-teal"
+            className="relative font-display leading-none text-teal"
             style={{ fontSize: initialsSize }}
             aria-label={`Foto pendiente de ${doctor.name}`}
             role="img"

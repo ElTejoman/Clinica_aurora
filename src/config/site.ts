@@ -2,39 +2,71 @@ import { env } from "./env";
 
 /**
  * Datos de la clínica en un solo lugar.
- * ➜ Reemplaza los valores entre corchetes antes de publicar. Una búsqueda de
- *   "[" en el proyecto muestra cualquier dato pendiente.
- * ⚠️ `whatsapp` es OBLIGATORIO: la reserva termina enviando un mensaje a ese número.
+ * ➜ Lo que va entre corchetes está pendiente de confirmar: búscalo con "[".
  */
 export const SITE = {
   name: "Clínica Aurora",
-  tagline: "Especialistas que te escuchan primero.",
+  tagline: "Medicina integrativa en Miraflores",
+  description:
+    "Ozonoterapia, acupuntura, sueroterapia, nutrición, medicina funcional y medicina general en Miraflores, Lima. Atención personalizada en español, inglés y chino.",
   url: env.siteUrl,
   city: "Lima",
-
-  phone: "[TELÉFONO]",
-  /** Número de WhatsApp en formato internacional, solo dígitos (ej. 51987654321). */
-  whatsapp: "[NÚMERO]",
-  email: "[CORREO]",
-  address: "[DIRECCIÓN]",
-  hours: "[HORARIO DE ATENCIÓN]",
-  insurers: "[ASEGURADORAS]",
-
-  reschedulePolicy: "Cancela o reprograma gratis hasta 12 h antes",
+  address: "Av. Roca y Boloña 681, Miraflores, Lima",
+  phones: ["+51 912 724 465", "+51 946 453 531"],
+  /** WhatsApp en formato internacional, solo dígitos. */
+  whatsapp: {
+    /** Consultas generales (botón flotante y pie de página). */
+    general: "51912724465",
+    /** Solicitudes de cita (reserva y "Agenda aquí"). */
+    booking: "51946453531",
+  },
+  email: "admin@limanaturalhealth.com",
+  languages: ["español", "inglés", "chino"],
+  social: {
+    facebook: "https://www.facebook.com/limanaturalhealthclinic",
+    instagram: "https://www.instagram.com/lima_natural_health_clinic",
+    tiktok: "https://www.tiktok.com/@lima.natural.health",
+    youtube: "https://www.youtube.com/@doctorhierba1614",
+  },
+  /** Datos del proveedor para el Libro de Reclamaciones (DS 011-2011-PCM / DS 002-2019-SA). */
+  legal: {
+    name: "[RAZÓN SOCIAL]",
+    ruc: "[RUC]",
+    address: "[DOMICILIO FISCAL]",
+  },
 } as const;
 
-/** ¿El número de WhatsApp tiene formato válido? (solo dígitos, con código de país) */
-export const isWhatsAppConfigured = /^\d{9,15}$/.test(SITE.whatsapp);
+export interface OpeningDay {
+  day: string;
+  /** 0 = domingo … 6 = sábado */
+  weekday: number;
+  /** Tramos de atención "HH:mm"–"HH:mm" (24 h). Vacío = cerrado. */
+  ranges: readonly (readonly [string, string])[];
+}
 
-/** Reglas de la agenda. Cambia aquí si la clínica abre domingos o cambia de zona horaria. */
+/** Horario de atención (se muestra en el pie y en contacto; la agenda simulada lo respeta). */
+export const OPENING_HOURS: readonly OpeningDay[] = [
+  { day: "Lunes", weekday: 1, ranges: [["09:00", "11:30"], ["14:00", "18:30"]] },
+  { day: "Martes", weekday: 2, ranges: [["14:00", "18:30"]] },
+  { day: "Miércoles", weekday: 3, ranges: [["08:30", "12:30"], ["14:30", "17:30"]] },
+  { day: "Jueves", weekday: 4, ranges: [["09:00", "11:30"], ["14:00", "18:30"]] },
+  { day: "Viernes", weekday: 5, ranges: [["09:30", "13:00"], ["14:00", "18:30"]] },
+  { day: "Sábado", weekday: 6, ranges: [["08:30", "12:30"]] },
+  { day: "Domingo", weekday: 0, ranges: [] },
+];
+
+/** ¿Los números de WhatsApp tienen formato válido? (solo dígitos, con código de país) */
+export const isWhatsAppConfigured = Object.values(SITE.whatsapp).every((n) => /^\d{9,15}$/.test(n));
+
+/** Reglas de la agenda. */
 export const SCHEDULE = {
   timeZone: "America/Lima",
   /** Desfase respecto de UTC en horas (Lima: −5, sin horario de verano). */
   utcOffsetHours: -5,
-  /** Días cerrados (0 = domingo … 6 = sábado). */
-  closedWeekdays: [0] as readonly number[],
   /** Margen mínimo (min) entre "ahora" y el primer horario reservable de hoy. */
   sameDayLeadMinutes: 30,
-  /** Duración por defecto de la consulta si el médico aún no tiene `durationMin`. */
-  defaultDurationMin: 40,
+  /** Duración de la consulta (min): la clínica dedica 30 minutos por paciente. */
+  defaultDurationMin: 30,
+  /** Días cerrados, derivados del horario. */
+  closedWeekdays: OPENING_HOURS.filter((d) => d.ranges.length === 0).map((d) => d.weekday) as readonly number[],
 } as const;

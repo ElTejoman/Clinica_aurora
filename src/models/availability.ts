@@ -13,9 +13,3 @@ export interface DayAvailability {
   slots: string[];
 }
 
-/** Un horario concreto con etiqueta corta ("Hoy 16:00", "Mañana 10:15", "Jue 12 15:30"). */
-export interface UpcomingSlot {
-  date: string;
-  time: string;
-  label: string;
-}

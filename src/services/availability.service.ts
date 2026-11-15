@@ -1,4 +1,4 @@
-import type { DayAvailability, UpcomingSlot } from "@/models";
+import type { DayAvailability } from "@/models";
 import type { AvailabilityRepository } from "@/repositories/availability.repository";
 import { SCHEDULE } from "@/config/site";
 import { addDays, dayOfMonth, nowInTimeZone, timeToMinutes, weekdayOf, type ZonedNow } from "@/utils/date";
@@ -19,8 +19,6 @@ const SEARCH_WINDOW_DAYS = 21;
 export interface AvailabilityService {
   /** Próximos `count` días con al menos un horario libre. */
   getDays(doctorSlug: string, count?: number): Promise<DayAvailability[]>;
-  /** Próximos `count` horarios libres, sin importar el día. */
-  getUpcomingSlots(doctorSlug: string, count?: number): Promise<UpcomingSlot[]>;
   /** "Hoy · 16:00", "Mañana · 09:30", "Jue 12 · 11:00" */
   getNextAvailableLabel(doctorSlug: string): Promise<string>;
 }
@@ -79,14 +77,6 @@ export function createAvailabilityService(
 
   return {
     getDays: (doctorSlug, count = 7) => loadDays(doctorSlug, count, clock()),
-
-    async getUpcomingSlots(doctorSlug, count = 3) {
-      const now = clock();
-      const days = await loadDays(doctorSlug, count, now);
-      return days
-        .flatMap((day) => day.slots.map((time) => ({ date: day.date, time, label: `${relativeDayLabel(day, now.date)} ${time}` })))
-        .slice(0, count);
-    },
 
     async getNextAvailableLabel(doctorSlug) {
       const now = clock();

@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { bookingRequestSchema } from "./booking";
 
 const valid = {
-  doctorSlug: "valeria-quispe",
-  reason: "Lumbalgia",
+  serviceSlug: "acupuntura",
+  doctorSlug: "ricardo-meza",
   mode: "presencial",
   date: "2026-11-13",
   time: "10:15",
@@ -12,6 +12,10 @@ const valid = {
 };
 
 describe("bookingRequestSchema", () => {
+  it("should_reject_the_request_when_no_service_is_chosen", () => {
+    expect(bookingRequestSchema.safeParse({ ...valid, serviceSlug: "" }).success).toBe(false);
+  });
+
   it("should_accept_the_request_when_document_is_empty", () => {
     expect(bookingRequestSchema.safeParse(valid).success).toBe(true);
   });

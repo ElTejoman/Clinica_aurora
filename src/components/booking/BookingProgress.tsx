@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn";
 
-const STEP_LABELS = ["Motivo", "Especialista", "Fecha y hora", "Tus datos"];
+const STEP_LABELS = ["Servicio", "Profesional", "Fecha y hora", "Tus datos"];
 
 /** Pasos numerados + barra de avance de la reserva. */
 export function BookingProgress({ step }: { step: number }) {

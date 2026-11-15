@@ -18,10 +18,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /** Fondo general de las páginas (blanco roto con matiz verde). */
-        ground: "#F5F6F2",
-        /** Fondos suaves de tarjetas/tiles. */
-        mist: "#EEF2EF",
+        /** Fondo general de las páginas. */
+        ground: "#FFFFFF",
+        /** Fondos suaves de secciones alternas y tarjetas (teal muy claro). */
+        mist: "#EEF5F4",
+        /** Verde salvia de la marca (fondos de iconos, acentos; no usar para texto sobre blanco). */
+        sage: {
+          DEFAULT: "#5C8D89",
+          soft: "#DCEBE8",
+        },
         /** Fondo de pills/etiquetas y avatar por defecto. */
         tint: "#E4EEEB",
         /** Texto principal. */
@@ -71,12 +76,12 @@ const config: Config = {
       },
       fontFamily: {
         // Las variables CSS las crea `next/font` en src/app/layout.tsx
-        sans: ["var(--font-inter)", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
-        serif: ["var(--font-instrument)", "Georgia", "serif"],
+        sans: ["var(--font-lato)", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        display: ["var(--font-poppins)", "system-ui", "sans-serif"],
         brand: ["var(--font-cinzel)", "Georgia", "serif"],
       },
       maxWidth: {
-        page: "1280px",
+        page: "1240px",
         checkout: "1180px",
       },
       boxShadow: {

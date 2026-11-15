@@ -4,7 +4,6 @@ import anime from "animejs";
 import { useEffect, useRef } from "react";
 import type { Doctor } from "@/models";
 import { DoctorPortrait } from "@/components/ui/DoctorPortrait";
-import { SITE } from "@/config/site";
 import { motionAllowed } from "@/lib/motion";
 
 /**
@@ -15,13 +14,13 @@ import { motionAllowed } from "@/lib/motion";
  */
 export function BookingSummary({
   doctor,
-  reason,
+  serviceName,
   modeLabel,
   when,
   place,
 }: {
   doctor: Doctor;
-  reason: string;
+  serviceName: string;
   modeLabel: string;
   when: string;
   place: string;
@@ -49,10 +48,10 @@ export function BookingSummary({
       duration: 600,
       easing: "easeOutBack",
     });
-  }, [doctor.slug, reason, modeLabel, when]);
+  }, [doctor.slug, serviceName, modeLabel, when]);
 
   const rows: [string, string][] = [
-    ["Motivo", reason || "—"],
+    ["Servicio", serviceName || "—"],
     ["Modalidad", modeLabel],
     ["Fecha y hora", when || "—"],
     ["Lugar", place],
@@ -66,7 +65,7 @@ export function BookingSummary({
           <DoctorPortrait doctor={doctor} className="h-16 w-16 rounded-2xl" initialsSize={28} label={null} rings="none" sizes="64px" />
         </span>
         <span className="flex flex-col gap-[3px]">
-          <span className="font-serif text-[26px] leading-[1.1]">{doctor.name}</span>
+          <span className="font-display text-[26px] leading-[1.1]">{doctor.name}</span>
           <span className="text-[13px] text-night-soft">{doctor.specialty}</span>
         </span>
       </div>
@@ -83,11 +82,7 @@ export function BookingSummary({
           </div>
         ))}
       </dl>
-      <div className="flex items-baseline justify-between gap-3 pt-1.5">
-        <span className="text-sm text-night-soft">Consulta</span>
-        <span className="font-serif text-[32px]">S/ {doctor.price}</span>
-      </div>
-      <span className="text-[13px] text-night-soft">Pagas en la clínica o por link de pago. Aceptamos {SITE.insurers}.</span>
+      <span className="text-[13px] leading-relaxed text-night-soft">La clínica confirma tu cita por WhatsApp. Consulta de 30 minutos.</span>
     </div>
   );
 }

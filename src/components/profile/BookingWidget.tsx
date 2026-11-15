@@ -7,11 +7,10 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { toggleClass } from "@/components/ui/styles";
 import { ROUTES } from "@/config/routes";
-import { SITE } from "@/config/site";
 import { useDoctorDays } from "@/hooks/useAvailability";
 import { useStaggeredEntrance } from "@/hooks/useStaggeredEntrance";
 import { cn } from "@/utils/cn";
-import { describeModes } from "@/utils/format";
+import { formatModes } from "@/utils/format";
 
 /**
  * <BookingWidget> — Panel "Reserva tu cita" del perfil (columna derecha, fija)
@@ -25,31 +24,31 @@ import { describeModes } from "@/utils/format";
  */
 const VISIBLE_DAYS = 5;
 
-export function BookingWidget({ doctor }: { doctor: Doctor }) {
+export function BookingWidget({ doctor, serviceSlug }: { doctor: Doctor; serviceSlug?: string }) {
   const days = useDoctorDays(doctor.slug, VISIBLE_DAYS);
 
   return (
     <div className="flex flex-col gap-5 rounded-[28px] border border-[#DCE6E2] bg-white p-6 shadow-float">
       <div className="flex flex-col gap-1">
-        <span className="font-serif text-3xl leading-[1.1]">Reserva tu cita</span>
+        <span className="font-display text-2xl font-semibold leading-[1.1]">Reserva tu cita</span>
         <span className="text-sm text-muted">
-          S/ {doctor.price} · {doctor.durationMin} min · {describeModes(doctor.modes)}
+          Consulta de 30 minutos · {formatModes(doctor.modes)}
         </span>
       </div>
 
       {days === undefined && <p className="m-0 min-h-[260px] text-sm text-muted">Buscando horarios…</p>}
       {days?.length === 0 && <p className="m-0 text-base">Por ahora no hay horarios publicados. Escríbenos y te avisamos.</p>}
-      {days && days.length > 0 && <SlotPicker doctor={doctor} days={days} />}
+      {days && days.length > 0 && <SlotPicker doctor={doctor} days={days} serviceSlug={serviceSlug} />}
 
       <span className="flex items-center gap-2 text-[13px] text-muted">
         <Icon name="check" className="flex-none text-leaf" />
-        {SITE.reschedulePolicy}
+        La clínica confirma tu horario por WhatsApp
       </span>
     </div>
   );
 }
 
-function SlotPicker({ doctor, days }: { doctor: Doctor; days: DayAvailability[] }) {
+function SlotPicker({ doctor, days, serviceSlug }: { doctor: Doctor; days: DayAvailability[]; serviceSlug?: string }) {
   const [dayIdx, setDayIdx] = useState(0);
   const [slotIdx, setSlotIdx] = useState(0);
   const slotsRef = useRef<HTMLDivElement>(null);
@@ -100,7 +99,7 @@ function SlotPicker({ doctor, days }: { doctor: Doctor; days: DayAvailability[] 
 
       <Magnetic className="flex" strength={0.12}>
         <ButtonLink
-          href={ROUTES.booking({ medico: doctor.slug, dia: day.date, hora: time })}
+          href={ROUTES.booking({ medico: doctor.slug, servicio: serviceSlug, dia: day.date, hora: time })}
           size="lg"
           shape="soft"
           className="w-full"

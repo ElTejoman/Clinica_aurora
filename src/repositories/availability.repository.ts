@@ -1,24 +1,23 @@
+import type { OpeningDay } from "@/config/site";
+import { timeToMinutes, weekdayOf } from "@/utils/date";
+
 /**
- * Fuente de los horarios libres de cada médico.
+ * Fuente de los horarios libres de cada profesional.
  *
- * 🔌 Para conectar una agenda real (Google Calendar, Doctoralia, tu HIS…)
+ * 🔌 Para conectar una agenda real (Google Calendar, tu sistema clínico…)
  *    crea otra implementación de `AvailabilityRepository` que consulte esa API
  *    desde el navegador y pásala a `createAvailabilityService` en
- *    src/services/availability.service.ts. Nada más del sitio cambia.
+ *    src/hooks/useAvailability.ts. Nada más del sitio cambia.
  */
 export interface AvailabilityRepository {
   /** Horarios libres ("HH:mm") por fecha ISO, para las fechas pedidas. */
   getSlotsByDate(doctorSlug: string, dates: string[]): Promise<Record<string, string[]>>;
 }
 
-/** Horas posibles de la clínica; el simulador elige un subconjunto por día. */
-const SLOT_POOL = [
-  "08:00", "08:30", "09:00", "09:30", "10:15", "11:00", "11:30", "12:00",
-  "14:30", "15:00", "15:30", "16:00", "16:45", "17:30", "18:15", "19:00",
-];
+const SLOT_MINUTES = 30;
 const MAX_SLOTS_PER_DAY = 6;
 
-/** Generador pseudoaleatorio con semilla (mulberry32): mismo médico + día ⇒ mismos horarios. */
+/** Generador pseudoaleatorio con semilla (mulberry32): mismo profesional + día ⇒ mismos horarios. */
 function seededRandom(seedText: string): () => number {
   let h = 1779033703;
   for (let i = 0; i < seedText.length; i++) h = Math.imul(h ^ seedText.charCodeAt(i), 3432918353);
@@ -32,18 +31,34 @@ function seededRandom(seedText: string): () => number {
   };
 }
 
-function simulateSlots(doctorSlug: string, date: string): string[] {
-  const rand = seededRandom(`${doctorSlug}:${date}`);
-  const target = 3 + Math.floor(rand() * 4); // entre 3 y 6 horarios
-  return SLOT_POOL.filter(() => rand() < target / SLOT_POOL.length + 0.05).slice(0, MAX_SLOTS_PER_DAY);
+const toTime = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+
+/** Todos los inicios de consulta posibles dentro del horario de atención de ese día. */
+export function candidateSlots(day: OpeningDay | undefined): string[] {
+  return (day?.ranges ?? []).flatMap(([start, end]) => {
+    const slots: string[] = [];
+    for (let m = timeToMinutes(start); m + SLOT_MINUTES <= timeToMinutes(end); m += SLOT_MINUTES) slots.push(toTime(m));
+    return slots;
+  });
 }
 
 /**
- * ⚠️ SIMULADO: horarios falsos pero estables para que el embudo funcione de
- * punta a punta. La clínica confirma la hora real por WhatsApp.
+ * ⚠️ SIMULADO: horarios falsos pero estables y siempre dentro del horario de
+ * atención. La clínica confirma la hora real por WhatsApp.
  */
-export const simulatedAvailabilityRepository: AvailabilityRepository = {
-  async getSlotsByDate(doctorSlug, dates) {
-    return Object.fromEntries(dates.map((date) => [date, simulateSlots(doctorSlug, date)]));
-  },
-};
+export function createSimulatedAvailabilityRepository(openingHours: readonly OpeningDay[]): AvailabilityRepository {
+  const byWeekday = new Map(openingHours.map((d) => [d.weekday, d]));
+
+  const simulate = (doctorSlug: string, date: string): string[] => {
+    const pool = candidateSlots(byWeekday.get(weekdayOf(date)));
+    const rand = seededRandom(`${doctorSlug}:${date}`);
+    const target = Math.min(pool.length, 3 + Math.floor(rand() * 4)); // entre 3 y 6 horarios
+    return pool.filter(() => rand() < target / Math.max(pool.length, 1) + 0.05).slice(0, MAX_SLOTS_PER_DAY);
+  };
+
+  return {
+    async getSlotsByDate(doctorSlug, dates) {
+      return Object.fromEntries(dates.map((date) => [date, simulate(doctorSlug, date)]));
+    },
+  };
+}

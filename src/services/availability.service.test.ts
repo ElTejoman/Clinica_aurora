@@ -39,12 +39,6 @@ describe("availabilityService labels", () => {
     expect(await service.getNextAvailableLabel("dr")).toBe("Mañana · 08:00");
   });
 
-  it("should_return_upcoming_slots_across_days_when_today_has_few", async () => {
-    const service = createAvailabilityService(repoWith(["10:00", "19:00"]), at("2026-11-13", 12 * 60));
-    const slots = await service.getUpcomingSlots("dr", 3);
-    expect(slots.map((s) => s.label)).toEqual(["Hoy 19:00", "Mañana 10:00", "Mañana 19:00"]);
-  });
-
   it("should_ask_to_consult_when_there_are_no_slots", async () => {
     const service = createAvailabilityService(repoWith([]), at("2026-11-13", 0));
     expect(await service.getNextAvailableLabel("dr")).toBe("Consultar horarios");

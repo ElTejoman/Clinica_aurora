@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { DayAvailability } from "@/models";
-import { simulatedAvailabilityRepository } from "@/repositories/availability.repository";
+import { OPENING_HOURS } from "@/config/site";
+import { createSimulatedAvailabilityRepository } from "@/repositories/availability.repository";
 import { createAvailabilityService } from "@/services/availability.service";
 
 /**
@@ -13,9 +14,9 @@ import { createAvailabilityService } from "@/services/availability.service";
  * componente: los hooks devuelven `undefined` mientras tanto y el HTML
  * inicial muestra un estado de carga, sin errores de hidratación.
  *
- * 🔌 Agenda real: cambia `simulatedAvailabilityRepository` por tu implementación.
+ * 🔌 Agenda real: cambia el repositorio simulado por tu implementación.
  */
-const availabilityService = createAvailabilityService(simulatedAvailabilityRepository);
+const availabilityService = createAvailabilityService(createSimulatedAvailabilityRepository(OPENING_HOURS));
 
 function useAsyncValue<T>(key: string, load: () => Promise<T>): T | undefined {
   const [state, setState] = useState<{ key: string; value: T }>();
@@ -40,10 +41,6 @@ function useAsyncValue<T>(key: string, load: () => Promise<T>): T | undefined {
 
 export function useDoctorDays(slug: string, count = 7) {
   return useAsyncValue(`days:${slug}:${count}`, () => availabilityService.getDays(slug, count));
-}
-
-export function useUpcomingSlots(slug: string, count = 3) {
-  return useAsyncValue(`upcoming:${slug}:${count}`, () => availabilityService.getUpcomingSlots(slug, count));
 }
 
 export function useNextAvailableLabel(slug: string) {

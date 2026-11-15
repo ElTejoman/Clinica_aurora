@@ -1,2 +1,2 @@
 /** Titular de cada paso de la reserva. */
-export const stepTitleClass = "m-0 font-serif text-[clamp(38px,4.2vw,56px)] font-normal leading-[1.04]";
+export const stepTitleClass = "m-0 font-display text-[clamp(28px,3.4vw,40px)] font-semibold leading-[1.15] text-ink";
