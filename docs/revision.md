@@ -1,0 +1,85 @@
+# Revisión sección por sección
+
+Cada sección tiene un código. Al dar un comentario, menciona el código (p. ej. "I3: …").
+Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verificó y el commit.
+
+**Estados:** ⬜ pendiente de revisar · 🔄 en cambios · ✅ aprobado
+
+## Mapa del sitio
+
+### Global (todas las páginas)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| G1 | Barra superior (dirección, teléfonos, redes) | `components/layout/Header.tsx` (`TopBar`) | ⬜ |
+| G2 | Menú principal + desplegable de servicios + menú móvil | `components/layout/Header.tsx` | ⬜ |
+| G3 | Pie de página (contacto, horario, servicios, Libro de Reclamaciones) | `components/layout/Footer.tsx` | ⬜ |
+| G4 | Botón flotante de WhatsApp | `components/layout/WhatsAppFloat.tsx` | ⬜ |
+| G5 | Estilo general: colores, tipografías, botones | `tailwind.config.ts`, `app/layout.tsx`, `components/ui/` | ⬜ |
+
+### Inicio (`/`)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| I1 | Carrusel de banners | `components/home/HeroSlider.tsx` · banners en `data/clinic.ts` | ⬜ |
+| I2 | Titular + ola 3D | `components/home/WelcomeIntro.tsx` | ⬜ |
+| I3 | Nuestros servicios | `components/home/sections/ServicesGrid.tsx` | ⬜ |
+| I4 | ¿Qué deseas realizar hoy? | `components/home/sections/QuickActions.tsx` | ⬜ |
+| I5 | Tenemos el respaldo de | `components/home/sections/Affiliations.tsx` | ⬜ |
+| I6 | Galería de fotos | `components/home/sections/Gallery.tsx` | ⬜ |
+| I7 | ¿Por qué elegir Clínica Aurora? (partículas 3D) | `components/home/sections/WhyChoose.tsx` | ⬜ |
+| I8 | Testimonios (pendiente: widget Trustindex) | `components/reviews/ReviewsSection.tsx` | ⬜ |
+| I9 | Bloque de cierre "Tu bienestar es nuestra prioridad" | `components/home/sections/WellbeingCta.tsx` | ⬜ |
+
+### Servicios (`/servicios/` y `/servicios/[servicio]/`)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| S1 | Índice de servicios | `app/(site)/servicios/page.tsx` | ⬜ |
+| S2 | Cabecera del servicio (banner o foto + "Agenda aquí") | `components/services/ServiceHero.tsx` | ⬜ |
+| S3 | Problemas que atiende / protocolos / planes | `components/services/ServiceSections.tsx` · textos en `data/services.ts` | ⬜ |
+| S4 | Profesionales que lo atienden | `app/(site)/servicios/[slug]/page.tsx` | ⬜ |
+| S5 | Reseñas del servicio | `components/reviews/ReviewsSection.tsx` | ⬜ |
+| S6 | Banda final "Agenda aquí" | `components/services/ServiceCtaBand.tsx` | ⬜ |
+
+### Staff (`/staff-de-profesionales/` y perfiles)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| P1 | Directorio: filtros, buscador y tarjetas | `components/staff/StaffDirectory.tsx`, `components/doctors/DoctorCard.tsx` | ⬜ |
+| P2 | Cabecera del perfil | `components/profile/ProfileHero.tsx` | ⬜ |
+| P3 | Especialidades y formación | `components/profile/ProfileSections.tsx` · datos en `data/doctors.ts` | ⬜ |
+| P4 | Panel "Reserva tu cita" | `components/profile/BookingWidget.tsx` | ⬜ |
+| P5 | "También te puede ayudar" | `components/profile/ProfileSections.tsx` | ⬜ |
+
+### Contacto (`/contacto/`)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| C1 | Agenda tu cita ahora (canales) | `components/contact/ContactChannels.tsx` | ⬜ |
+| C2 | Nos encanta leerte (formulario + recomendaciones) | `components/contact/ContactForm.tsx` | ⬜ |
+| C3 | Nuestra sede (mapa + horario) | `app/(site)/contacto/page.tsx` | ⬜ |
+
+### Libro de Reclamaciones
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| L1 | Página (canales, hoja, texto legal) | `app/(site)/libro-de-reclamaciones/page.tsx` | ⬜ |
+| L2 | Hoja de reclamación imprimible | `app/(print)/libro-de-reclamaciones/hoja/page.tsx` | ⬜ |
+
+### Reserva (`/reservar/`)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| R1 | Paso 1 · Servicio | `components/booking/steps/ServiceStep.tsx` | ⬜ |
+| R2 | Paso 2 · Profesional | `components/booking/steps/DoctorStep.tsx` | ⬜ |
+| R3 | Paso 3 · Fecha y hora | `components/booking/steps/DateTimeStep.tsx` | ⬜ |
+| R4 | Paso 4 · Datos y consentimiento | `components/booking/steps/PatientStep.tsx` | ⬜ |
+| R5 | Resumen y confirmación (WhatsApp) | `components/booking/BookingSummary.tsx`, `Confirmation.tsx` | ⬜ |
+
+## Pendientes del cliente
+
+- [ ] Código del widget de Trustindex (I8, S5)
+- [ ] Razón social, RUC y domicilio para el Libro de Reclamaciones (L1, L2)
+- [ ] Qué WhatsApp recibe las citas y cuál las consultas (G4, C1, R5)
+- [ ] Nombres de los dos retratos sin identificar (P1)
+- [ ] Correo corporativo con el dominio nuevo (G3, C1)
+
+## Registro de cambios
+
+| Fecha | Código | Comentario | Cambio realizado | Verificación | Commit |
+|---|---|---|---|---|---|
+| | | | | | |
