@@ -14,8 +14,8 @@ import { catalogService, doctorService } from "@/services/container";
 /**
  * PÁGINA · SERVICIO   (ruta: /servicios/[slug]/)
  * Un HTML por servicio, generado en el build.
- *   cabecera → problemas que atiende / protocolos → cierre → quién te atiende →
- *   testimonios del servicio → "Agenda aquí"
+ *   cabecera → problemas que atiende / protocolos → quién te atiende →
+ *   testimonios del servicio → "Agenda aquí" (con el texto de cierre, si lo hay)
  */
 export const dynamicParams = false;
 
@@ -45,14 +45,6 @@ export default async function ServicePage({ params }: Params) {
       <ServiceHero service={service} />
       <ServiceSections sections={service.sections} />
 
-      {service.closing && (
-        <section className={`${pageContainer} py-16`}>
-          <Reveal className="mx-auto max-w-[820px] text-center">
-            <SectionHeading intro={service.closing.text}>{service.closing.title}</SectionHeading>
-          </Reveal>
-        </section>
-      )}
-
       {doctors.length > 0 && (
         <section className={`${pageContainer} py-16`}>
           <Reveal>
@@ -72,7 +64,7 @@ export default async function ServicePage({ params }: Params) {
         title="Lo que dicen nuestros pacientes"
         intro="Reseñas reales de Google de pacientes que se atendieron con nosotros."
       />
-      <ServiceCtaBand service={service} />
+      <ServiceCtaBand service={service} eyebrow={service.closing?.title} text={service.closing?.text} />
     </>
   );
 }

@@ -11,6 +11,25 @@ test.describe("Servicios", () => {
     await expect(page.getByRole("heading", { name: "Nuestros protocolos" })).toBeVisible();
   });
 
+  test("reparte los bloques en filas equilibradas y lleva el cierre a la banda final", async ({ page, isMobile }) => {
+    test.skip(isMobile, "en móvil va una tarjeta por fila");
+    await page.goto("/servicios/medicina-general/");
+    const boxes = await page.locator('[data-service-section="lists"] ul[data-reveal] > li').evaluateAll((items) =>
+      items.map((el) => el.getBoundingClientRect()).map((r) => ({ top: Math.round(r.top), left: r.left, right: r.right })),
+    );
+    const rows = Object.values(Object.groupBy(boxes, (b) => String(b.top)));
+    expect(rows.map((r) => r!.length)).toEqual([4, 3]);
+    const container = await page.locator('[data-service-section="lists"] ul[data-reveal]').boundingBox();
+    const last = rows[1]!;
+    const leftGap = last[0]!.left - container!.x;
+    const rightGap = container!.x + container!.width - last[last.length - 1]!.right;
+    expect(Math.abs(leftGap - rightGap)).toBeLessThan(2);
+
+    await page.goto("/servicios/ozonoterapia/");
+    await expect(page.locator('[data-service-section="cards"] ol > li').first()).toContainText("01");
+    await expect(page.locator("section", { hasText: "¿Quieres empezar tu tratamiento de ozonoterapia?" }).last()).toContainText("Ozonoterapia en Lima");
+  });
+
   test("muestra a los profesionales que atienden el servicio", async ({ page }) => {
     await page.goto("/servicios/medicina-general/");
     const team = page.locator("section", { hasText: "Nuestros profesionales" });

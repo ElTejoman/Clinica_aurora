@@ -6,13 +6,14 @@ import { pageContainer } from "@/components/ui/styles";
 import { ROUTES } from "@/config/routes";
 import { serviceWhatsAppUrl } from "@/services/booking.service";
 
-/** Banda final "Agenda aquí" de cada servicio. */
-export function ServiceCtaBand({ service, title, text }: { service: { slug: string; name: string }; title?: string; text?: string }) {
+/** Banda final "Agenda aquí" de cada servicio. `eyebrow` muestra una etiqueta sobre el título (p. ej. "Ozonoterapia en Lima"). */
+export function ServiceCtaBand({ service, eyebrow, title, text }: { service: { slug: string; name: string }; eyebrow?: string; title?: string; text?: string }) {
   return (
     <section className={`${pageContainer} py-16`}>
       <Reveal className="flex flex-col items-center gap-5 rounded-[28px] bg-teal-deep px-6 py-12 text-center text-night-ice sm:px-14">
+        {eyebrow && <span className="text-[13px] font-semibold uppercase tracking-[1.4px] text-leaf-mint">{eyebrow}</span>}
         <h2 className="m-0 font-display text-[clamp(26px,3vw,36px)] font-semibold">{title ?? `¿Quieres empezar tu tratamiento de ${service.name.toLowerCase()}?`}</h2>
-        <p className="m-0 max-w-[620px] text-[17px] leading-relaxed text-night-muted">
+        <p className="m-0 max-w-[680px] text-[17px] leading-relaxed text-night-muted">
           {text ?? "Escríbenos y te ayudamos a elegir el horario y el profesional adecuados para ti."}
         </p>
         <div className="mt-2 flex flex-wrap justify-center gap-3">
