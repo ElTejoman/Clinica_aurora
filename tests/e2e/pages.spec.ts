@@ -44,6 +44,14 @@ for (const { path, h1 } of PAGES) {
   });
 }
 
+/** El botón flotante de WhatsApp lleva SIEMPRE al número general (912 724 465), en todas las páginas con él. */
+for (const { path } of PAGES.filter((p) => p.path !== "/reservar/")) {
+  test(`WhatsApp flotante al 912 724 465 en ${path}`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page.getByRole("link", { name: /Escribir a Clínica Aurora por WhatsApp/ })).toHaveAttribute("href", /^https:\/\/wa\.me\/51912724465\?/);
+  });
+}
+
 test("404 personalizada", async ({ page }) => {
   const res = await page.goto("/no-existe/");
   expect(res?.status()).toBe(404);
