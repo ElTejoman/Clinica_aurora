@@ -7,12 +7,13 @@ Cada sección tiene un código; al dar un comentario, menciónalo (p. ej. "I3: �
 
 ## Estado al día (actualizado: 2026-11-15)
 
-**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 13 en cambios 🔄 · 19 sin revisar ⬜ (de 37 secciones).
+**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 15 en cambios 🔄 · 17 sin revisar ⬜ (de 37 secciones).
 
 **Esperando tu aprobación (🔄):** I4 accesos rápidos · I8 testimonios (falta Trustindex) · P1 directorio de staff ·
 P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta · B1/B2 blog educativo ·
 C1–C3 contacto reorganizado (agenda por especialidad, sede sin horario, canales + formulario) ·
-G3 pie de página (horario resumido) · S3/S6 bloques de cada servicio ordenados y cierre en la banda final.
+G3 pie de página (horario resumido) · S3/S6 bloques de cada servicio ordenados, planes de nutrición con precio y
+cierre en la banda final · I7/I9 ocultas en el inicio.
 
 **Decisiones abiertas (tuyas o del cliente):**
 1. ¿Las reservas llegan al WhatsApp de citas (946 453 531) o al general (912 724 465)?
@@ -20,10 +21,12 @@ G3 pie de página (horario resumido) · S3/S6 bloques de cada servicio ordenados
 3. ¿Agrupar en el horario los días con las mismas horas ("Lunes, Martes y Viernes") o uno por línea (actual)?
 4. Horario general de la clínica: confirmar o ampliar con el de los profesionales (ver Pendientes del cliente).
 5. Blog: ¿más artículos? Hoy solo existe el de acupuntura (el único de la referencia).
+6. Precios de nutrición y cuenta BCP/CCI: copiados del sitio actual; confirmar que siguen vigentes (`data/services.ts`,
+   `SITE.payment`).
 
 **Pendiente técnico:**
-- E2E al día: 113 en verde y 3 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
-  incluidas las de I3, I6, G4, P4, R1, el blog, la agenda de contacto y los bloques de servicios.
+- E2E al día: 115 en verde y 3 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
+  incluidas las de I3, I6, G4, P4, R1, el blog, la agenda de contacto, los bloques de servicios y los planes.
 - Código en GitHub: `github.com/ElTejoman/Clinica_aurora` (rama `main`). Demo lista para Netlify (`netlify.toml`,
   README §6 "Demo en Netlify"): falta importar el repo en Netlify (no hay acceso desde aquí).
 - Despliegue definitivo en Hostinger: pendiente (dominio + hPanel, README §6).
@@ -61,9 +64,9 @@ I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 | I4 | ¿Qué deseas realizar hoy? | `components/home/sections/QuickActions.tsx` | 🔄 |
 | I5 | Tenemos el respaldo de | `components/home/sections/Affiliations.tsx` | ✅ |
 | I6 | Galería de fotos | `components/home/sections/Gallery.tsx` | ✅ |
-| I7 | ¿Por qué elegir Clínica Aurora? (partículas 3D) | `components/home/sections/WhyChoose.tsx` | ⬜ |
+| I7 | ¿Por qué elegir Clínica Aurora? (partículas 3D) · **oculta** | `components/home/sections/WhyChoose.tsx` | 🔄 |
 | I8 | Testimonios (pendiente: widget Trustindex) | `components/reviews/ReviewsSection.tsx` | 🔄 |
-| I9 | Bloque de cierre "Tu bienestar es nuestra prioridad" | `components/home/sections/WellbeingCta.tsx` | ⬜ |
+| I9 | Bloque de cierre "Tu bienestar es nuestra prioridad" · **oculto en el inicio** | `components/home/sections/WellbeingCta.tsx` | 🔄 |
 
 ### Servicios (`/servicios/` y `/servicios/[servicio]/`)
 | Código | Sección | Archivo principal | Estado |
@@ -151,3 +154,5 @@ I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 | 2026-11-15 | C1, C2, C3 | Redistribuir Contáctanos: sin el enredo de horas; widget de horarios y citas más grande y por especialización; debajo el mapa de la sede, sin horario de atención | Orden nuevo: agenda (#agendar) → sede (#sede) → otros canales (#escribenos). C1: `AppointmentFinder`, una tarjeta en 3 pasos: especialidad (6 servicios con icono; 2 columnas en móvil) → profesional que la atiende, con foto y "Próxima: Lun 16 · 2:30 p. m." (Medicina General, Ozonoterapia y Sueroterapia ofrecen al Dr. Rondón y a la Dra. Huamán) → 7 días y horas separadas en Mañana / Tarde (`groupSlotsByPeriod`, +2 tests). Barra de resumen ("Medicina General con la Dra. Huamán, el mar 17 a las 8:30 a. m.") con "Reservar", que abre /reservar directo en "Tus datos" (R1), y WhatsApp. Reutiliza `useSlotSelection` y la agenda simulada de P4, así que solo ofrece horas dentro del horario de cada profesional. C3: mapa + dirección + "Cómo llegar" + "Antes de tu visita" (las recomendaciones que estaban junto al formulario); ya no muestra el horario por día. C2: canales en lista compacta (`ContactChannels layout="list"`; el Libro de Reclamaciones sigue con tarjetas) junto al formulario "Nos encanta leerte". Se quitó el botón suelto "Reservar en línea" | Playwright: escritorio 1400 px y móvil 390 px (capturas de la página, del widget y de la sede con el mapa cargado); cambio de especialidad y de profesional, la hora elegida pasa al resumen y "Reservar" lleva servicio/médico/día/hora; sin scroll horizontal ni errores de consola. E2E completa: 112 en verde y 2 omitidas por diseño (+2: agenda → Tus datos, en escritorio y móvil); tsc + eslint + 66 unit tests | 9746f8d |
 | 2026-11-15 | G3 | Pasar el pie por revisión UX/UI y mejorarlo; el horario es variable: no mostrar todo el enredo, hacerlo más simple | Revisión UX/UI (10 hallazgos). Horario: de 7 filas con tramos a 3 líneas (lunes a viernes 8:30 a. m.–6:30 p. m. · sábados 8:30 a. m.–1:00 p. m. · domingos cerrado), rango que cubre a todo el staff, con "Cada profesional atiende en días y horas distintos" y "Ver horarios del staff"; `OPENING_HOURS_SUMMARY` en `config/site.ts` + test que falla si un horario de profesional queda fuera. Anillo de foco claro en el pie (el teal no se veía, ≈ 1,5:1). Teléfonos rotulados "Consultas" (912) / "Citas" (946); dirección → cómo llegar en Google Maps. Libro de Reclamaciones junto a la marca (el WhatsApp flotante lo tapaba entre 1280 y 1399 px). Enlaces en "Servicios" y "La clínica" (+ Contacto y sede), 2 columnas en móvil y tablet, áreas táctiles ≥ 28 px; texto de marca corto (ya no repite los servicios); aviso de urgencias en línea propia. Alto: tablet 937 → 697 px, móvil 1367 → 1269 px. Nuevo `HoursSummary`, `formatPeruPhone` (+2 tests). El horario por día sigue disponible en `OpeningHours` | Playwright: escritorio 1400/1280, tablet 820 y móvil 390 px, sin scroll horizontal ni errores de consola; anillo de foco claro; todos los enlaces internos del pie en 200; E2E de inicio (pie actualizado) en verde en una copia aislada; tsc + eslint + 70 unit tests | 1dcc88d |
 | 2026-11-15 | S3, S6 | Los bloques de cada servicio se ven poco ordenados; hacerlos mucho más presentables | Problemas detectados: filas incompletas alineadas a la izquierda (5 → 4 + 1, 6 → 4 + 2, 7 → 4 + 3), el mismo ícono de hoja en cada condición, "qué tratamos" y "cómo tratamos" con la misma tarjeta, y el párrafo de cierre flotando solo. S3 "cards" (qué tratamos): índice editorial con el título a la izquierda y las condiciones numeradas 01, 02… en 2 columnas con separadores (1 columna en móvil). S3 "lists" (protocolos, sueros, planes, condiciones agrupadas): grilla equilibrada con `balancedColumns` (`utils/layout.ts`, +4 tests): 5 → 3 + 2, 6 → 3 + 3, 7 → 4 + 3, 8 → 4 + 4, con la última fila centrada y tarjetas de igual alto (título separado de las viñetas). S6: el cierre ("Ozonoterapia en Lima" + texto) pasa a la banda "Agenda aquí" como etiqueta y texto; si el servicio no tiene cierre, la banda queda igual | Playwright: los 6 servicios en escritorio 1400 px (antes y después) y Nutrición en móvil 390 px; sin scroll horizontal ni errores de consola. E2E: +1 (Medicina General en filas 4 + 3 con la segunda centrada, numeración y cierre en la banda); suite completa 113 en verde y 3 omitidas por diseño; tsc + eslint + 74 unit tests | 0cd3cf6 |
+| 2026-11-15 | I7, I9 | Comentar (que no se vean) "¿Por qué elegir Clínica Aurora?" y "¿Por qué elegirnos? Tu bienestar es nuestra prioridad" del inicio | Comentadas en `app/(site)/page.tsx` (imports y JSX), con nota para reactivarlas; los componentes quedan intactos. El inicio cierra con los testimonios y pasa directo al pie. "Tu bienestar es nuestra prioridad" sigue en el blog educativo (B1), que no se tocó | Playwright: inicio en escritorio y móvil sin esas secciones (títulos h2: servicios, ¿qué deseas realizar hoy?, respaldo, galería, testimonios) y sin errores; E2E completa 113 en verde; tsc + eslint | 0c19479 |
+| 2026-11-15 | S3 | En Nutrición faltaba presentar mejor los planes y mostrar el precio | Se tomaron los planes reales de la referencia: eran 5 (faltaba "2 consultas presenciales"), con duración, precio y ahorro (S/ 150 · S/ 260 · S/ 280, ahorras S/ 20 · S/ 420, ahorras S/ 30 · S/ 560, ahorras S/ 40). Nuevo layout `plans` (`PlanPricing` en el modelo): tarjeta con duración, nombre, precio grande, sello de ahorro (líneas alineadas entre tarjetas vecinas), qué incluye y "Reservar este plan", que abre /reservar con el servicio y el plan en el detalle ("Plan: Paquete de 3 controles (S/ 420)", llega al mensaje de WhatsApp). 5 en una fila desde 1280 px, 3 + 2 en laptop, 1 por fila en móvil. Debajo, "Métodos de pago" con la cuenta BCP y el CCI de la referencia (`SITE.payment`, fáciles de seleccionar). `formatSoles` (+3 tests) | Playwright: sección de planes a 1400 px (fila de 5), 1100 px (3 + 2) y 390 px; el enlace del paquete de 3 controles lleva el plan y el precio. E2E: +1 (5 planes, precios, ahorro, CCI y reserva con el plan); suite completa 115 en verde y 3 omitidas por diseño; tsc + eslint + 77 unit tests | a0a2e7a |
