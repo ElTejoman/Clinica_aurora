@@ -3,6 +3,8 @@
  * Edita aquí los textos; los componentes solo los muestran.
  */
 
+import type { GalleryPhoto } from "@/models";
+
 export interface Banner {
   src: string;
   srcMobile: string;
@@ -21,14 +23,20 @@ export const HOME_BANNERS: Banner[] = [
   { src: "/images/banners/banner-dr-rondon-1600.webp", srcMobile: "/images/banners/banner-dr-rondon-800.webp", alt: "Doctor Rondón, especialista en ozonoterapia", href: "/staff-de-profesionales/ronald-rondon/" },
 ];
 
-/** Galería del inicio (fotos reales de la clínica). */
-export const GALLERY = [
-  { src: "/images/clinic/terapia-acupuntura.webp", alt: "Sesión de acupuntura en camilla" },
-  { src: "/images/clinic/clinica-moderna.webp", alt: "Profesional y paciente en un consultorio luminoso" },
-  { src: "/images/clinic/evaluacion-postura.webp", alt: "Evaluación de postura a un paciente" },
-  { src: "/images/clinic/dos-profesionales.webp", alt: "Paciente y profesional sonrientes en la sala de espera" },
-  { src: "/images/clinic/sueroterapia.webp", alt: "Aplicación de sueroterapia" },
-  { src: "/images/clinic/tratamiento-acupuntura.webp", alt: "Tratamiento de acupuntura" },
+/**
+ * Galería del inicio (fotos reales de la clínica). El ORDEN importa: en el
+ * mosaico las verticales ocupan dos filas y las dos fotos del mismo paciente
+ * (acupuntura en camilla y evaluación de postura) quedan en diagonal, nunca
+ * lado a lado. Escritorio (4 col.):  vertical | 2 | 3 | vertical
+ *                                              | 5 | 6 |
+ */
+export const GALLERY: readonly GalleryPhoto[] = [
+  { src: "/images/clinic/sueroterapia.webp", alt: "Aplicación de sueroterapia a una paciente en un sillón", caption: "Sueroterapia", orientation: "portrait" },
+  { src: "/images/clinic/terapia-acupuntura.webp", alt: "Sesión de acupuntura en camilla", caption: "Sesión de acupuntura", orientation: "landscape" },
+  { src: "/images/clinic/dos-profesionales.webp", alt: "Paciente y profesional sonrientes en la sala de espera", caption: "Sala de espera", orientation: "landscape" },
+  { src: "/images/clinic/tratamiento-acupuntura.webp", alt: "Tratamiento de acupuntura a una paciente en camilla", caption: "Tratamiento de acupuntura", orientation: "portrait" },
+  { src: "/images/clinic/clinica-moderna.webp", alt: "Profesional y paciente en un consultorio luminoso", caption: "Consultorio", orientation: "landscape" },
+  { src: "/images/clinic/evaluacion-postura.webp", alt: "Evaluación de postura a un paciente", caption: "Evaluación de postura", orientation: "landscape" },
 ];
 
 /** "Tenemos el respaldo de:" */

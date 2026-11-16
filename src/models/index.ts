@@ -7,4 +7,5 @@ export type * from "./doctor";
 export type * from "./service";
 export type * from "./review";
 export type * from "./availability";
+export type * from "./gallery";
 export type { BookingPreselection, BookingRequest, BookingRequestInput } from "./booking";

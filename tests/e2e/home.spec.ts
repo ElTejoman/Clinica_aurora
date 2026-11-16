@@ -24,6 +24,18 @@ test.describe("Inicio", () => {
     await expect(page).toHaveURL(/\/servicios\/acupuntura\/$/);
   });
 
+  test("abre la galería en un visor navegable con teclado", async ({ page }) => {
+    const gallery = page.locator("section[aria-labelledby=galeria-titulo]");
+    await gallery.getByRole("button", { name: /Ampliar foto/ }).first().click();
+    const viewer = page.getByRole("dialog", { name: "Galería de fotos" });
+    await expect(viewer).toBeVisible();
+    await expect(viewer.locator("figcaption")).toContainText("1 / 6");
+    await page.keyboard.press("ArrowRight");
+    await expect(viewer.locator("figcaption")).toContainText("2 / 6");
+    await page.keyboard.press("Escape");
+    await expect(viewer).toBeHidden();
+  });
+
   test("agenda desde la tarjeta con el servicio ya elegido", async ({ page }) => {
     const card = page.locator('[data-service-card="sueroterapia"]');
     await expect(card.getByRole("link", { name: /Agendar/ })).toHaveAttribute("href", "/reservar/?servicio=sueroterapia");
