@@ -33,9 +33,13 @@ export const GALLERY = [
 
 /** "Tenemos el respaldo de:" */
 export const AFFILIATIONS = [
-  { name: "Colegio Médico del Perú", logo: "/images/respaldo/colegio-medico.webp" },
-  { name: "Beijing University of Chinese Medicine", logo: "/images/respaldo/beijing-university.webp" },
-  { name: "Dongzhimen Hospital", logo: "/images/respaldo/dongzhimen-hospital.webp" },
+  { name: "Colegio Médico del Perú", logo: "/images/respaldo/colegio-medico.webp", detail: "Médicos colegiados en el Perú, con número CMP." },
+  {
+    name: "Beijing University of Chinese Medicine",
+    logo: "/images/respaldo/beijing-university.webp",
+    detail: "Formación en Medicina China y Acupuntura de nuestro especialista.",
+  },
+  { name: "Dongzhimen Hospital", logo: "/images/respaldo/dongzhimen-hospital.webp", detail: "Experiencia clínica en Acupuntura y Moxibustión en Beijing." },
 ];
 
 /** "¿Por qué elegir Clínica Aurora?" */
