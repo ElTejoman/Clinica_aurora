@@ -24,7 +24,9 @@ G3 pie de página (horario resumido).
 **Pendiente técnico:**
 - E2E al día: 112 en verde y 2 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
   incluidas las de I3, I6, G4, P4, R1, el blog y la agenda de contacto.
-- Subir a GitHub y configurar el despliegue en Hostinger (aún no hay `git push`).
+- Código en GitHub: `github.com/ElTejoman/Clinica_aurora` (rama `main`). Demo lista para Netlify (`netlify.toml`,
+  README §6 "Demo en Netlify"): falta importar el repo en Netlify (no hay acceso desde aquí).
+- Despliegue definitivo en Hostinger: pendiente (dominio + hPanel, README §6).
 
 **Siguiente en la revisión:** B1/B2 (blog) y C1–C3 (contacto), recién cambiados; I7 y I9 (inicio, sin revisar),
 P2/P3/P5 (perfil), servicios (S), libro (L, siguiente), reserva R2–R5, global G1, G2 y G5.

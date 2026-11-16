@@ -171,6 +171,20 @@ git push (main) ──► GitHub Actions: check + build ──► rama "deploy" 
 
 **Alternativa manual:** ejecuta `npm run build` y sube el **contenido** de `out/` a `public_html`.
 
+### Demo en Netlify
+
+Para mostrar el sitio (y probar la reserva) antes de tener el dominio. Todo se configura en `netlify.toml`:
+
+1. En Netlify: **Add new site › Import an existing project › GitHub** y elige este repositorio.
+2. Rama **`main`**. Netlify lee el comando y la carpeta (`out`) de `netlify.toml`; no cambies nada y pulsa **Deploy**.
+3. Opcional: **Site configuration › Change site name** (p. ej. `clinica-aurora-demo` → `clinica-aurora-demo.netlify.app`).
+
+Cada `git push` a `main` actualiza la demo. Detalles:
+
+- Compila con `NEXT_PUBLIC_SITE_URL` = URL de la demo, así las canónicas, el sitemap y la vista previa al compartir apuntan a ella.
+- Envía `X-Robots-Tag: noindex`: Google no indexa la demo.
+- La reserva y los formularios abren WhatsApp hacia los **números reales** de la clínica (`SITE.whatsapp`): avisa a quien la pruebe.
+
 ## 7. SEO, accesibilidad y rendimiento
 
 - **SEO:**
