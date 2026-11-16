@@ -9,4 +9,5 @@ export type * from "./review";
 export type * from "./availability";
 export type * from "./gallery";
 export type * from "./schedule";
+export type * from "./article";
 export type { BookingPreselection, BookingRequest, BookingRequestInput } from "./booking";

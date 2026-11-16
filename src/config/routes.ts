@@ -19,6 +19,8 @@ export const ROUTES = {
   service: (slug: string) => `/servicios/${slug}/`,
   staff: (params?: { servicio?: string; q?: string }) => withQuery("/staff-de-profesionales/", params),
   doctor: (slug: string) => `/staff-de-profesionales/${slug}/`,
+  blog: "/blog-educativo/",
+  article: (slug: string) => `/blog-educativo/${slug}/`,
   contact: (section?: "agendar" | "escribenos" | "sede") => (section ? `/contacto/#${section}` : "/contacto/"),
   complaints: "/libro-de-reclamaciones/",
   complaintForm: "/libro-de-reclamaciones/hoja/",

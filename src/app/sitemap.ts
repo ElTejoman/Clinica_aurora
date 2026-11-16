@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { ROUTES } from "@/config/routes";
 import { SITE } from "@/config/site";
-import { catalogService, doctorService } from "@/services/container";
+import { blogService, catalogService, doctorService } from "@/services/container";
 
 /**
  * /sitemap.xml generado en el build: incluye cada perfil de médico.
@@ -19,6 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...catalogService.getServices().map((s) => page(ROUTES.service(s.slug), 0.9)),
     page(ROUTES.staff(), 0.8),
     ...doctorService.getAll().map((d) => page(ROUTES.doctor(d.slug), 0.8)),
+    page(ROUTES.blog, 0.7),
+    ...blogService.getArticles().map((a) => page(ROUTES.article(a.slug), 0.6)),
     page(ROUTES.contact(), 0.7),
     page(ROUTES.complaints, 0.3),
   ];

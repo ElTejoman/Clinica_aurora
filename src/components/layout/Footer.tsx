@@ -64,6 +64,9 @@ export function Footer({ services }: { services: { slug: string; name: string }[
           <Link href={ROUTES.staff()} className="mt-2 !text-night-muted no-underline hover:!text-white">
             Staff de profesionales
           </Link>
+          <Link href={ROUTES.blog} className="!text-night-muted no-underline hover:!text-white">
+            Blog educativo
+          </Link>
         </nav>
       </div>
 

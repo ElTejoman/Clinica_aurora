@@ -14,7 +14,7 @@ import { SocialLinks } from "./SocialLinks";
 
 /**
  * <Header> — Barra superior (redes + teléfonos) y navegación principal fija.
- * Menú: Inicio · Staff de Profesionales · Servicios (desplegable) · Contacto.
+ * Menú: Inicio · Staff de Profesionales · Servicios (desplegable) · Blog · Contacto.
  * En móvil, la navegación se abre en un panel con el botón ☰.
  */
 
@@ -32,6 +32,7 @@ export function Header({ services }: { services: NavService[] }) {
     { href: ROUTES.home, label: "Inicio" },
     { href: ROUTES.staff(), label: "Staff de Profesionales" },
     { href: ROUTES.services, label: "Servicios", children: services },
+    { href: ROUTES.blog, label: "Blog" },
     { href: ROUTES.contact(), label: "Contacto" },
   ];
 
@@ -104,7 +105,8 @@ function TopBar() {
   );
 }
 
-const linkBase = "rounded-full px-4 py-2 text-[14px] font-semibold uppercase tracking-[.4px] no-underline transition-colors font-display";
+const linkBase =
+  "whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] font-semibold uppercase tracking-[.3px] no-underline transition-colors font-display xl:px-4 xl:text-[14px] xl:tracking-[.4px]";
 
 function NavLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (
