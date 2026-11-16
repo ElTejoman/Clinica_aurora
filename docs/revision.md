@@ -1,9 +1,40 @@
 # Revisión sección por sección
 
-Cada sección tiene un código. Al dar un comentario, menciona el código (p. ej. "I3: …").
-Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verificó y el commit.
+Bitácora del proyecto: qué se pidió, qué se cambió, cómo se verificó y en qué commit.
+Cada sección tiene un código; al dar un comentario, menciónalo (p. ej. "I3: …").
 
 **Estados:** ⬜ pendiente de revisar · 🔄 en cambios · ✅ aprobado
+
+## Estado al día (actualizado: 2026-11-15)
+
+**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 5 en cambios 🔄 · 25 sin revisar ⬜ (de 35 secciones).
+
+**Esperando tu aprobación (🔄):** I4 accesos rápidos · I8 testimonios (falta Trustindex) · P1 directorio de staff ·
+P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta.
+
+**Decisiones abiertas (tuyas o del cliente):**
+1. ¿Las reservas llegan al WhatsApp de citas (946 453 531) o al general (912 724 465)?
+2. ¿Mostrar "Cuéntanos un poco más" también en "Tus datos" cuando la reserva se salta el paso 1?
+3. ¿Agrupar en el horario los días con las mismas horas ("Lunes, Martes y Viernes") o uno por línea (actual)?
+4. Horario general de la clínica: confirmar o ampliar con el de los profesionales (ver Pendientes del cliente).
+
+**Pendiente técnico:**
+- Correr las pruebas E2E (`npm run test:e2e`): requiere apagar un momento el `npm run dev` (comparten `.next`).
+  Las E2E se actualizaron en I3, I6, G4, P4 y R1 pero aún no se ejecutaron con esos cambios.
+- Subir a GitHub y configurar el despliegue en Hostinger (aún no hay `git push`).
+
+**Siguiente en la revisión:** I7 y I9 (inicio, sin revisar), P2/P3/P5 (perfil), servicios (S), contacto (C),
+libro (L), reserva R2–R5, global G1–G3 y G5.
+
+## Antes de la revisión
+
+| Commit | Qué se hizo |
+|---|---|
+| ab7fde8 | Estado inicial del proyecto, funcionando |
+| 232e343 | Arquitectura por capas (Clean Code + SOLID), sitio estático y reserva por WhatsApp |
+| 2f3784d | Despliegue a Hostinger (GitHub Actions → rama `deploy`), tests unitarios y README |
+| 5976794 | Rediseño con la estructura del sitio de Lima Natural Health Clinic y el material de la clínica |
+| b749065 | Este documento: mapa de secciones y registro |
 
 ## Mapa del sitio
 
@@ -75,7 +106,7 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 - [x] Fotos de las tarjetas de servicios (I3, S1): 6 imágenes 4:3 (1200 × 900) que reemplazan a las provisionales en `public/images/services/` con el mismo nombre: `ozonoterapia`, `acupuntura`, `sueroterapia`, `nutricion`, `medicina-funcional`, `medicina-general` (.webp)
 - [ ] ID del widget de Trustindex (I8, S5): plan pago de Trustindex + widget "una fila en carrusel"; el ID va en `.env.production` (`NEXT_PUBLIC_TRUSTINDEX_WIDGET_ID`)
 - [ ] Razón social, RUC y domicilio para el Libro de Reclamaciones (L1, L2)
-- [ ] Qué WhatsApp recibe las citas y cuál las consultas (G4, C1, R5)
+- [ ] Qué WhatsApp recibe las citas y cuál las consultas (C1, R5) — el flotante ya quedó fijo en el 912 (G4)
 - [ ] Nombres de los dos retratos sin identificar (P1)
 - [x] Horario de atención de los 5 profesionales (P4)
 - [ ] Confirmar el horario general de la clínica (pie, contacto, "Abierto ahora"): los horarios de los profesionales lo exceden (vie 8:30 corrido, sáb hasta 1:00 p. m., mié tarde 2:00–6:00 p. m.)
@@ -104,4 +135,4 @@ Por cada comentario se registra: qué se pidió, qué se cambió, cómo se verif
 | 2026-11-15 | P4 | Horario de la Dra. Adela Huamán | Lunes, miércoles, jueves y sábado 8:30 a. m.–1:00 p. m. Los 5 profesionales ya tienen horario propio; el respaldo con el horario de la clínica queda para profesionales nuevos (tests ajustados a un slug ficticio) | Playwright: 5 días del widget (lun/mié/jue/sáb), todas las horas dentro; "Reservar" lleva la hora; tsc + 52 unit tests | 43c4b13 |
 | 2026-11-15 | G4 | El botón flotante de WhatsApp siempre debe llevar al 912 724 465, incluido el inicio | Ya usaba el número general en todas las páginas (verificado). Se dejó la regla documentada en `WhatsAppFloat` y un test E2E por página que exige `wa.me/51912724465`. El número de citas (946 453 531) sigue solo en el envío final de la reserva y en "WhatsApp citas" de contacto | Playwright: inicio, servicios, un servicio, staff, un perfil, contacto y libro → 51912724465; /reservar no tiene botón flotante; tsc + eslint | b74ec95 |
 | 2026-11-15 | P4 | Cambio de la clínica: la Dra. Adela Huamán solo atiende martes y jueves, 8:30 a. m.–1:00 p. m. y 2:00–6:30 p. m. | Horario actualizado en `data/schedules.ts` (antes lun/mié/jue/sáb en la mañana) | Playwright: widget solo martes y jueves, mañana y tarde, todas las horas dentro; "Reservar" lleva la hora; tsc + 52 unit tests | 036e53c |
-| 2026-11-15 | R1 | Si se reserva desde el perfil de un profesional (o desde donde ya se eligió algo) no debe volver al paso 1; solo empieza en "Servicio" si no se eligió nada (p. ej. desde el inicio) | La reserva abre en el primer paso que falta (`resolveStartStep` en `booking.service.ts`, +5 tests): nada → 1 Servicio; servicio → 2 Profesional; profesional → 3 Fecha y hora; profesional + día y hora (widget del perfil) → 4 Tus datos. Si la hora preseleccionada ya no está libre, vuelve sola al paso 3. "Atrás" sigue permitiendo cambiar lo elegido. E2E de reserva actualizadas (inicio en paso 2 desde un servicio, formato de hora 12 h) + 3 nuevas (sin nada → paso 1; widget del perfil → Tus datos con resumen; tarjeta de profesional → Fecha y hora) | Playwright: widget del Dr. Meza → "Tus datos" con "lun 16 · 9:30 a. m." en el resumen; tarjeta de la Dra. Ramirez → Fecha y hora; tarjeta de Sueroterapia → Profesional; "Agendar cita" del menú → Servicio; hora inválida → Fecha y hora; Atrás desde 4 → 3; sin errores de consola; tsc + eslint + 57 unit tests | ver git log |
+| 2026-11-15 | R1 | Si se reserva desde el perfil de un profesional (o desde donde ya se eligió algo) no debe volver al paso 1; solo empieza en "Servicio" si no se eligió nada (p. ej. desde el inicio) | La reserva abre en el primer paso que falta (`resolveStartStep` en `booking.service.ts`, +5 tests): nada → 1 Servicio; servicio → 2 Profesional; profesional → 3 Fecha y hora; profesional + día y hora (widget del perfil) → 4 Tus datos. Si la hora preseleccionada ya no está libre, vuelve sola al paso 3. "Atrás" sigue permitiendo cambiar lo elegido. E2E de reserva actualizadas (inicio en paso 2 desde un servicio, formato de hora 12 h) + 3 nuevas (sin nada → paso 1; widget del perfil → Tus datos con resumen; tarjeta de profesional → Fecha y hora) | Playwright: widget del Dr. Meza → "Tus datos" con "lun 16 · 9:30 a. m." en el resumen; tarjeta de la Dra. Ramirez → Fecha y hora; tarjeta de Sueroterapia → Profesional; "Agendar cita" del menú → Servicio; hora inválida → Fecha y hora; Atrás desde 4 → 3; sin errores de consola; tsc + eslint + 57 unit tests | ee0e6e6 |
