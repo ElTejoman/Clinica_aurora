@@ -16,7 +16,7 @@ import { catalogService, doctorService } from "@/services/container";
  * Estructura del sitio actual de la clínica, con mejor acabado:
  *   banners → titular → servicios → ¿qué deseas realizar hoy? → respaldo →
  *   galería → testimonios.
- *   (Ocultas: "¿Por qué elegir Clínica Aurora?" y el cierre "Tu bienestar es nuestra prioridad".)
+ *   (Ocultas: "¿Por qué elegir Clínica La Aurora?" y el cierre "Tu bienestar es nuestra prioridad".)
  */
 export default function HomePage() {
   return (

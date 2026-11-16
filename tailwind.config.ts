@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 /**
  * =============================================================================
- * TOKENS DE DISEÑO DE CLÍNICA AURORA
+ * TOKENS DE DISEÑO DE CLÍNICA LA AURORA
  * =============================================================================
  * Todos los colores salen del logo (verde azulado del árbol + verde de los anillos).
  * Si la marca cambia, edita SOLO este archivo: todos los componentes usan estos

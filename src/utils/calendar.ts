@@ -27,7 +27,7 @@ export function buildIcs(event: CalendarEvent): string {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Clinica Aurora//Reservas//ES",
+    "PRODID:-//Clinica La Aurora//Reservas//ES",
     "BEGIN:VEVENT",
     `UID:${start.getTime()}-${Math.random().toString(36).slice(2)}@clinicaaurora`,
     `DTSTAMP:${formatUtc(new Date())}`,

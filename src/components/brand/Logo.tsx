@@ -3,15 +3,16 @@
 import anime from "animejs";
 import Image from "next/image";
 import { useEffect, useId, useRef } from "react";
+import { SITE } from "@/config/site";
 import { motionAllowed } from "@/lib/motion";
 import { cn } from "@/utils/cn";
 
 /**
- * <LogoMark> — Sello circular de Clínica Aurora
+ * <LogoMark> — Sello circular de Clínica La Aurora
  * =============================================================================
  * Recrea el logo original con el nombre nuevo:
  *   - Anillo exterior e interior (SVG, verde).
- *   - "CLÍNICA" arriba y "AURORA" abajo siguiendo el arco (textPath, Cinzel).
+ *   - "CLÍNICA" arriba y "LA AURORA" abajo siguiendo el arco (textPath, Cinzel).
  *   - El árbol original al centro (/public/brand/aurora-tree.png, recortado
  *     del logo que enviaste, con fondo transparente).
  *
@@ -98,7 +99,7 @@ export function LogoMark({
         </text>
         <text fill={text} fontSize={fontSize} fontWeight={600} letterSpacing={size < 80 ? 7 : 8} className="font-brand">
           <textPath href={`#bot-${uid}`} startOffset="50%" textAnchor="middle">
-            AURORA
+            LA AURORA
           </textPath>
         </text>
       </svg>
@@ -120,13 +121,23 @@ export function LogoMark({
   );
 }
 
+/** "CLÍNICA LA AURORA": si no cabe en una línea, corta solo tras "CLÍNICA" (nunca "CLÍNICA LA / AURORA"). */
+function BrandName() {
+  const [first, ...rest] = SITE.name.toLocaleUpperCase("es").split(" ");
+  return (
+    <>
+      <span className="whitespace-nowrap">{first}</span> <span className="whitespace-nowrap">{rest.join(" ")}</span>
+    </>
+  );
+}
+
 /** Sello + nombre en texto, enlazable (header). */
 export function LogoLockup({ size = 56, textSize = 17 }: { size?: number; textSize?: number }) {
   return (
     <span className="flex items-center gap-3.5">
       <LogoMark size={size} animate />
       <span className="font-brand font-semibold tracking-[3px] text-teal" style={{ fontSize: textSize }}>
-        CLÍNICA AURORA
+        <BrandName />
       </span>
     </span>
   );

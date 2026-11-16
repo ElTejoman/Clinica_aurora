@@ -25,7 +25,7 @@ for (const { path, h1 } of PAGES) {
     await page.goto(path);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("h1")).toHaveText(h1);
-    await expect(page).toHaveTitle(/Clínica Aurora/);
+    await expect(page).toHaveTitle(/Clínica La Aurora/);
     // Recorre la página para disparar las animaciones de scroll.
     const height = await page.evaluate(() => document.body.scrollHeight);
     for (let y = 0; y < height; y += 600) {
@@ -50,7 +50,7 @@ for (const { path, h1 } of PAGES) {
 for (const { path } of PAGES.filter((p) => p.path !== "/reservar/")) {
   test(`WhatsApp flotante al 912 724 465 en ${path}`, async ({ page }) => {
     await page.goto(path);
-    await expect(page.getByRole("link", { name: /Escribir a Clínica Aurora por WhatsApp/ })).toHaveAttribute("href", /^https:\/\/wa\.me\/51912724465\?/);
+    await expect(page.getByRole("link", { name: /Escribir a Clínica La Aurora por WhatsApp/ })).toHaveAttribute("href", /^https:\/\/wa\.me\/51912724465\?/);
   });
 }
 

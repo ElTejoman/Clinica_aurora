@@ -50,7 +50,7 @@ export const AFFILIATIONS = [
   { name: "Dongzhimen Hospital", logo: "/images/respaldo/dongzhimen-hospital.webp", detail: "Experiencia clínica en Acupuntura y Moxibustión en Beijing." },
 ];
 
-/** "¿Por qué elegir Clínica Aurora?" */
+/** "¿Por qué elegir Clínica La Aurora?" */
 export const WHY_CHOOSE = [
   { title: "Consultas médicas de 30 minutos", text: "Dedicamos el tiempo necesario para escucharte, conocer tu historia clínica y evaluar tus necesidades, sin apresurar la atención." },
   { title: "Atención verdaderamente personalizada", text: "Nuestros médicos se toman el tiempo de conversar contigo, resolver tus dudas y explicarte tus opciones de tratamiento." },

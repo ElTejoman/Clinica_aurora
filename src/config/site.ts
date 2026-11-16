@@ -6,7 +6,7 @@ import { env } from "./env";
  * ➜ Lo que va entre corchetes está pendiente de confirmar: búscalo con "[".
  */
 export const SITE = {
-  name: "Clínica Aurora",
+  name: "Clínica La Aurora",
   tagline: "Medicina integrativa en Miraflores",
   description:
     "Ozonoterapia, acupuntura, sueroterapia, nutrición, medicina funcional y medicina general en Miraflores, Lima. Atención personalizada en español, inglés y chino.",

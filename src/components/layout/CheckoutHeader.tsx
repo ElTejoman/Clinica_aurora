@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogoLockup } from "@/components/brand/Logo";
 import { Icon } from "@/components/ui/Icon";
 import { ROUTES } from "@/config/routes";
+import { SITE } from "@/config/site";
 
 /**
  * <CheckoutHeader> — Cabecera mínima del paso de reserva
@@ -14,7 +15,7 @@ export function CheckoutHeader() {
   return (
     <header className="border-b border-line bg-white">
       <div className="mx-auto flex max-w-checkout flex-wrap items-center justify-between gap-4 px-4 sm:px-8 py-4">
-        <Link href={ROUTES.home} aria-label="Clínica Aurora, inicio" className="no-underline">
+        <Link href={ROUTES.home} aria-label={`${SITE.name}, inicio`} className="no-underline">
           <LogoLockup size={44} textSize={15} />
         </Link>
         <div className="flex items-center gap-5 text-sm text-muted">

@@ -1,6 +1,6 @@
-# Clínica Aurora: sitio web
+# Clínica La Aurora: sitio web
 
-Sitio **100 % estático** de Clínica Aurora (antes Lima Natural Health Clinic), hecho con **Next.js 15 + TypeScript**. Sigue la estructura del sitio actual de la clínica, con mejor diseño, mejor rendimiento y animaciones con three.js y anime.js.
+Sitio **100 % estático** de Clínica La Aurora (antes Lima Natural Health Clinic), hecho con **Next.js 15 + TypeScript**. Sigue la estructura del sitio actual de la clínica, con mejor diseño, mejor rendimiento y animaciones con three.js y anime.js.
 
 ```
 Inicio ─┬─ Servicios ── /servicios/[servicio]/ ──┐

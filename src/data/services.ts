@@ -33,7 +33,7 @@ export const SERVICES: Service[] = [
     highlights: ["Dolor lumbar y articular", "Inflamación crónica", "Estrés oxidativo y fatiga"],
     intro:
       "La ozonoterapia es una terapia médica que utiliza una mezcla controlada de oxígeno y ozono para estimular procesos naturales de recuperación del organismo. Aplicada bajo protocolos clínicos, puede ayudar a mejorar la oxigenación celular, modular procesos inflamatorios y apoyar la regeneración de tejidos.",
-    hero: { src: "/images/banners/banner-ozonoterapia-1600.webp", srcMobile: "/images/banners/banner-ozonoterapia-800.webp", alt: "Servicio de ozonoterapia en Clínica Aurora", banner: true },
+    hero: { src: "/images/banners/banner-ozonoterapia-1600.webp", srcMobile: "/images/banners/banner-ozonoterapia-800.webp", alt: "Servicio de ozonoterapia en Clínica La Aurora", banner: true },
     sections: [
       {
         title: "Problemas de salud que atendemos",
@@ -63,7 +63,7 @@ export const SERVICES: Service[] = [
     ],
     closing: {
       title: "Ozonoterapia en Lima",
-      text: "En Clínica Aurora trabajamos con protocolos médicos seguros y personalizados, integrando la ozonoterapia como parte de un enfoque moderno de salud. Si deseas saber si este tratamiento es adecuado para ti, agenda una evaluación médica.",
+      text: "En Clínica La Aurora trabajamos con protocolos médicos seguros y personalizados, integrando la ozonoterapia como parte de un enfoque moderno de salud. Si deseas saber si este tratamiento es adecuado para ti, agenda una evaluación médica.",
     },
   },
   {
@@ -76,7 +76,7 @@ export const SERVICES: Service[] = [
     highlights: ["Colon irritable", "Insomnio", "Dolores menstruales"],
     intro:
       "Técnica de la medicina tradicional china que estimula puntos específicos del cuerpo con agujas finas y descartables. Desde problemas digestivos y hormonales hasta mejoras estéticas, alivia dolencias y restablece tu bienestar con técnicas tradicionales personalizadas.",
-    hero: { src: "/images/banners/banner-acupuntura-1600.webp", srcMobile: "/images/banners/banner-acupuntura-800.webp", alt: "Servicio de acupuntura en Clínica Aurora", banner: true },
+    hero: { src: "/images/banners/banner-acupuntura-1600.webp", srcMobile: "/images/banners/banner-acupuntura-800.webp", alt: "Servicio de acupuntura en Clínica La Aurora", banner: true },
     sections: [
       {
         title: "Problemas de salud que atendemos",
@@ -142,7 +142,7 @@ export const SERVICES: Service[] = [
     highlights: ["Sobrepeso y obesidad", "Diabetes y prediabetes", "Salud hormonal y menstrual"],
     intro:
       "Planes de alimentación personalizados y basados en evidencia. Desde problemas digestivos y hormonales hasta mejoras en tu energía diaria, la nutrición te ayuda a restablecer tu bienestar.",
-    hero: { src: "/images/banners/banner-nutricion-embarazadas-1600.webp", srcMobile: "/images/banners/banner-nutricion-embarazadas-800.webp", alt: "Servicio de nutrición para embarazadas en Clínica Aurora", banner: true },
+    hero: { src: "/images/banners/banner-nutricion-embarazadas-1600.webp", srcMobile: "/images/banners/banner-nutricion-embarazadas-800.webp", alt: "Servicio de nutrición para embarazadas en Clínica La Aurora", banner: true },
     sections: [
       {
         title: "Problemas de salud que atendemos",

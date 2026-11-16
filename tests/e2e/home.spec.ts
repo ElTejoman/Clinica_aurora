@@ -52,7 +52,7 @@ test.describe("Inicio", () => {
     await expect(page.getByText("Tenemos el respaldo de:")).toBeVisible();
     await expect(page.getByText("Colegio Médico del Perú")).toBeVisible();
     await expect(page.getByText(/48 reseñas en Google/)).toBeVisible();
-    await expect(page.getByRole("link", { name: /Escribir a Clínica Aurora por WhatsApp/ })).toHaveAttribute("href", /wa\.me\/51912724465/);
+    await expect(page.getByRole("link", { name: /Escribir a Clínica La Aurora por WhatsApp/ })).toHaveAttribute("href", /wa\.me\/51912724465/);
   });
 
   test("el pie tiene horario resumido, WhatsApp y Libro de Reclamaciones", async ({ page }) => {

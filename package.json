@@ -2,7 +2,7 @@
   "name": "clinica-aurora",
   "version": "1.0.0",
   "private": true,
-  "description": "Sitio web estático de Clínica Aurora: embudo de captación centrado en médicos (visitante → dolor → especialista → perfil → reserva por WhatsApp).",
+  "description": "Sitio web estático de Clínica La Aurora: embudo de captación centrado en médicos (visitante → dolor → especialista → perfil → reserva por WhatsApp).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
