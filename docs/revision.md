@@ -28,9 +28,11 @@ cierre en la banda final · I7/I9 ocultas en el inicio · L1/L2 Libro de Reclama
    María), tomado de la hoja que envió la clínica; confirmar que es la empresa que opera Clínica La Aurora.
 
 **Pendiente técnico:**
-- E2E al día: 115 en verde y 3 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
-  incluidas las de I3, I6, G4, P4, R1, el blog, la agenda de contacto, los bloques de servicios, los planes y el libro.
-- Commits locales sin subir a GitHub (a pedido del usuario: "aún no subas nada").
+- Verificación final (2026-11-15, en una copia aislada para no tocar el `npm run dev`): `npm run check` (tipos, lint y
+  77 unitarias) y E2E con 115 en verde y 3 omitidas por diseño, incluidas las de I3, I6, G4, P4, R1, el blog, la agenda
+  de contacto, los bloques de servicios, los planes y el libro.
+- **Push listo, programado para el martes 2026-11-17** (a pedido del usuario): `main` va por delante de `origin/main`
+  sin divergencia, así que basta `git push origin main` (fast-forward). Netlify (si ya está importado) desplegará solo.
 - Código en GitHub: `github.com/ElTejoman/Clinica_aurora` (rama `main`). Demo lista para Netlify (`netlify.toml`,
   README §6 "Demo en Netlify"): falta importar el repo en Netlify (no hay acceso desde aquí).
 - Despliegue definitivo en Hostinger: pendiente (dominio + hPanel, README §6).
