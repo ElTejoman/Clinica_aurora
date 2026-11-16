@@ -3,7 +3,7 @@ import type { ContactMessage } from "@/models/contact";
 import { SCHEDULE, SITE } from "@/config/site";
 import { buildIcs } from "@/utils/calendar";
 import { formatLongDate } from "@/utils/date";
-import { CONSULT_MODE_LABEL } from "@/utils/format";
+import { CONSULT_MODE_LABEL, formatTime12h } from "@/utils/format";
 import { whatsappUrl } from "@/utils/whatsapp";
 
 /**
@@ -30,7 +30,7 @@ export function buildBookingMessage({ request, doctor, service }: BookingDetails
     `*Profesional:* ${doctor.name}`,
     request.details ? `*Detalle:* ${request.details}` : null,
     `*Modalidad:* ${CONSULT_MODE_LABEL[request.mode]}`,
-    `*Fecha y hora:* ${formatLongDate(request.date)} · ${request.time}`,
+    `*Fecha y hora:* ${formatLongDate(request.date)} · ${formatTime12h(request.time)}`,
     `*Nombre:* ${request.patient.fullName}`,
     request.patient.documentId ? `*DNI/CE:* ${request.patient.documentId}` : null,
   ];

@@ -103,6 +103,7 @@ tests/e2e/                                 pruebas Playwright
 | Razón social, RUC y domicilio del Libro de Reclamaciones | `src/config/site.ts` (`SITE.legal`) |
 | Servicios: textos, condiciones que atiende, protocolos, imagen | `src/data/services.ts` |
 | Staff: bio, CMP/RNE, experiencia, especialidades, servicios que atiende | `src/data/doctors.ts` |
+| Horario de atención de cada profesional (su agenda solo ofrece esas horas; sin horario propio usa el de la clínica) | `src/data/schedules.ts` |
 | Reseñas de Google y cantidad total | `src/data/reviews.ts` (o el widget de Trustindex, ver abajo) |
 | Banners del carrusel, galería, respaldo, "por qué elegirnos", recomendaciones | `src/data/clinic.ts` |
 | Colores y tipografías | `tailwind.config.ts` y `src/app/layout.tsx` |

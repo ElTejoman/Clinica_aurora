@@ -1,4 +1,5 @@
-import type { OpeningDay } from "@/config/site";
+import type { ScheduleDay } from "@/models";
+import type { ScheduleRepository } from "./schedule.repository";
 import { timeToMinutes, weekdayOf } from "@/utils/date";
 
 /**
@@ -34,7 +35,7 @@ function seededRandom(seedText: string): () => number {
 const toTime = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 
 /** Todos los inicios de consulta posibles dentro del horario de atención de ese día. */
-export function candidateSlots(day: OpeningDay | undefined): string[] {
+export function candidateSlots(day: ScheduleDay | undefined): string[] {
   return (day?.ranges ?? []).flatMap(([start, end]) => {
     const slots: string[] = [];
     for (let m = timeToMinutes(start); m + SLOT_MINUTES <= timeToMinutes(end); m += SLOT_MINUTES) slots.push(toTime(m));
@@ -43,14 +44,14 @@ export function candidateSlots(day: OpeningDay | undefined): string[] {
 }
 
 /**
- * ⚠️ SIMULADO: horarios falsos pero estables y siempre dentro del horario de
- * atención. La clínica confirma la hora real por WhatsApp.
+ * ⚠️ SIMULADO: horarios ocupados/libres falsos pero estables, y siempre dentro
+ * del horario de atención DE ESE PROFESIONAL. La clínica confirma la hora
+ * real por WhatsApp.
  */
-export function createSimulatedAvailabilityRepository(openingHours: readonly OpeningDay[]): AvailabilityRepository {
-  const byWeekday = new Map(openingHours.map((d) => [d.weekday, d]));
-
+export function createSimulatedAvailabilityRepository(schedules: ScheduleRepository): AvailabilityRepository {
   const simulate = (doctorSlug: string, date: string): string[] => {
-    const pool = candidateSlots(byWeekday.get(weekdayOf(date)));
+    const weekday = weekdayOf(date);
+    const pool = candidateSlots(schedules.getForDoctor(doctorSlug).days.find((d) => d.weekday === weekday));
     const rand = seededRandom(`${doctorSlug}:${date}`);
     const target = Math.min(pool.length, 3 + Math.floor(rand() * 4)); // entre 3 y 6 horarios
     return pool.filter(() => rand() < target / Math.max(pool.length, 1) + 0.05).slice(0, MAX_SLOTS_PER_DAY);

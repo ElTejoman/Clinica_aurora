@@ -10,7 +10,7 @@ import { ROUTES } from "@/config/routes";
 import { useDoctorDays } from "@/hooks/useAvailability";
 import { useStaggeredEntrance } from "@/hooks/useStaggeredEntrance";
 import { cn } from "@/utils/cn";
-import { formatModes } from "@/utils/format";
+import { formatModes, formatTime12h } from "@/utils/format";
 
 /**
  * <BookingWidget> — Panel "Reserva tu cita" del perfil (columna derecha, fija)
@@ -91,7 +91,7 @@ function SlotPicker({ doctor, days, serviceSlug }: { doctor: Doctor; days: DayAv
               onClick={() => setSlotIdx(i)}
               className={cn(toggleClass(t === time), "h-[46px] rounded-xl text-sm font-medium")}
             >
-              {t}
+              {formatTime12h(t)}
             </button>
           ))}
         </div>
@@ -105,7 +105,7 @@ function SlotPicker({ doctor, days, serviceSlug }: { doctor: Doctor; days: DayAv
           className="w-full"
           trackAs={{ event: "cta_click", props: { location: "profile_widget", doctor: doctor.slug } }}
         >
-          Reservar {day.label} a las {time}
+          Reservar {day.label} a las {formatTime12h(time)}
         </ButtonLink>
       </Magnetic>
     </>

@@ -22,7 +22,7 @@ describe("buildBookingMessage", () => {
     expect(message).toContain("*Servicio:* Acupuntura");
     expect(message).toContain("*Profesional:* Dr. Ricardo Meza");
     expect(message).toContain("*Detalle:* Dolor lumbar desde hace 3 semanas");
-    expect(message).toContain("*Fecha y hora:* viernes, 13 de noviembre · 10:00");
+    expect(message).toContain("*Fecha y hora:* viernes, 13 de noviembre · 10:00 a. m.");
     expect(message).toContain("*Nombre:* María Pérez");
     expect(message).toContain("*DNI/CE:* 12345678");
   });

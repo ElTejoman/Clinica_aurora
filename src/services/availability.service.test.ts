@@ -36,7 +36,7 @@ describe("availabilityService.getDays", () => {
 describe("availabilityService labels", () => {
   it("should_say_tomorrow_when_next_slot_is_the_next_day", async () => {
     const service = createAvailabilityService(repoWith(["08:00", "11:00"]), at("2026-11-13", 20 * 60));
-    expect(await service.getNextAvailableLabel("dr")).toBe("Mañana · 08:00");
+    expect(await service.getNextAvailableLabel("dr")).toBe("Mañana · 8:00 a. m.");
   });
 
   it("should_ask_to_consult_when_there_are_no_slots", async () => {

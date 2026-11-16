@@ -2,7 +2,7 @@ import type { ConsultMode, DayAvailability, Doctor } from "@/models";
 import { DoctorPortrait } from "@/components/ui/DoctorPortrait";
 import { optionClass } from "@/components/ui/styles";
 import { cn } from "@/utils/cn";
-import { CONSULT_MODE_LABEL } from "@/utils/format";
+import { CONSULT_MODE_LABEL, formatTime12h } from "@/utils/format";
 import { stepTitleClass } from "./stepStyles";
 
 export function DoctorStep({
@@ -45,7 +45,7 @@ export function DoctorStep({
                 <span className="text-[17px] font-semibold">{d.name}</span>
                 <span className="text-[13px] text-muted">
                   {d.specialty}
-                  {first && ` · Próxima cita: ${first.label} ${first.slots[0]}`}
+                  {first && ` · Próxima cita: ${first.label} ${formatTime12h(first.slots[0]!)}`}
                 </span>
               </span>
               {d.slug === recommendedSlug && <span className="flex-none text-xs font-semibold text-leaf-ink">Recomendado</span>}

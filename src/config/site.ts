@@ -1,3 +1,4 @@
+import type { ScheduleDay } from "@/models";
 import { env } from "./env";
 
 /**
@@ -36,15 +37,13 @@ export const SITE = {
   },
 } as const;
 
-export interface OpeningDay {
-  day: string;
-  /** 0 = domingo … 6 = sábado */
-  weekday: number;
-  /** Tramos de atención "HH:mm"–"HH:mm" (24 h). Vacío = cerrado. */
-  ranges: readonly (readonly [string, string])[];
-}
+export type OpeningDay = ScheduleDay;
 
-/** Horario de atención (se muestra en el pie y en contacto; la agenda simulada lo respeta). */
+/**
+ * Horario de atención de la CLÍNICA (pie, contacto, estado "Abierto ahora").
+ * La agenda de cada profesional usa su propio horario (src/data/schedules.ts)
+ * y, si aún no lo tiene, este.
+ */
 export const OPENING_HOURS: readonly OpeningDay[] = [
   { day: "Lunes", weekday: 1, ranges: [["09:00", "11:30"], ["14:00", "18:30"]] },
   { day: "Martes", weekday: 2, ranges: [["14:00", "18:30"]] },

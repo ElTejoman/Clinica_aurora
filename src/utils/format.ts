@@ -12,7 +12,7 @@ export function formatModes(modes: ConsultMode[]): string {
 
 /** "hoy a las 09:30" / "el jue 12 a las 10:15" */
 export function describeAppointmentTime(day: Pick<DayAvailability, "isToday" | "label">, time: string): string {
-  return day.isToday ? `hoy a las ${time}` : `el ${day.label} a las ${time}`;
+  return day.isToday ? `hoy a las ${formatTime12h(time)}` : `el ${day.label} a las ${formatTime12h(time)}`;
 }
 
 /** "14:30" → "2:30 p. m." */

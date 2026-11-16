@@ -2,6 +2,7 @@ import type { DayAvailability } from "@/models";
 import type { AvailabilityRepository } from "@/repositories/availability.repository";
 import { SCHEDULE } from "@/config/site";
 import { addDays, dayOfMonth, nowInTimeZone, timeToMinutes, weekdayOf, type ZonedNow } from "@/utils/date";
+import { formatTime12h } from "@/utils/format";
 import { capitalize } from "@/utils/text";
 
 /**
@@ -81,7 +82,7 @@ export function createAvailabilityService(
     async getNextAvailableLabel(doctorSlug) {
       const now = clock();
       const [first] = await loadDays(doctorSlug, 1, now);
-      return first ? `${relativeDayLabel(first, now.date)} · ${first.slots[0]}` : "Consultar horarios";
+      return first ? `${relativeDayLabel(first, now.date)} · ${formatTime12h(first.slots[0]!)}` : "Consultar horarios";
     },
   };
 }

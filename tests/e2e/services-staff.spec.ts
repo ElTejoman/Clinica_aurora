@@ -39,11 +39,11 @@ test.describe("Staff", () => {
 
   test("la tarjeta calcula la próxima cita y el perfil ofrece reservar", async ({ page }) => {
     await page.goto("/staff-de-profesionales/");
-    await expect(page.locator("article").first()).toContainText(/Próxima cita: (Hoy|Mañana|[A-Z][a-zé]{2} \d{1,2}) · \d{2}:\d{2}/);
+    await expect(page.locator("article").first()).toContainText(/Próxima cita: (Hoy|Mañana|[A-Z][a-zé]{2} \d{1,2}) · \d{1,2}:\d{2} [ap]\. m\./);
     await page.goto("/staff-de-profesionales/cilka-ramirez/");
     await expect(page.getByText("CMP 080739").first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "Formación y experiencia" })).toBeVisible();
-    const cta = page.getByRole("link", { name: /^Reservar .+ a las \d{2}:\d{2}$/ });
+    const cta = page.getByRole("link", { name: /^Reservar .+ a las \d{1,2}:\d{2} [ap]\. m\.$/ });
     await expect(cta).toHaveAttribute("href", /\/reservar\/\?medico=cilka-ramirez&servicio=medicina-funcional&dia=\d{4}-\d{2}-\d{2}&hora=/);
   });
 });

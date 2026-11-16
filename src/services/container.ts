@@ -1,10 +1,12 @@
 import "server-only";
-import { isWhatsAppConfigured } from "@/config/site";
+import { isWhatsAppConfigured, OPENING_HOURS } from "@/config/site";
 import { DOCTORS } from "@/data/doctors";
 import { RATING, REVIEWS } from "@/data/reviews";
+import { DOCTOR_SCHEDULES } from "@/data/schedules";
 import { SERVICES } from "@/data/services";
 import { createInMemoryDoctorRepository } from "@/repositories/doctor.repository";
 import { createInMemoryReviewRepository } from "@/repositories/review.repository";
+import { createInMemoryScheduleRepository } from "@/repositories/schedule.repository";
 import { createInMemoryServiceRepository } from "@/repositories/service.repository";
 import { createCatalogService } from "./catalog.service";
 import { createDoctorService } from "./doctor.service";
@@ -28,3 +30,5 @@ export const catalogService = createCatalogService(
   createInMemoryServiceRepository(SERVICES),
   createInMemoryReviewRepository(REVIEWS, RATING),
 );
+/** Horario semanal de cada profesional (bloque "Horario de atención" del perfil). */
+export const scheduleRepository = createInMemoryScheduleRepository(DOCTOR_SCHEDULES, OPENING_HOURS);

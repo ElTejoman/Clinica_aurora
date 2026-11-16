@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { DayAvailability } from "@/models";
 import { OPENING_HOURS } from "@/config/site";
+import { DOCTOR_SCHEDULES } from "@/data/schedules";
 import { createSimulatedAvailabilityRepository } from "@/repositories/availability.repository";
+import { createInMemoryScheduleRepository } from "@/repositories/schedule.repository";
 import { createAvailabilityService } from "@/services/availability.service";
 
 /**
@@ -16,7 +18,9 @@ import { createAvailabilityService } from "@/services/availability.service";
  *
  * 🔌 Agenda real: cambia el repositorio simulado por tu implementación.
  */
-const availabilityService = createAvailabilityService(createSimulatedAvailabilityRepository(OPENING_HOURS));
+const availabilityService = createAvailabilityService(
+  createSimulatedAvailabilityRepository(createInMemoryScheduleRepository(DOCTOR_SCHEDULES, OPENING_HOURS)),
+);
 
 function useAsyncValue<T>(key: string, load: () => Promise<T>): T | undefined {
   const [state, setState] = useState<{ key: string; value: T }>();

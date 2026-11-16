@@ -9,7 +9,7 @@ import { motionAllowed } from "@/lib/motion";
 import { bookingRequestSchema } from "@/models/booking";
 import { bookingPlace, buildBookingCalendarFile, buildBookingWhatsAppUrl, resolveInitialSlot } from "@/services/booking.service";
 import { downloadFile } from "@/utils/download";
-import { describeAppointmentTime } from "@/utils/format";
+import { describeAppointmentTime, formatTime12h } from "@/utils/format";
 
 /**
  * Estado y reglas del flujo de reserva:
@@ -79,8 +79,8 @@ export function useBookingForm({
   const days = availability?.[doctorSlug];
   const slot: Slot = chosenSlot ?? (days ? resolveInitialSlot(days, preselection) : { date: "", time: null });
   const day = days?.find((d) => d.date === slot.date);
-  /** Resumen: "jue 12 · 10:15" · Frase: "el jue 12 a las 10:15" */
-  const whenLabel = day && slot.time ? `${day.label} · ${slot.time}` : "";
+  /** Resumen: "jue 12 · 10:30 a. m." · Frase: "el jue 12 a las 10:30 a. m." */
+  const whenLabel = day && slot.time ? `${day.label} · ${formatTime12h(slot.time)}` : "";
   const whenPhrase = day && slot.time ? describeAppointmentTime(day, slot.time) : "";
 
   // `consent` es boolean en el formulario; el esquema exige `true` para aceptar la reserva.

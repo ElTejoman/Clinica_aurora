@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { BookingWidget } from "@/components/profile/BookingWidget";
 import { ProfileHero } from "@/components/profile/ProfileHero";
 import { ExperienceSection, RelatedDoctorsSection, SpecialtiesSection } from "@/components/profile/ProfileSections";
+import { ScheduleCard } from "@/components/profile/ScheduleCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ROUTES } from "@/config/routes";
-import { catalogService, doctorService } from "@/services/container";
+import { catalogService, doctorService, scheduleRepository } from "@/services/container";
 import { physicianJsonLd } from "@/utils/structured-data";
 
 /**
@@ -43,6 +44,7 @@ export default async function DoctorPage({ params }: Params) {
 
       <div className="mx-auto flex max-w-page flex-wrap items-start gap-12 px-4 pb-20 pt-14 sm:px-8">
         <div className="flex min-w-0 flex-[999_1_600px] flex-col gap-16">
+          <ScheduleCard doctor={doctor} schedule={scheduleRepository.getForDoctor(doctor.slug)} />
           <SpecialtiesSection specialties={doctor.specialties} />
           <ExperienceSection experience={doctor.experience} />
         </div>

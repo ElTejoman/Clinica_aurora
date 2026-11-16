@@ -5,6 +5,7 @@ import type { DayAvailability } from "@/models";
 import { toggleClass } from "@/components/ui/styles";
 import { useStaggeredEntrance } from "@/hooks/useStaggeredEntrance";
 import { cn } from "@/utils/cn";
+import { formatTime12h } from "@/utils/format";
 import { stepTitleClass } from "./stepStyles";
 
 export function DateTimeStep({
@@ -60,7 +61,7 @@ export function DateTimeStep({
                   onClick={() => onTimeChange(t)}
                   className={cn(toggleClass(t === time), "h-[50px] rounded-[14px] text-[15px] font-medium")}
                 >
-                  {t}
+                  {formatTime12h(t)}
                 </button>
               ))}
             </div>
