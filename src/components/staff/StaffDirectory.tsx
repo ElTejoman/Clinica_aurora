@@ -79,9 +79,14 @@ export function StaffDirectory({ doctors, services, initialService = "todos", in
       </p>
 
       {list.length > 0 ? (
-        <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(min(260px,100%),1fr))] gap-5 [perspective:1400px]">
+        <div className="mt-4 flex flex-wrap justify-center gap-5 [perspective:1400px]">
           {list.map((d, i) => (
-            <Tilt key={d.slug} enterKey={`${service}|${query}`} index={i}>
+            <Tilt
+              key={d.slug}
+              enterKey={`${service}|${query}`}
+              index={i}
+              className="w-full sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
+            >
               <StaffCard doctor={d} serviceSlug={service === "todos" ? undefined : service} />
             </Tilt>
           ))}

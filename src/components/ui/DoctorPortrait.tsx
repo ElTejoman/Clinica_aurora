@@ -27,6 +27,7 @@ export function DoctorPortrait({
   rings = "corner",
   sizes = "(max-width: 768px) 100vw, 400px",
   priority,
+  imageClassName,
   children,
 }: {
   doctor: Pick<Doctor, "name" | "initials" | "tint" | "photo">;
@@ -38,6 +39,8 @@ export function DoctorPortrait({
   /** Patrón decorativo de círculos: esquina inferior, superior o ninguno. */
   rings?: "corner" | "top" | "none";
   sizes?: string;
+  /** Clases extra de la foto (p. ej. `object-top` para recortes bajos). */
+  imageClassName?: string;
   priority?: boolean;
   /** Elementos superpuestos (etiquetas, botón de video…). */
   children?: ReactNode;
@@ -48,7 +51,7 @@ export function DoctorPortrait({
       style={{ background: doctor.tint }}
     >
       {doctor.photo ? (
-        <Image src={doctor.photo} alt={`Foto de ${doctor.name}`} fill sizes={sizes} priority={priority} className="object-cover" />
+        <Image src={doctor.photo} alt={`Foto de ${doctor.name}`} fill sizes={sizes} priority={priority} className={cn("object-cover", imageClassName)} />
       ) : (
         <>
           {rings !== "none" && (

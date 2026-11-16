@@ -15,12 +15,23 @@ import { ROUTES } from "@/config/routes";
 export function StaffCard({ doctor, serviceSlug }: { doctor: Doctor; serviceSlug?: string }) {
   return (
     <article data-reveal-item="" className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-line-soft bg-white transition-[transform,box-shadow] duration-[450ms] ease-out hover:-translate-y-1.5 hover:shadow-lift">
-      <Link href={ROUTES.doctor(doctor.slug)} className="block no-underline" tabIndex={-1} aria-hidden="true">
-        <DoctorPortrait doctor={doctor} className="aspect-[4/5] bg-gradient-to-b from-mist to-white" initialsSize={96} label={null} rings="none" sizes="(max-width: 640px) 100vw, 320px" />
+      <Link href={ROUTES.doctor(doctor.slug)} className="relative block overflow-hidden no-underline" tabIndex={-1} aria-hidden="true">
+        <DoctorPortrait
+          doctor={doctor}
+          className="aspect-square transition-transform sm:aspect-[5/6] duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          initialsSize={96}
+          label={null}
+          rings="none"
+          sizes="(max-width: 640px) 100vw, 380px"
+          imageClassName="object-top sm:object-center"
+        />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent" />
+        <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[13px] font-semibold text-teal shadow-sm backdrop-blur-sm">
+          {doctor.specialty}
+        </span>
       </Link>
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="-mt-6 relative flex flex-1 flex-col gap-4 px-5 pb-5">
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-semibold uppercase tracking-[1px] text-leaf">{doctor.specialty}</span>
           <h3 className="m-0 font-display text-xl font-semibold leading-tight">
             <Link href={ROUTES.doctor(doctor.slug)} className="!text-ink no-underline hover:!text-teal">
               {doctor.name}
@@ -33,6 +44,13 @@ export function StaffCard({ doctor, serviceSlug }: { doctor: Doctor; serviceSlug
             </span>
           )}
         </div>
+        <ul aria-label="Atiende" className="m-0 flex list-none flex-wrap gap-1.5 p-0">
+          {doctor.treats.map((item) => (
+            <li key={item} className="rounded-full bg-mist px-2.5 py-1 text-[12.5px] font-medium text-subink">
+              {item}
+            </li>
+          ))}
+        </ul>
         <span className="mt-auto inline-flex items-center gap-2 text-[13px] font-medium text-subink">
           <Icon name="clock" className="text-leaf" strokeWidth={1.8} />
           Próxima cita: <NextAvailableText slug={doctor.slug} />

@@ -136,7 +136,7 @@ function AvatarStack({ staff }: { staff: readonly StaffAvatar[] }) {
           key={doctor.slug}
           className={cn("relative h-11 w-11 overflow-hidden rounded-full bg-white shadow-[0_0_0_2px_#fff,0_0_0_3px_rgba(23,97,107,.2)]", i > 0 && "-ml-2.5")}
         >
-          {doctor.photo && <Image src={doctor.photo} alt="" fill sizes="88px" className="origin-[50%_12%] scale-[1.6] object-cover object-top" />}
+          {doctor.photo && <Image src={doctor.photo} alt="" fill sizes="88px" className="origin-[50%_10%] scale-[1.6] object-cover object-top" />}
         </span>
       ))}
     </span>
