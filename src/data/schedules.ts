@@ -18,4 +18,13 @@ export const DOCTOR_SCHEDULES: Readonly<Record<string, WeeklySchedule>> = {
     { day: "Sábado", weekday: 6, ranges: [["08:30", "12:30"]] },
     { day: "Domingo", weekday: 0, ranges: [] },
   ],
+  "deivis-astuvilca": [
+    { day: "Lunes", weekday: 1, ranges: [["14:00", "18:00"]] },
+    { day: "Martes", weekday: 2, ranges: [["14:00", "18:00"]] },
+    { day: "Miércoles", weekday: 3, ranges: [] },
+    { day: "Jueves", weekday: 4, ranges: [] },
+    { day: "Viernes", weekday: 5, ranges: [["14:00", "18:00"]] },
+    { day: "Sábado", weekday: 6, ranges: [["08:30", "13:00"]] },
+    { day: "Domingo", weekday: 0, ranges: [] },
+  ],
 };

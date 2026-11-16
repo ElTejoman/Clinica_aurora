@@ -34,9 +34,16 @@ describe("candidateSlots", () => {
 describe("simulatedAvailabilityRepository", () => {
   const repo = createSimulatedAvailabilityRepository(createInMemoryScheduleRepository(DOCTOR_SCHEDULES, OPENING_HOURS));
 
-  it("should_only_offer_times_within_the_doctor_schedule_when_the_doctor_has_one", async () => {
-    const byDate = await repo.getSlotsByDate("ricardo-meza", fourWeeksFrom("2026-11-16"));
-    expectWithin(DOCTOR_SCHEDULES["ricardo-meza"]!, byDate);
+  it.each(Object.keys(DOCTOR_SCHEDULES))("should_only_offer_times_within_the_schedule_of_%s", async (slug) => {
+    const byDate = await repo.getSlotsByDate(slug, fourWeeksFrom("2026-11-16"));
+    expectWithin(DOCTOR_SCHEDULES[slug]!, byDate);
+  });
+
+  it("should_offer_nothing_on_wednesday_or_thursday_to_deivis_astuvilca", async () => {
+    const byDate = await repo.getSlotsByDate("deivis-astuvilca", fourWeeksFrom("2026-11-16"));
+    for (const [date, slots] of Object.entries(byDate)) {
+      if ([3, 4].includes(weekdayOf(date))) expect(slots, date).toEqual([]);
+    }
   });
 
   it("should_never_offer_wednesday_afternoon_or_friday_morning_to_ricardo_meza", async () => {
