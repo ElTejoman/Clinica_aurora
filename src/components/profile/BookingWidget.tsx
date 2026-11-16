@@ -1,26 +1,19 @@
 "use client";
 
-import { useRef, useState } from "react";
-import type { DayAvailability, Doctor } from "@/models";
-import { Magnetic } from "@/components/motion/Magnetic";
-import { ButtonLink } from "@/components/ui/Button";
+import type { Doctor } from "@/models";
+import { SlotPicker } from "@/components/availability/SlotPicker";
 import { Icon } from "@/components/ui/Icon";
-import { toggleClass } from "@/components/ui/styles";
-import { ROUTES } from "@/config/routes";
 import { useDoctorDays } from "@/hooks/useAvailability";
-import { useStaggeredEntrance } from "@/hooks/useStaggeredEntrance";
-import { cn } from "@/utils/cn";
-import { formatModes, formatTime12h } from "@/utils/format";
+import { formatModes } from "@/utils/format";
 
 /**
  * <BookingWidget> — Panel "Reserva tu cita" del perfil (columna derecha, fija)
  * =============================================================================
- * Permite elegir día y hora SIN salir del perfil; el botón final cambia su
- * texto ("Reservar jue 12 a las 10:30") y lleva a /reservar con todo
- * preseleccionado. Así el paso de reserva solo pide motivo y datos.
+ * Tarjeta que envuelve al <SlotPicker>: el paciente elige día y hora SIN salir
+ * del perfil y el botón lo lleva a /reservar con todo preseleccionado.
+ * Solo ofrece horas dentro del horario del profesional (data/schedules.ts).
  *
- * Los horarios se calculan en el navegador; al cambiar de día entran con un
- * pequeño rebote (anime.js). Es `position: sticky` en escritorio.
+ * Los horarios se calculan en el navegador. Es `position: sticky` en escritorio.
  */
 const VISIBLE_DAYS = 5;
 
@@ -31,83 +24,17 @@ export function BookingWidget({ doctor, serviceSlug }: { doctor: Doctor; service
     <div className="flex flex-col gap-5 rounded-[28px] border border-[#DCE6E2] bg-white p-6 shadow-float">
       <div className="flex flex-col gap-1">
         <span className="font-display text-2xl font-semibold leading-[1.1]">Reserva tu cita</span>
-        <span className="text-sm text-muted">
-          Consulta de 30 minutos · {formatModes(doctor.modes)}
-        </span>
+        <span className="text-sm text-muted">Consulta de 30 minutos · {formatModes(doctor.modes)}</span>
       </div>
 
       {days === undefined && <p className="m-0 min-h-[260px] text-sm text-muted">Buscando horarios…</p>}
       {days?.length === 0 && <p className="m-0 text-base">Por ahora no hay horarios publicados. Escríbenos y te avisamos.</p>}
-      {days && days.length > 0 && <SlotPicker doctor={doctor} days={days} serviceSlug={serviceSlug} />}
+      {days && days.length > 0 && <SlotPicker doctor={doctor} days={days} serviceSlug={serviceSlug} trackLocation="profile_widget" />}
 
       <span className="flex items-center gap-2 text-[13px] text-muted">
         <Icon name="check" className="flex-none text-leaf" />
         La clínica confirma tu horario por WhatsApp
       </span>
     </div>
-  );
-}
-
-function SlotPicker({ doctor, days, serviceSlug }: { doctor: Doctor; days: DayAvailability[]; serviceSlug?: string }) {
-  const [dayIdx, setDayIdx] = useState(0);
-  const [slotIdx, setSlotIdx] = useState(0);
-  const slotsRef = useRef<HTMLDivElement>(null);
-  useStaggeredEntrance(slotsRef, "button", dayIdx);
-
-  const day = days[Math.min(dayIdx, days.length - 1)]!;
-  const time = day.slots[Math.min(slotIdx, day.slots.length - 1)]!;
-
-  return (
-    <>
-      <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
-        <legend className="mb-2.5 p-0 text-[13px] font-semibold">Día</legend>
-        <div className="grid grid-cols-5 gap-1.5">
-          {days.map((d, i) => (
-            <button
-              key={d.date}
-              type="button"
-              aria-pressed={i === dayIdx}
-              onClick={() => {
-                setDayIdx(i);
-                setSlotIdx(0);
-              }}
-              className={cn(toggleClass(i === dayIdx), "flex h-16 flex-col items-center justify-center gap-0.5 rounded-[14px]")}
-            >
-              <span className="text-[11px] font-semibold tracking-[.6px]">{d.dow}</span>
-              <span className="text-lg font-semibold">{d.dayNumber}</span>
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <fieldset className="m-0 flex flex-col border-0 p-0">
-        <legend className="mb-2.5 p-0 text-[13px] font-semibold">Hora</legend>
-        <div ref={slotsRef} className="grid grid-cols-3 gap-1.5">
-          {day.slots.map((t, i) => (
-            <button
-              key={t}
-              type="button"
-              aria-pressed={t === time}
-              onClick={() => setSlotIdx(i)}
-              className={cn(toggleClass(t === time), "h-[46px] rounded-xl text-sm font-medium")}
-            >
-              {formatTime12h(t)}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <Magnetic className="flex" strength={0.12}>
-        <ButtonLink
-          href={ROUTES.booking({ medico: doctor.slug, servicio: serviceSlug, dia: day.date, hora: time })}
-          size="lg"
-          shape="soft"
-          className="w-full"
-          trackAs={{ event: "cta_click", props: { location: "profile_widget", doctor: doctor.slug } }}
-        >
-          Reservar {day.label} a las {formatTime12h(time)}
-        </ButtonLink>
-      </Magnetic>
-    </>
   );
 }

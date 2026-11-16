@@ -27,4 +27,13 @@ export const DOCTOR_SCHEDULES: Readonly<Record<string, WeeklySchedule>> = {
     { day: "Sábado", weekday: 6, ranges: [["08:30", "13:00"]] },
     { day: "Domingo", weekday: 0, ranges: [] },
   ],
+  "cilka-ramirez": [
+    { day: "Lunes", weekday: 1, ranges: [] },
+    { day: "Martes", weekday: 2, ranges: [] },
+    { day: "Miércoles", weekday: 3, ranges: [] },
+    { day: "Jueves", weekday: 4, ranges: [["14:00", "18:30"]] },
+    { day: "Viernes", weekday: 5, ranges: [["08:30", "18:30"]] },
+    { day: "Sábado", weekday: 6, ranges: [["08:30", "13:00"]] },
+    { day: "Domingo", weekday: 0, ranges: [] },
+  ],
 };
