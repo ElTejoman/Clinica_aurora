@@ -6,16 +6,12 @@ test.describe("Reserva", () => {
     await page.getByRole("link", { name: "Elegir día y hora" }).click();
     await expect(page).toHaveURL(/\/reservar\/\?servicio=acupuntura$/);
 
-    // 1 · Servicio preseleccionado
-    await expect(page.getByRole("button", { name: /Acupuntura/ })).toHaveAttribute("aria-pressed", "true");
-    await page.getByRole("button", { name: "Continuar" }).click();
-
-    // 2 · Solo los profesionales de acupuntura
+    // El servicio ya viene elegido: abre en 2 · Profesional (solo los de acupuntura)
     await expect(page.locator("main section button[aria-pressed]").filter({ hasText: "Dr." })).toHaveCount(1);
     await page.getByRole("button", { name: "Continuar" }).click();
 
     // 3 · Primer horario libre
-    await page.locator("button[aria-pressed]").filter({ hasText: /^\d{2}:\d{2}$/ }).first().click();
+    await page.locator("button[aria-pressed]").filter({ hasText: /^\d{1,2}:\d{2} [ap]\. m\.$/ }).first().click();
     await page.getByRole("button", { name: "Continuar" }).click();
 
     // 4 · Validación y envío
@@ -32,8 +28,30 @@ test.describe("Reserva", () => {
     await expect(page.locator("h1")).toContainText("Envía tu solicitud por WhatsApp");
   });
 
+  test("sin nada elegido abre en el paso de servicio", async ({ page }) => {
+    await page.goto("/reservar/");
+    await expect(page.locator("h1")).toHaveText("¿Qué servicio necesitas?");
+  });
+
+  test("desde el widget del perfil abre directo en Tus datos con todo elegido", async ({ page }) => {
+    await page.goto("/staff-de-profesionales/ricardo-meza/");
+    const cta = page.getByRole("link", { name: /^Reservar .+ a las / });
+    const when = (await cta.innerText()).replace(/^Reservar /, "").replace(" a las ", " · ");
+    await cta.click();
+    await expect(page).toHaveURL(/medico=ricardo-meza&servicio=acupuntura&dia=\d{4}-\d{2}-\d{2}&hora=/);
+    await expect(page.getByLabel("Nombre y apellido")).toBeVisible();
+    await expect(page.locator("aside")).toContainText("Dr. Ricardo Meza");
+    await expect(page.locator("aside")).toContainText(when);
+  });
+
+  test("desde la tarjeta de un profesional abre en Fecha y hora", async ({ page }) => {
+    await page.goto("/reservar/?medico=cilka-ramirez");
+    await expect(page.locator("h1")).toHaveText("¿Cuándo te viene bien?");
+  });
+
   test("al cambiar de servicio cambia la lista de profesionales", async ({ page }) => {
-    await page.goto("/reservar/?medico=ricardo-meza");
+    await page.goto("/reservar/?servicio=acupuntura");
+    await page.getByRole("button", { name: "Atrás" }).click();
     await page.getByRole("button", { name: /Sueroterapia/ }).click();
     await page.getByRole("button", { name: "Continuar" }).click();
     const names = page.locator("main section button[aria-pressed] .font-semibold").filter({ hasText: /^Dr/ });

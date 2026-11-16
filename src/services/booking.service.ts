@@ -82,6 +82,20 @@ export function parseBookingPreselection(get: (key: string) => string | null): B
   };
 }
 
+/**
+ * Paso en que abre la reserva: el primero que falta según lo que el paciente
+ * ya eligió antes de llegar (por URL). Solo cuenta lo que es válido.
+ *   nada → 1 Servicio · servicio → 2 Profesional · profesional → 3 Fecha y hora
+ *   profesional + día y hora → 4 Tus datos
+ */
+export function resolveStartStep(
+  preselection: Pick<BookingPreselection, "date" | "time">,
+  valid: { service: boolean; doctor: boolean },
+): 1 | 2 | 3 | 4 {
+  if (valid.doctor) return preselection.date && preselection.time ? 4 : 3;
+  return valid.service ? 2 : 1;
+}
+
 /** Día y hora iniciales: los preseleccionados si siguen libres; si no, el primer día sin hora. */
 export function resolveInitialSlot(
   days: DayAvailability[],

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { BookingRequest, DayAvailability } from "@/models";
-import { buildBookingMessage, parseBookingPreselection, resolveInitialSlot, serviceWhatsAppUrl } from "./booking.service";
+import { buildBookingMessage, parseBookingPreselection, resolveInitialSlot, resolveStartStep, serviceWhatsAppUrl } from "./booking.service";
 
 const request: BookingRequest = {
   serviceSlug: "acupuntura",
@@ -68,5 +68,29 @@ describe("parseBookingPreselection", () => {
 
   it("should_leave_fields_undefined_when_params_are_missing", () => {
     expect(parseBookingPreselection(() => null)).toEqual({ serviceSlug: undefined, doctorSlug: undefined, date: undefined, time: undefined, details: undefined });
+  });
+});
+
+describe("resolveStartStep", () => {
+  const none = { service: false, doctor: false };
+
+  it("should_start_at_service_step_when_nothing_was_chosen", () => {
+    expect(resolveStartStep({}, none)).toBe(1);
+  });
+
+  it("should_start_at_doctor_step_when_only_the_service_was_chosen", () => {
+    expect(resolveStartStep({}, { service: true, doctor: false })).toBe(2);
+  });
+
+  it("should_start_at_date_step_when_the_doctor_was_chosen_without_time", () => {
+    expect(resolveStartStep({}, { service: true, doctor: true })).toBe(3);
+  });
+
+  it("should_start_at_patient_step_when_doctor_day_and_time_were_chosen", () => {
+    expect(resolveStartStep({ date: "2026-11-17", time: "15:00" }, { service: true, doctor: true })).toBe(4);
+  });
+
+  it("should_ignore_day_and_time_when_the_doctor_is_not_valid", () => {
+    expect(resolveStartStep({ date: "2026-11-17", time: "15:00" }, none)).toBe(1);
   });
 });

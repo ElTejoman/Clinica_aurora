@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ZodIssue } from "zod";
 import type { BookingPreselection, BookingRequestInput, ConsultMode, Doctor, Service } from "@/models";
 import { useAvailabilityMap } from "@/hooks/useAvailability";
 import { track } from "@/lib/analytics";
 import { motionAllowed } from "@/lib/motion";
 import { bookingRequestSchema } from "@/models/booking";
-import { bookingPlace, buildBookingCalendarFile, buildBookingWhatsAppUrl, resolveInitialSlot } from "@/services/booking.service";
+import { bookingPlace, buildBookingCalendarFile, buildBookingWhatsAppUrl, resolveInitialSlot, resolveStartStep } from "@/services/booking.service";
 import { downloadFile } from "@/utils/download";
 import { describeAppointmentTime, formatTime12h } from "@/utils/format";
 
@@ -16,7 +16,8 @@ import { describeAppointmentTime, formatTime12h } from "@/utils/format";
  *   1 Servicio → 2 Profesional → 3 Fecha y hora → 4 Tus datos → 5 WhatsApp
  *
  * - "Continuar" solo avanza si el paso está completo.
- * - Lo que llega por URL (servicio, profesional, día, hora, motivo) ya viene marcado.
+ * - Lo que llega por URL (servicio, profesional, día, hora, motivo) ya viene marcado
+ *   y la reserva abre en el primer paso que falta (ver resolveStartStep).
  * - En el paso 2 solo aparecen los profesionales del servicio elegido.
  * - Al confirmar se abre WhatsApp con el mensaje armado (no se guarda nada).
  */
@@ -59,7 +60,12 @@ export function useBookingForm({
   const slugs = useMemo(() => doctors.map((d) => d.slug), [doctors]);
   const availability = useAvailabilityMap(slugs, AVAILABILITY_DAYS);
 
-  const [step, setStep] = useState<BookingStep>(1);
+  const [step, setStep] = useState<BookingStep>(() =>
+    resolveStartStep(preselection, {
+      service: Boolean(initial.serviceSlug),
+      doctor: initial.doctor.slug === preselection.doctorSlug,
+    }),
+  );
   const [serviceSlug, setServiceSlug] = useState<string | null>(initial.serviceSlug);
   const [details, setDetails] = useState(preselection.details ?? "");
   const [doctorSlug, setDoctorSlug] = useState(initial.doctor.slug);
@@ -96,6 +102,10 @@ export function useBookingForm({
   } satisfies Omit<BookingRequestInput, "consent"> & { consent: boolean };
   const parsed = bookingRequestSchema.safeParse(input);
   const errors = showErrors && !parsed.success ? collectPatientErrors(parsed.error.issues) : {};
+
+  useEffect(() => {
+    if (step === 4 && days && !slot.time) setStep(3);
+  }, [step, days, slot.time]);
 
   const stepComplete: Record<1 | 2 | 3 | 4, boolean> = {
     1: Boolean(service),
