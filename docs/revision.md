@@ -7,13 +7,13 @@ Cada sección tiene un código; al dar un comentario, menciónalo (p. ej. "I3: �
 
 ## Estado al día (actualizado: 2026-11-15)
 
-**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 15 en cambios 🔄 · 17 sin revisar ⬜ (de 37 secciones).
+**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 17 en cambios 🔄 · 15 sin revisar ⬜ (de 37 secciones).
 
 **Esperando tu aprobación (🔄):** I4 accesos rápidos · I8 testimonios (falta Trustindex) · P1 directorio de staff ·
 P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta · B1/B2 blog educativo ·
 C1–C3 contacto reorganizado (agenda por especialidad, sede sin horario, canales + formulario) ·
 G3 pie de página (horario resumido) · S3/S6 bloques de cada servicio ordenados, planes de nutrición con precio y
-cierre en la banda final · I7/I9 ocultas en el inicio.
+cierre en la banda final · I7/I9 ocultas en el inicio · L1/L2 Libro de Reclamaciones (hoja llenable en línea).
 
 **Decisiones abiertas (tuyas o del cliente):**
 1. ¿Las reservas llegan al WhatsApp de citas (946 453 531) o al general (912 724 465)?
@@ -24,16 +24,18 @@ cierre en la banda final · I7/I9 ocultas en el inicio.
 6. Precios de nutrición y cuenta BCP/CCI: copiados del sitio actual; confirmar que siguen vigentes (`data/services.ts`,
    `SITE.payment`).
 7. Dominio definitivo: `.env.production` aún dice `clinicaaurora.pe` (el nombre ahora es "Clínica La Aurora").
+8. Libro de Reclamaciones: el proveedor que figura es ATMA PULSE CLINIC E.I.R.L. (RUC 20609912970, domicilio en Jesús
+   María), tomado de la hoja que envió la clínica; confirmar que es la empresa que opera Clínica La Aurora.
 
 **Pendiente técnico:**
 - E2E al día: 115 en verde y 3 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
-  incluidas las de I3, I6, G4, P4, R1, el blog, la agenda de contacto, los bloques de servicios y los planes.
+  incluidas las de I3, I6, G4, P4, R1, el blog, la agenda de contacto, los bloques de servicios, los planes y el libro.
+- Commits locales sin subir a GitHub (a pedido del usuario: "aún no subas nada").
 - Código en GitHub: `github.com/ElTejoman/Clinica_aurora` (rama `main`). Demo lista para Netlify (`netlify.toml`,
   README §6 "Demo en Netlify"): falta importar el repo en Netlify (no hay acceso desde aquí).
 - Despliegue definitivo en Hostinger: pendiente (dominio + hPanel, README §6).
 
-**Siguiente en la revisión:** L1/L2 (Libro de Reclamaciones, siguiente); luego S1, S2, S4 y S5 (servicios),
-I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
+**Siguiente en la revisión:** S1, S2, S4 y S5 (servicios), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 
 ## Antes de la revisión
 
@@ -98,8 +100,8 @@ I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 ### Libro de Reclamaciones
 | Código | Sección | Archivo principal | Estado |
 |---|---|---|---|
-| L1 | Página (canales, hoja, texto legal) | `app/(site)/libro-de-reclamaciones/page.tsx` | ⬜ |
-| L2 | Hoja de reclamación imprimible | `app/(print)/libro-de-reclamaciones/hoja/page.tsx` | ⬜ |
+| L1 | Página (libro abierto, canales, hoja: pasos + vista previa, texto legal) · acceso desde el pie | `app/(site)/libro-de-reclamaciones/page.tsx`, `components/complaints/ComplaintsBadge.tsx` | 🔄 |
+| L2 | Hoja de reclamación llenable en línea → PDF o impresión | `app/(print)/libro-de-reclamaciones/hoja/page.tsx` | 🔄 |
 
 ### Blog educativo (`/blog-educativo/` y artículos)
 | Código | Sección | Archivo principal | Estado |
@@ -120,7 +122,7 @@ I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 
 - [x] Fotos de las tarjetas de servicios (I3, S1): 6 imágenes 4:3 (1200 × 900) que reemplazan a las provisionales en `public/images/services/` con el mismo nombre: `ozonoterapia`, `acupuntura`, `sueroterapia`, `nutricion`, `medicina-funcional`, `medicina-general` (.webp)
 - [ ] ID del widget de Trustindex (I8, S5): plan pago de Trustindex + widget "una fila en carrusel"; el ID va en `.env.production` (`NEXT_PUBLIC_TRUSTINDEX_WIDGET_ID`)
-- [ ] Razón social, RUC y domicilio para el Libro de Reclamaciones (L1, L2)
+- [x] Razón social, RUC y domicilio para el Libro de Reclamaciones (L1, L2): de su hoja de reclamación (confirmar, decisión 8)
 - [ ] Qué WhatsApp recibe las citas y cuál las consultas (C1, R5) — el flotante ya quedó fijo en el 912 (G4)
 - [ ] Nombres de los dos retratos sin identificar (P1)
 - [x] Horario de atención de los 5 profesionales (P4)
@@ -158,3 +160,4 @@ I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 | 2026-11-15 | I7, I9 | Comentar (que no se vean) "¿Por qué elegir Clínica Aurora?" y "¿Por qué elegirnos? Tu bienestar es nuestra prioridad" del inicio | Comentadas en `app/(site)/page.tsx` (imports y JSX), con nota para reactivarlas; los componentes quedan intactos. El inicio cierra con los testimonios y pasa directo al pie. "Tu bienestar es nuestra prioridad" sigue en el blog educativo (B1), que no se tocó | Playwright: inicio en escritorio y móvil sin esas secciones (títulos h2: servicios, ¿qué deseas realizar hoy?, respaldo, galería, testimonios) y sin errores; E2E completa 113 en verde; tsc + eslint | 0c19479 |
 | 2026-11-15 | S3 | En Nutrición faltaba presentar mejor los planes y mostrar el precio | Se tomaron los planes reales de la referencia: eran 5 (faltaba "2 consultas presenciales"), con duración, precio y ahorro (S/ 150 · S/ 260 · S/ 280, ahorras S/ 20 · S/ 420, ahorras S/ 30 · S/ 560, ahorras S/ 40). Nuevo layout `plans` (`PlanPricing` en el modelo): tarjeta con duración, nombre, precio grande, sello de ahorro (líneas alineadas entre tarjetas vecinas), qué incluye y "Reservar este plan", que abre /reservar con el servicio y el plan en el detalle ("Plan: Paquete de 3 controles (S/ 420)", llega al mensaje de WhatsApp). 5 en una fila desde 1280 px, 3 + 2 en laptop, 1 por fila en móvil. Debajo, "Métodos de pago" con la cuenta BCP y el CCI de la referencia (`SITE.payment`, fáciles de seleccionar). `formatSoles` (+3 tests) | Playwright: sección de planes a 1400 px (fila de 5), 1100 px (3 + 2) y 390 px; el enlace del paquete de 3 controles lleva el plan y el precio. E2E: +1 (5 planes, precios, ahorro, CCI y reserva con el plan); suite completa 115 en verde y 3 omitidas por diseño; tsc + eslint + 77 unit tests | a0a2e7a |
 | 2026-11-15 | Todo el sitio (G1–G5) | El nombre correcto es "Clínica La Aurora" (faltaba "La") | `SITE.name` → "Clínica La Aurora": títulos de pestaña, metadatos, mensajes de WhatsApp, pie, Libro de Reclamaciones, etiquetas accesibles y datos estructurados lo toman de ahí. Sello del logo: arco inferior "LA AURORA" (antes "AURORA"). Nombre junto al sello: sale de `SITE.name` y, si no cabe, corta solo tras "CLÍNICA" ("CLÍNICA / LA AURORA", nunca "CLÍNICA LA / AURORA"). Textos fijos: alt de banners y cierre de Ozonoterapia, cabecera de la reserva, calendario .ics, README, package.json, .env.example, .htaccess, tokens y E2E. Sin cambios: el componente `AuroraWave` (la ola "aurora", no el nombre), las filas anteriores de esta bitácora y el dominio de `.env.production` (pendiente, decisión 7) | Playwright: header a 1400, 1024 y 390 px (sin desbordes; título "Contacto · Clínica La Aurora"; etiqueta "Clínica La Aurora, inicio") y sello del pie; búsqueda sin restos de "Clínica Aurora" en el código; E2E completa 115 en verde y 3 omitidas por diseño; tsc + eslint + 77 unit tests | ff6b710 |
+| 2026-11-15 | L1, L2 (+ pie) | Documento de la clínica "Página de libro de reclamaciones": (1) libro en la parte inferior del inicio con la imagen del libro abierto, que lleve a una página como la de AUNA; (2) canales WhatsApp 912 724 465 / 946 453 531 y correo corporativo; (3) formulario descargable que el paciente pueda llenar, estético y sin el enlace de Google; (4) texto legal al final | (1) Pie de todas las páginas: distintivo blanco "Libro de Reclamaciones" con el libro abierto (`ComplaintsBadge`) en lugar del ícono pequeño. (2) Ya estaban: "¿Necesitas ayuda? / Juntos resolveremos tus dudas" con WhatsApp citas (946), WhatsApp consultas (912) y correo. (3) Del Google Doc enlazado se tomaron los campos (coinciden con nuestra hoja) y los datos del proveedor que faltaban: ATMA PULSE CLINIC E.I.R.L., RUC 20609912970 (dígito verificador válido), Av. José Arnaldo Márquez 1965, Jesús María (`SITE.legal`; decisión 8). L1: bloque "¿Tienes algún reclamo? · Hoja de reclamación" con 3 pasos (complétala en línea → guárdala como PDF o imprímela → envíanosla, respuesta en máx. 15 días hábiles), vista previa de la hoja con los datos del proveedor y botón "Llenar hoja de reclamación". L2: la hoja se llena en pantalla (campos con etiqueta y autocompletado, Reclamo/Queja, renglones que crecen con el texto, fecha sin "dd/mm/aaaa" al imprimir, N.º y sección 4 para la clínica) y "Imprimir o guardar como PDF" la saca con lo escrito; rótulo "Hoja de reclamación virtual". (4) El texto legal ya estaba al final; dice "Clínica La Aurora" en lugar de "Lima Natural Health Clinic" | Playwright: página del libro en escritorio y móvil, distintivo del pie, hoja llenada en escritorio y móvil y PDF A4 generado con los datos escritos (2 páginas); sin scroll horizontal ni errores de consola. E2E del libro ampliada (pie → libro → canales → RUC → llenar hoja: nombre, Queja, detalle); suite completa 115 en verde y 3 omitidas por diseño; tsc + eslint | f59b87d |
