@@ -45,4 +45,13 @@ export const DOCTOR_SCHEDULES: Readonly<Record<string, WeeklySchedule>> = {
     { day: "Sábado", weekday: 6, ranges: [] },
     { day: "Domingo", weekday: 0, ranges: [] },
   ],
+  "adela-huaman": [
+    { day: "Lunes", weekday: 1, ranges: [["08:30", "13:00"]] },
+    { day: "Martes", weekday: 2, ranges: [] },
+    { day: "Miércoles", weekday: 3, ranges: [["08:30", "13:00"]] },
+    { day: "Jueves", weekday: 4, ranges: [["08:30", "13:00"]] },
+    { day: "Viernes", weekday: 5, ranges: [] },
+    { day: "Sábado", weekday: 6, ranges: [["08:30", "13:00"]] },
+    { day: "Domingo", weekday: 0, ranges: [] },
+  ],
 };

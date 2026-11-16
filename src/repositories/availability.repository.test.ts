@@ -56,7 +56,7 @@ describe("simulatedAvailabilityRepository", () => {
   });
 
   it("should_fall_back_to_clinic_hours_when_the_doctor_has_no_schedule", async () => {
-    const byDate = await repo.getSlotsByDate("adela-huaman", fourWeeksFrom("2026-11-16"));
+    const byDate = await repo.getSlotsByDate("profesional-sin-horario", fourWeeksFrom("2026-11-16"));
     expectWithin(OPENING_HOURS, byDate);
   });
 
@@ -75,7 +75,7 @@ describe("scheduleRepository", () => {
   });
 
   it("should_return_clinic_hours_when_the_doctor_has_no_schedule", () => {
-    expect(schedules.getForDoctor("adela-huaman")).toEqual({ days: OPENING_HOURS, source: "clinic" });
+    expect(schedules.getForDoctor("profesional-sin-horario")).toEqual({ days: OPENING_HOURS, source: "clinic" });
   });
 
   it("should_only_define_schedules_for_existing_doctors_with_valid_ranges", () => {
