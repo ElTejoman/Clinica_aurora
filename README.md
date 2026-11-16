@@ -103,7 +103,7 @@ tests/e2e/                                 pruebas Playwright
 | Razón social, RUC y domicilio del Libro de Reclamaciones | `src/config/site.ts` (`SITE.legal`) |
 | Servicios: textos, condiciones que atiende, protocolos, imagen | `src/data/services.ts` |
 | Staff: bio, CMP/RNE, experiencia, especialidades, servicios que atiende | `src/data/doctors.ts` |
-| Reseñas de Google y cantidad total | `src/data/reviews.ts` |
+| Reseñas de Google y cantidad total | `src/data/reviews.ts` (o el widget de Trustindex, ver abajo) |
 | Banners del carrusel, galería, respaldo, "por qué elegirnos", recomendaciones | `src/data/clinic.ts` |
 | Colores y tipografías | `tailwind.config.ts` y `src/app/layout.tsx` |
 | Dominio público | `.env.production` (`NEXT_PUBLIC_SITE_URL`) |
@@ -114,6 +114,7 @@ tests/e2e/                                 pruebas Playwright
   - Fotos: 1200×900.
 - **Añadir un servicio o profesional:** copia un bloque en su archivo de `data/`. El `slug` será su URL. Relaciónalos con `serviceSlugs` en el profesional; un test avisa si una relación queda rota.
 - **Reseñas:** usa solo reseñas reales y verificables (Google). Nunca inventes testimonios.
+- **Reseñas sincronizadas con Trustindex:** en su panel, crea un widget de reseñas de Google con diseño de **una fila en carrusel** y copia el código `<script src="https://cdn.trustindex.io/loader.js?ID">`. Pega solo el `ID` en `.env.production` como `NEXT_PUBLIC_TRUSTINDEX_WIDGET_ID=ID`, haz commit y push. El widget reemplaza a las reseñas de `data/reviews.ts` en el inicio y en las páginas de servicio. Para volver a las reseñas fijas, deja la variable vacía. En un sitio que no es WordPress, como este, mostrar el widget requiere un plan pago de Trustindex.
 
 ## 4. Reserva y contacto por WhatsApp
 

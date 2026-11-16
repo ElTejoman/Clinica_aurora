@@ -19,10 +19,21 @@ function readSiteUrl(raw: string | undefined): string {
   }
 }
 
+/** ID del widget de Trustindex (lo que va tras "loader.js?" en su código). Vacío = reseñas propias. */
+function readTrustindexId(raw: string | undefined): string {
+  const value = raw?.trim() ?? "";
+  if (value && !/^[a-z0-9]+$/i.test(value)) {
+    throw new Error(`NEXT_PUBLIC_TRUSTINDEX_WIDGET_ID solo admite letras y números: "${value}"`);
+  }
+  return value;
+}
+
 export const env = {
   /** Dominio público, sin barra final. Se usa en SEO, sitemap y datos estructurados. */
   siteUrl: readSiteUrl(process.env.NEXT_PUBLIC_SITE_URL),
   /** `NEXT_PUBLIC_ENABLE_MOTION=false` apaga todas las animaciones del sitio. */
   motionEnabled: process.env.NEXT_PUBLIC_ENABLE_MOTION !== "false",
+  /** Widget de reseñas de Trustindex. Si está vacío se muestran las reseñas de data/reviews.ts. */
+  trustindexWidgetId: readTrustindexId(process.env.NEXT_PUBLIC_TRUSTINDEX_WIDGET_ID),
   isProduction: process.env.NODE_ENV === "production",
 } as const;
