@@ -7,12 +7,12 @@ Cada sección tiene un código; al dar un comentario, menciónalo (p. ej. "I3: �
 
 ## Estado al día (actualizado: 2026-11-15)
 
-**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 11 en cambios 🔄 · 21 sin revisar ⬜ (de 37 secciones).
+**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 13 en cambios 🔄 · 19 sin revisar ⬜ (de 37 secciones).
 
 **Esperando tu aprobación (🔄):** I4 accesos rápidos · I8 testimonios (falta Trustindex) · P1 directorio de staff ·
 P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta · B1/B2 blog educativo ·
 C1–C3 contacto reorganizado (agenda por especialidad, sede sin horario, canales + formulario) ·
-G3 pie de página (horario resumido).
+G3 pie de página (horario resumido) · S3/S6 bloques de cada servicio ordenados y cierre en la banda final.
 
 **Decisiones abiertas (tuyas o del cliente):**
 1. ¿Las reservas llegan al WhatsApp de citas (946 453 531) o al general (912 724 465)?
@@ -22,14 +22,14 @@ G3 pie de página (horario resumido).
 5. Blog: ¿más artículos? Hoy solo existe el de acupuntura (el único de la referencia).
 
 **Pendiente técnico:**
-- E2E al día: 112 en verde y 2 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
-  incluidas las de I3, I6, G4, P4, R1, el blog y la agenda de contacto.
+- E2E al día: 113 en verde y 3 omitidas por diseño (2026-11-15, en una copia aislada para no tocar el `npm run dev`),
+  incluidas las de I3, I6, G4, P4, R1, el blog, la agenda de contacto y los bloques de servicios.
 - Código en GitHub: `github.com/ElTejoman/Clinica_aurora` (rama `main`). Demo lista para Netlify (`netlify.toml`,
   README §6 "Demo en Netlify"): falta importar el repo en Netlify (no hay acceso desde aquí).
 - Despliegue definitivo en Hostinger: pendiente (dominio + hPanel, README §6).
 
-**Siguiente en la revisión:** B1/B2 (blog) y C1–C3 (contacto), recién cambiados; I7 y I9 (inicio, sin revisar),
-P2/P3/P5 (perfil), servicios (S), libro (L, siguiente), reserva R2–R5, global G1, G2 y G5.
+**Siguiente en la revisión:** L1/L2 (Libro de Reclamaciones, siguiente); luego S1, S2, S4 y S5 (servicios),
+I7 y I9 (inicio), P2/P3/P5 (perfil), reserva R2–R5, global G1, G2 y G5.
 
 ## Antes de la revisión
 
@@ -70,10 +70,10 @@ P2/P3/P5 (perfil), servicios (S), libro (L, siguiente), reserva R2–R5, global 
 |---|---|---|---|
 | S1 | Índice de servicios | `app/(site)/servicios/page.tsx` | ⬜ |
 | S2 | Cabecera del servicio (banner o foto + "Agenda aquí") | `components/services/ServiceHero.tsx` | ⬜ |
-| S3 | Problemas que atiende / protocolos / planes | `components/services/ServiceSections.tsx` · textos en `data/services.ts` | ⬜ |
+| S3 | Problemas que atiende / protocolos / planes | `components/services/ServiceSections.tsx` · textos en `data/services.ts` | 🔄 |
 | S4 | Profesionales que lo atienden | `app/(site)/servicios/[slug]/page.tsx` | ⬜ |
 | S5 | Reseñas del servicio | `components/reviews/ReviewsSection.tsx` | ⬜ |
-| S6 | Banda final "Agenda aquí" | `components/services/ServiceCtaBand.tsx` | ⬜ |
+| S6 | Banda final "Agenda aquí" (con el texto de cierre del servicio) | `components/services/ServiceCtaBand.tsx` | 🔄 |
 
 ### Staff (`/staff-de-profesionales/` y perfiles)
 | Código | Sección | Archivo principal | Estado |
@@ -150,3 +150,4 @@ P2/P3/P5 (perfil), servicios (S), libro (L, siguiente), reserva R2–R5, global 
 | 2026-11-15 | B1, B2 | Faltaba extraer y embellecer el blog educativo de la referencia (limanaturalhealth.com/blog-educativo/) | La referencia tiene un solo artículo (acupuntura) con el texto en la misma página; se copió íntegro. Índice `/blog-educativo/`: cabecera con el texto de la referencia, artículo destacado horizontal (tema, minutos de lectura, resumen, "Leer artículo" sobre toda la tarjeta), grilla para los siguientes y cierre "Tu bienestar es nuestra prioridad". Artículo `/blog-educativo/<slug>/`: portada real de la clínica (en vez de la foto de banco de la referencia) montada sobre la cabecera, letra capital, beneficios y condiciones en tarjetas con check, aviso "es informativo y no reemplaza una evaluación médica", panel fijo "Tratamiento relacionado" (servicio, Dr. Meza, "Agendar acupuntura" → reserva con el servicio elegido, WhatsApp) y "Sigue leyendo" cuando haya más artículos. Capas `models/article.ts` → `data/articles.ts` → `article.repository` → `blog.service` (relacionados y minutos de lectura, +7 tests); JSON-LD BlogPosting; sitemap; "Blog" en el menú y "Blog educativo" en el pie. G2: el menú se compacta solo entre 1024 y 1279 px (antes "Staff de profesionales" ya se partía en dos líneas a 1024 px) | Playwright: índice y artículo en escritorio 1400 px y móvil 390 px, panel fijo al hacer scroll, menú en una línea a 1024/1100/1180/1280 px, sin scroll horizontal ni errores de consola; E2E completa 110/110 (+5: carga de las 2 páginas, WhatsApp flotante en ambas, menú → artículo → reserva); tsc + eslint + 64 unit tests | d4e4017 |
 | 2026-11-15 | C1, C2, C3 | Redistribuir Contáctanos: sin el enredo de horas; widget de horarios y citas más grande y por especialización; debajo el mapa de la sede, sin horario de atención | Orden nuevo: agenda (#agendar) → sede (#sede) → otros canales (#escribenos). C1: `AppointmentFinder`, una tarjeta en 3 pasos: especialidad (6 servicios con icono; 2 columnas en móvil) → profesional que la atiende, con foto y "Próxima: Lun 16 · 2:30 p. m." (Medicina General, Ozonoterapia y Sueroterapia ofrecen al Dr. Rondón y a la Dra. Huamán) → 7 días y horas separadas en Mañana / Tarde (`groupSlotsByPeriod`, +2 tests). Barra de resumen ("Medicina General con la Dra. Huamán, el mar 17 a las 8:30 a. m.") con "Reservar", que abre /reservar directo en "Tus datos" (R1), y WhatsApp. Reutiliza `useSlotSelection` y la agenda simulada de P4, así que solo ofrece horas dentro del horario de cada profesional. C3: mapa + dirección + "Cómo llegar" + "Antes de tu visita" (las recomendaciones que estaban junto al formulario); ya no muestra el horario por día. C2: canales en lista compacta (`ContactChannels layout="list"`; el Libro de Reclamaciones sigue con tarjetas) junto al formulario "Nos encanta leerte". Se quitó el botón suelto "Reservar en línea" | Playwright: escritorio 1400 px y móvil 390 px (capturas de la página, del widget y de la sede con el mapa cargado); cambio de especialidad y de profesional, la hora elegida pasa al resumen y "Reservar" lleva servicio/médico/día/hora; sin scroll horizontal ni errores de consola. E2E completa: 112 en verde y 2 omitidas por diseño (+2: agenda → Tus datos, en escritorio y móvil); tsc + eslint + 66 unit tests | 9746f8d |
 | 2026-11-15 | G3 | Pasar el pie por revisión UX/UI y mejorarlo; el horario es variable: no mostrar todo el enredo, hacerlo más simple | Revisión UX/UI (10 hallazgos). Horario: de 7 filas con tramos a 3 líneas (lunes a viernes 8:30 a. m.–6:30 p. m. · sábados 8:30 a. m.–1:00 p. m. · domingos cerrado), rango que cubre a todo el staff, con "Cada profesional atiende en días y horas distintos" y "Ver horarios del staff"; `OPENING_HOURS_SUMMARY` en `config/site.ts` + test que falla si un horario de profesional queda fuera. Anillo de foco claro en el pie (el teal no se veía, ≈ 1,5:1). Teléfonos rotulados "Consultas" (912) / "Citas" (946); dirección → cómo llegar en Google Maps. Libro de Reclamaciones junto a la marca (el WhatsApp flotante lo tapaba entre 1280 y 1399 px). Enlaces en "Servicios" y "La clínica" (+ Contacto y sede), 2 columnas en móvil y tablet, áreas táctiles ≥ 28 px; texto de marca corto (ya no repite los servicios); aviso de urgencias en línea propia. Alto: tablet 937 → 697 px, móvil 1367 → 1269 px. Nuevo `HoursSummary`, `formatPeruPhone` (+2 tests). El horario por día sigue disponible en `OpeningHours` | Playwright: escritorio 1400/1280, tablet 820 y móvil 390 px, sin scroll horizontal ni errores de consola; anillo de foco claro; todos los enlaces internos del pie en 200; E2E de inicio (pie actualizado) en verde en una copia aislada; tsc + eslint + 70 unit tests | 1dcc88d |
+| 2026-11-15 | S3, S6 | Los bloques de cada servicio se ven poco ordenados; hacerlos mucho más presentables | Problemas detectados: filas incompletas alineadas a la izquierda (5 → 4 + 1, 6 → 4 + 2, 7 → 4 + 3), el mismo ícono de hoja en cada condición, "qué tratamos" y "cómo tratamos" con la misma tarjeta, y el párrafo de cierre flotando solo. S3 "cards" (qué tratamos): índice editorial con el título a la izquierda y las condiciones numeradas 01, 02… en 2 columnas con separadores (1 columna en móvil). S3 "lists" (protocolos, sueros, planes, condiciones agrupadas): grilla equilibrada con `balancedColumns` (`utils/layout.ts`, +4 tests): 5 → 3 + 2, 6 → 3 + 3, 7 → 4 + 3, 8 → 4 + 4, con la última fila centrada y tarjetas de igual alto (título separado de las viñetas). S6: el cierre ("Ozonoterapia en Lima" + texto) pasa a la banda "Agenda aquí" como etiqueta y texto; si el servicio no tiene cierre, la banda queda igual | Playwright: los 6 servicios en escritorio 1400 px (antes y después) y Nutrición en móvil 390 px; sin scroll horizontal ni errores de consola. E2E: +1 (Medicina General en filas 4 + 3 con la segunda centrada, numeración y cierre en la banda); suite completa 113 en verde y 3 omitidas por diseño; tsc + eslint + 74 unit tests | 0cd3cf6 |
