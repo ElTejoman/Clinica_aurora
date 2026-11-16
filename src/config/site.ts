@@ -29,6 +29,12 @@ export const SITE = {
     tiktok: "https://www.tiktok.com/@lima.natural.health",
     youtube: "https://www.youtube.com/@doctorhierba1614",
   },
+  /** Métodos de pago que se muestran junto a los planes (tomados del sitio actual de la clínica). */
+  payment: {
+    bank: "BCP",
+    account: "1939920610080",
+    cci: "00219300992061008014",
+  },
   /** Datos del proveedor para el Libro de Reclamaciones (DS 011-2011-PCM / DS 002-2019-SA). */
   legal: {
     name: "[RAZÓN SOCIAL]",

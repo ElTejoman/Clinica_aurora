@@ -15,6 +15,12 @@ export function describeAppointmentTime(day: Pick<DayAvailability, "isToday" | "
   return day.isToday ? `hoy a las ${formatTime12h(time)}` : `el ${day.label} a las ${formatTime12h(time)}`;
 }
 
+/** 150 → "S/ 150" · 1200 → "S/ 1,200" · 99.5 → "S/ 99.50" (soles, formato peruano) */
+export function formatSoles(amount: number): string {
+  const decimals = Number.isInteger(amount) ? 0 : 2;
+  return `S/ ${amount.toLocaleString("es-PE", { minimumFractionDigits: decimals, maximumFractionDigits: 2 })}`;
+}
+
 /** "14:30" → "2:30 p. m." */
 export function formatTime12h(time: string): string {
   const [h, m] = time.split(":").map(Number) as [number, number];

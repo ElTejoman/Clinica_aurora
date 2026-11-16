@@ -169,12 +169,33 @@ export const SERVICES: Service[] = [
       {
         title: "Nuestros planes de nutrición",
         intro: "Un plan personalizado para una vida más saludable.",
-        layout: "lists",
+        layout: "plans",
         items: [
-          { title: "1 consulta presencial", bullets: ["Evaluación antropométrica completa", "Plan nutricional 100 % personalizado", "Recomendaciones estratégicas"] },
-          { title: "Paquete de 2 controles", bullets: ["Evaluación corporal en cada sesión", "2 planes nutricionales progresivos", "Seguimiento mensual"] },
-          { title: "Paquete de 3 controles", bullets: ["Evaluación en cada consulta", "3 planes nutricionales progresivos", "Seguimiento profundo y ajustes"] },
-          { title: "Paquete de 4 controles", bullets: ["Evaluación corporal completa cada mes", "Ajustes estratégicos continuos", "Renovación total de menús"] },
+          {
+            title: "1 consulta presencial",
+            plan: { duration: "1 mes", price: 150 },
+            bullets: ["Evaluación antropométrica completa", "Plan nutricional 100 % personalizado", "Recomendaciones estratégicas"],
+          },
+          {
+            title: "2 consultas presenciales",
+            plan: { duration: "1 mes (cada 15 días)", price: 260 },
+            bullets: ["Evaluación antropométrica completa", "Plan nutricional 100 % personalizado", "Recomendaciones estratégicas"],
+          },
+          {
+            title: "Paquete de 2 controles",
+            plan: { duration: "2 meses", price: 280, savings: 20 },
+            bullets: ["Evaluación corporal en cada sesión", "2 planes nutricionales progresivos", "Seguimiento mensual"],
+          },
+          {
+            title: "Paquete de 3 controles",
+            plan: { duration: "3 meses", price: 420, savings: 30 },
+            bullets: ["Evaluación en cada consulta", "3 planes nutricionales progresivos", "Seguimiento profundo y ajustes"],
+          },
+          {
+            title: "Paquete de 4 controles",
+            plan: { duration: "4 meses", price: 560, savings: 40 },
+            bullets: ["Evaluación corporal completa cada mes", "Ajustes estratégicos continuos", "Renovación total de menús"],
+          },
         ],
       },
     ],

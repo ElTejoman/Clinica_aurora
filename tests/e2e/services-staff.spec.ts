@@ -30,6 +30,18 @@ test.describe("Servicios", () => {
     await expect(page.locator("section", { hasText: "¿Quieres empezar tu tratamiento de ozonoterapia?" }).last()).toContainText("Ozonoterapia en Lima");
   });
 
+  test("nutrición muestra sus planes con precio y cada uno se reserva con el plan indicado", async ({ page }) => {
+    await page.goto("/servicios/nutricion/");
+    const plans = page.locator("[data-plan]");
+    await expect(plans).toHaveCount(5);
+    await expect(plans.first()).toContainText("S/ 150");
+    await expect(plans.nth(3)).toContainText("S/ 420");
+    await expect(plans.nth(3)).toContainText("Ahorras S/ 30");
+    await expect(page.getByText("00219300992061008014")).toBeVisible();
+    await plans.nth(3).getByRole("link", { name: /Reservar este plan/ }).click();
+    await expect(page).toHaveURL(/servicio=nutricion&motivo=Plan%3A\+Paquete\+de\+3\+controles\+%28S%2F\+420%29/);
+  });
+
   test("muestra a los profesionales que atienden el servicio", async ({ page }) => {
     await page.goto("/servicios/medicina-general/");
     const team = page.locator("section", { hasText: "Nuestros profesionales" });

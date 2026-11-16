@@ -43,7 +43,7 @@ export default async function ServicePage({ params }: Params) {
   return (
     <>
       <ServiceHero service={service} />
-      <ServiceSections sections={service.sections} />
+      <ServiceSections sections={service.sections} serviceSlug={service.slug} />
 
       {doctors.length > 0 && (
         <section className={`${pageContainer} py-16`}>

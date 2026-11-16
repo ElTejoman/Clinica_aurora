@@ -1,19 +1,31 @@
+/** Datos de precio de un plan (sección "plans"). Montos en soles. */
+export interface PlanPricing {
+  /** "1 mes (cada 15 días)" */
+  duration: string;
+  price: number;
+  /** Ahorro frente a pagar las consultas por separado. */
+  savings?: number;
+}
+
 /** Un elemento dentro de una sección de servicio: condición tratada, protocolo, suero, plan… */
 export interface ServiceItem {
   title: string;
   description?: string;
   bullets?: string[];
+  /** Solo en secciones "plans". */
+  plan?: PlanPricing;
 }
 
 /**
  * Bloque de contenido de la página de un servicio.
- *   "cards" → tarjetas con título + descripción ("Problemas de salud que atendemos")
- *   "lists" → tarjetas con título + viñetas (protocolos, sueros, planes)
+ *   "cards" → título + descripción ("Problemas de salud que atendemos")
+ *   "lists" → título + viñetas (protocolos, sueros)
+ *   "plans" → planes con duración, precio y botón de reserva, + métodos de pago
  */
 export interface ServiceSection {
   title: string;
   intro?: string;
-  layout: "cards" | "lists";
+  layout: "cards" | "lists" | "plans";
   items: ServiceItem[];
 }
 
