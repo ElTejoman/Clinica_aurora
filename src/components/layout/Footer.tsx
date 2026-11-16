@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { LogoMark } from "@/components/brand/Logo";
+import { ComplaintsBadge } from "@/components/complaints/ComplaintsBadge";
 import { Icon, WhatsAppIcon } from "@/components/ui/Icon";
 import { ROUTES } from "@/config/routes";
 import { SITE } from "@/config/site";
@@ -56,13 +57,7 @@ function FooterBrand() {
       </div>
       <div className="flex flex-wrap items-center gap-x-6 gap-y-5 lg:flex-col lg:items-start">
         <SocialLinks className="-ml-2 text-night-ice" />
-        <Link
-          href={ROUTES.complaints}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/25 px-4 font-semibold !text-night-ice no-underline hover:bg-white/10"
-        >
-          <Icon name="book" size={18} />
-          Libro de Reclamaciones
-        </Link>
+        <ComplaintsBadge />
       </div>
     </div>
   );

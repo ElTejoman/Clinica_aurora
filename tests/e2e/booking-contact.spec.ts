@@ -105,11 +105,23 @@ test.describe("Contacto", () => {
 
 test.describe("Libro de Reclamaciones", () => {
   test("muestra canales, texto legal y la hoja imprimible", async ({ page }) => {
-    await page.goto("/libro-de-reclamaciones/");
+    await page.goto("/");
+    await page.locator("footer").getByRole("link", { name: /Libro de\s*Reclamaciones/ }).click();
+    await expect(page).toHaveURL(/\/libro-de-reclamaciones\/$/);
     await expect(page.getByText(/Decreto Supremo N\.º 002-2019-SA/)).toBeVisible();
     await expect(page.getByRole("link", { name: /Correo corporativo/ })).toHaveAttribute("href", /^mailto:/);
-    await page.goto("/libro-de-reclamaciones/hoja/");
+    await expect(page.getByRole("link", { name: /WhatsApp consultas/ })).toHaveAttribute("href", /wa\.me\/51912724465/);
+    await expect(page.locator("#hoja")).toContainText("20609912970");
+
+    await page.getByRole("link", { name: "Llenar hoja de reclamación" }).click();
+    await expect(page).toHaveURL(/\/libro-de-reclamaciones\/hoja\/$/);
     await expect(page.getByText("Identificación del consumidor reclamante")).toBeVisible();
+    await expect(page.getByText("ATMA PULSE CLINIC E.I.R.L.")).toBeVisible();
+    await page.getByLabel("Nombre", { exact: true }).fill("María Pérez");
+    await page.getByLabel("Queja²").check();
+    await page.getByLabel("Detalle").fill("Demora en la atención.");
+    await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue("María Pérez");
+    await expect(page.getByLabel("Queja²")).toBeChecked();
     await expect(page.getByRole("button", { name: "Imprimir o guardar como PDF" })).toBeVisible();
   });
 });

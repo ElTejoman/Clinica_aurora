@@ -37,9 +37,10 @@ export const SITE = {
   },
   /** Datos del proveedor para el Libro de Reclamaciones (DS 011-2011-PCM / DS 002-2019-SA). */
   legal: {
-    name: "[RAZÓN SOCIAL]",
-    ruc: "[RUC]",
-    address: "[DOMICILIO FISCAL]",
+    // De la hoja de reclamación que envió la clínica (domicilio escrito con tildes).
+    name: "ATMA PULSE CLINIC E.I.R.L.",
+    ruc: "20609912970",
+    address: "Av. José Arnaldo Márquez 1965, Jesús María",
   },
 } as const;
 

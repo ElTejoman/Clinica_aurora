@@ -12,8 +12,9 @@ import { SITE } from "@/config/site";
 
 /**
  * PÁGINA · LIBRO DE RECLAMACIONES   (ruta: /libro-de-reclamaciones/)
- * Canales de atención + hoja de reclamación imprimible + texto legal
- * (DS 002-2019-SA). Los datos del proveedor salen de SITE.legal.
+ * Libro abierto → canales de atención (WhatsApp citas y consultas, correo)
+ * → hoja de reclamación (pasos + vista previa; se llena en línea en /hoja/)
+ * → texto legal (DS 002-2019-SA). Los datos del proveedor salen de SITE.legal.
  */
 export const metadata: Metadata = {
   title: "Libro de Reclamaciones",
@@ -58,31 +59,7 @@ export default function ComplaintsPage() {
         </Reveal>
       </section>
 
-      <section className="bg-mist py-16">
-        <Reveal className={`${pageContainer} flex flex-col items-center gap-6 text-center`}>
-          <SectionHeading intro="Descarga e imprime la hoja, complétala y entrégala en la clínica o envíala firmada por WhatsApp o correo.">
-            Hoja de reclamación
-          </SectionHeading>
-          <ButtonLink href={ROUTES.complaintForm} size="lg" target="_blank">
-            <Icon name="printer" />
-            Descargar o imprimir la hoja
-          </ButtonLink>
-          <dl className="m-0 grid gap-x-8 gap-y-1 text-sm text-subink sm:grid-cols-3">
-            <div>
-              <dt className="font-semibold text-ink">Proveedor</dt>
-              <dd className="m-0">{SITE.legal.name}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold text-ink">RUC</dt>
-              <dd className="m-0">{SITE.legal.ruc}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold text-ink">Domicilio</dt>
-              <dd className="m-0">{SITE.legal.address}</dd>
-            </div>
-          </dl>
-        </Reveal>
-      </section>
+      <ComplaintSheetSection />
 
       <section className={`${pageContainer} py-16`}>
         <Reveal className="mx-auto flex max-w-[820px] flex-col gap-4 text-[16px] leading-relaxed text-muted">
@@ -102,5 +79,80 @@ export default function ComplaintsPage() {
         </Reveal>
       </section>
     </>
+  );
+}
+
+const SHEET_STEPS = [
+  { title: "Complétala en línea", text: "Escribe tus datos, el detalle y tu pedido directamente en la hoja." },
+  { title: "Guárdala como PDF o imprímela", text: "Con un clic la descargas ya llena, lista para firmar." },
+  { title: "Envíanosla", text: "Por WhatsApp o correo, o entrégala en la clínica. Te respondemos en un máximo de 15 días hábiles." },
+];
+
+/** "Hoja de reclamación": pasos + vista previa de la hoja + datos del proveedor. */
+function ComplaintSheetSection() {
+  return (
+    <section id="hoja" className="scroll-mt-28 bg-mist py-16">
+      <div className={`${pageContainer} grid items-center gap-12 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]`}>
+        <Reveal className="flex flex-col gap-7">
+          <SectionHeading align="left" eyebrow="¿Tienes algún reclamo?" intro="Llena la hoja de reclamación en línea, sin descargar programas ni usar enlaces externos.">
+            Hoja de reclamación
+          </SectionHeading>
+          <ol className="m-0 flex list-none flex-col gap-4 p-0">
+            {SHEET_STEPS.map((step, i) => (
+              <li key={step.title} className="flex gap-4">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal font-display text-sm font-semibold text-white">{i + 1}</span>
+                <span className="flex flex-col gap-0.5 pt-1">
+                  <span className="font-display text-[16px] font-semibold text-ink">{step.title}</span>
+                  <span className="text-[15px] leading-relaxed text-muted">{step.text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <ButtonLink href={ROUTES.complaintForm} size="lg" className="self-start" trackAs={{ event: "cta_click", props: { location: "complaints_sheet" } }}>
+            <Icon name="book" />
+            Llenar hoja de reclamación
+          </ButtonLink>
+        </Reveal>
+        <Reveal>
+          <SheetPreview />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/** Miniatura decorativa de la hoja con los datos reales del proveedor. */
+function SheetPreview() {
+  return (
+    <div className="relative mx-auto max-w-[420px] rotate-[1.5deg] rounded-[18px] bg-white p-6 shadow-float transition-transform duration-500 hover:rotate-0">
+      <div className="flex items-center gap-3 border-b-2 border-teal pb-3">
+        <OpenBook className="h-auto w-12" />
+        <div className="flex flex-col">
+          <span className="font-display text-[13px] font-semibold tracking-[.4px] text-ink">LIBRO DE RECLAMACIONES</span>
+          <span className="text-[12px] text-muted">Hoja de reclamación virtual</span>
+        </div>
+      </div>
+      <dl className="m-0 mt-4 flex flex-col gap-1.5 rounded-xl bg-mist px-3.5 py-3 text-[12.5px] text-subink">
+        {[
+          ["Proveedor", SITE.legal.name],
+          ["RUC", SITE.legal.ruc],
+          ["Domicilio", SITE.legal.address],
+        ].map(([term, value]) => (
+          <div key={term} className="flex gap-2">
+            <dt className="w-[74px] shrink-0 font-semibold text-ink">{term}</dt>
+            <dd className="m-0">{value}</dd>
+          </div>
+        ))}
+      </dl>
+      <div aria-hidden="true" className="mt-5 flex flex-col gap-4">
+        {["1. Consumidor reclamante", "2. Bien contratado", "3. Detalle y pedido"].map((block) => (
+          <div key={block} className="flex flex-col gap-2.5">
+            <span className="rounded bg-teal/90 px-2 py-1 text-[10.5px] font-semibold uppercase tracking-[.4px] text-white">{block}</span>
+            <span className="h-px bg-ink/20" />
+            <span className="h-px w-4/5 bg-ink/20" />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
