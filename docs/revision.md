@@ -7,23 +7,24 @@ Cada sección tiene un código; al dar un comentario, menciónalo (p. ej. "I3: �
 
 ## Estado al día (actualizado: 2026-11-15)
 
-**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 5 en cambios 🔄 · 25 sin revisar ⬜ (de 35 secciones).
+**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 7 en cambios 🔄 · 25 sin revisar ⬜ (de 37 secciones).
 
 **Esperando tu aprobación (🔄):** I4 accesos rápidos · I8 testimonios (falta Trustindex) · P1 directorio de staff ·
-P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta.
+P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta · B1/B2 blog educativo (nuevo).
 
 **Decisiones abiertas (tuyas o del cliente):**
 1. ¿Las reservas llegan al WhatsApp de citas (946 453 531) o al general (912 724 465)?
 2. ¿Mostrar "Cuéntanos un poco más" también en "Tus datos" cuando la reserva se salta el paso 1?
 3. ¿Agrupar en el horario los días con las mismas horas ("Lunes, Martes y Viernes") o uno por línea (actual)?
 4. Horario general de la clínica: confirmar o ampliar con el de los profesionales (ver Pendientes del cliente).
+5. Blog: ¿más artículos? Hoy solo existe el de acupuntura (el único de la referencia).
 
 **Pendiente técnico:**
-- Correr las pruebas E2E (`npm run test:e2e`): requiere apagar un momento el `npm run dev` (comparten `.next`).
-  Las E2E se actualizaron en I3, I6, G4, P4 y R1 pero aún no se ejecutaron con esos cambios.
+- E2E al día: 110/110 en verde (2026-11-15, en una copia aislada para no tocar el `npm run dev`), incluidas las
+  de I3, I6, G4, P4, R1 y el blog.
 - Subir a GitHub y configurar el despliegue en Hostinger (aún no hay `git push`).
 
-**Siguiente en la revisión:** I7 y I9 (inicio, sin revisar), P2/P3/P5 (perfil), servicios (S), contacto (C),
+**Siguiente en la revisión:** B1/B2 (blog, recién agregado), I7 y I9 (inicio, sin revisar), P2/P3/P5 (perfil), servicios (S), contacto (C),
 libro (L), reserva R2–R5, global G1–G3 y G5.
 
 ## Antes de la revisión
@@ -92,6 +93,12 @@ libro (L), reserva R2–R5, global G1–G3 y G5.
 | L1 | Página (canales, hoja, texto legal) | `app/(site)/libro-de-reclamaciones/page.tsx` | ⬜ |
 | L2 | Hoja de reclamación imprimible | `app/(print)/libro-de-reclamaciones/hoja/page.tsx` | ⬜ |
 
+### Blog educativo (`/blog-educativo/` y artículos)
+| Código | Sección | Archivo principal | Estado |
+|---|---|---|---|
+| B1 | Índice: cabecera, artículo destacado y grilla | `app/(site)/blog-educativo/page.tsx`, `components/blog/ArticleCard.tsx` · textos en `data/articles.ts` | 🔄 |
+| B2 | Artículo: portada, cuerpo y panel "Tratamiento relacionado" | `app/(site)/blog-educativo/[slug]/page.tsx`, `components/blog/Article{Hero,Body,Aside}.tsx` | 🔄 |
+
 ### Reserva (`/reservar/`)
 | Código | Sección | Archivo principal | Estado |
 |---|---|---|---|
@@ -136,3 +143,4 @@ libro (L), reserva R2–R5, global G1–G3 y G5.
 | 2026-11-15 | G4 | El botón flotante de WhatsApp siempre debe llevar al 912 724 465, incluido el inicio | Ya usaba el número general en todas las páginas (verificado). Se dejó la regla documentada en `WhatsAppFloat` y un test E2E por página que exige `wa.me/51912724465`. El número de citas (946 453 531) sigue solo en el envío final de la reserva y en "WhatsApp citas" de contacto | Playwright: inicio, servicios, un servicio, staff, un perfil, contacto y libro → 51912724465; /reservar no tiene botón flotante; tsc + eslint | b74ec95 |
 | 2026-11-15 | P4 | Cambio de la clínica: la Dra. Adela Huamán solo atiende martes y jueves, 8:30 a. m.–1:00 p. m. y 2:00–6:30 p. m. | Horario actualizado en `data/schedules.ts` (antes lun/mié/jue/sáb en la mañana) | Playwright: widget solo martes y jueves, mañana y tarde, todas las horas dentro; "Reservar" lleva la hora; tsc + 52 unit tests | 036e53c |
 | 2026-11-15 | R1 | Si se reserva desde el perfil de un profesional (o desde donde ya se eligió algo) no debe volver al paso 1; solo empieza en "Servicio" si no se eligió nada (p. ej. desde el inicio) | La reserva abre en el primer paso que falta (`resolveStartStep` en `booking.service.ts`, +5 tests): nada → 1 Servicio; servicio → 2 Profesional; profesional → 3 Fecha y hora; profesional + día y hora (widget del perfil) → 4 Tus datos. Si la hora preseleccionada ya no está libre, vuelve sola al paso 3. "Atrás" sigue permitiendo cambiar lo elegido. E2E de reserva actualizadas (inicio en paso 2 desde un servicio, formato de hora 12 h) + 3 nuevas (sin nada → paso 1; widget del perfil → Tus datos con resumen; tarjeta de profesional → Fecha y hora) | Playwright: widget del Dr. Meza → "Tus datos" con "lun 16 · 9:30 a. m." en el resumen; tarjeta de la Dra. Ramirez → Fecha y hora; tarjeta de Sueroterapia → Profesional; "Agendar cita" del menú → Servicio; hora inválida → Fecha y hora; Atrás desde 4 → 3; sin errores de consola; tsc + eslint + 57 unit tests | ee0e6e6 |
+| 2026-11-15 | B1, B2 | Faltaba extraer y embellecer el blog educativo de la referencia (limanaturalhealth.com/blog-educativo/) | La referencia tiene un solo artículo (acupuntura) con el texto en la misma página; se copió íntegro. Índice `/blog-educativo/`: cabecera con el texto de la referencia, artículo destacado horizontal (tema, minutos de lectura, resumen, "Leer artículo" sobre toda la tarjeta), grilla para los siguientes y cierre "Tu bienestar es nuestra prioridad". Artículo `/blog-educativo/<slug>/`: portada real de la clínica (en vez de la foto de banco de la referencia) montada sobre la cabecera, letra capital, beneficios y condiciones en tarjetas con check, aviso "es informativo y no reemplaza una evaluación médica", panel fijo "Tratamiento relacionado" (servicio, Dr. Meza, "Agendar acupuntura" → reserva con el servicio elegido, WhatsApp) y "Sigue leyendo" cuando haya más artículos. Capas `models/article.ts` → `data/articles.ts` → `article.repository` → `blog.service` (relacionados y minutos de lectura, +7 tests); JSON-LD BlogPosting; sitemap; "Blog" en el menú y "Blog educativo" en el pie. G2: el menú se compacta solo entre 1024 y 1279 px (antes "Staff de profesionales" ya se partía en dos líneas a 1024 px) | Playwright: índice y artículo en escritorio 1400 px y móvil 390 px, panel fijo al hacer scroll, menú en una línea a 1024/1100/1180/1280 px, sin scroll horizontal ni errores de consola; E2E completa 110/110 (+5: carga de las 2 páginas, WhatsApp flotante en ambas, menú → artículo → reserva); tsc + eslint + 64 unit tests | d4e4017 |
