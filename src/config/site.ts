@@ -54,6 +54,25 @@ export const OPENING_HOURS: readonly OpeningDay[] = [
   { day: "Domingo", weekday: 0, ranges: [] },
 ];
 
+export interface HoursSummaryRow {
+  label: string;
+  /** 0 = domingo … 6 = sábado */
+  weekdays: readonly number[];
+  /** Vacío = cerrado. */
+  ranges: readonly (readonly [string, string])[];
+}
+
+/**
+ * Horario RESUMIDO para el pie de página: el rango que cubre a todo el staff.
+ * El detalle varía por profesional (src/data/schedules.ts); un test avisa si
+ * algún horario queda fuera de este resumen.
+ */
+export const OPENING_HOURS_SUMMARY: readonly HoursSummaryRow[] = [
+  { label: "Lunes a viernes", weekdays: [1, 2, 3, 4, 5], ranges: [["08:30", "18:30"]] },
+  { label: "Sábados", weekdays: [6], ranges: [["08:30", "13:00"]] },
+  { label: "Domingos", weekdays: [0], ranges: [] },
+];
+
 /** ¿Los números de WhatsApp tienen formato válido? (solo dígitos, con código de país) */
 export const isWhatsAppConfigured = Object.values(SITE.whatsapp).every((n) => /^\d{9,15}$/.test(n));
 

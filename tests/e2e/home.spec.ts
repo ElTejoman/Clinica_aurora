@@ -55,10 +55,13 @@ test.describe("Inicio", () => {
     await expect(page.getByRole("link", { name: /Escribir a Clínica Aurora por WhatsApp/ })).toHaveAttribute("href", /wa\.me\/51912724465/);
   });
 
-  test("el pie tiene horario, WhatsApp y Libro de Reclamaciones", async ({ page }) => {
+  test("el pie tiene horario resumido, WhatsApp y Libro de Reclamaciones", async ({ page }) => {
     const footer = page.locator("footer");
-    await expect(footer.getByText("Domingo")).toBeVisible();
-    await expect(footer.getByText("Cerrado")).toBeVisible();
+    await expect(footer.getByText("Lunes a viernes", { exact: true })).toBeVisible();
+    await expect(footer.getByText("Domingos", { exact: true })).toBeVisible();
+    await expect(footer.getByText("Martes", { exact: true })).toHaveCount(0);
+    await expect(footer.getByRole("link", { name: /Ver horarios del staff/ })).toHaveAttribute("href", "/staff-de-profesionales/");
+    await expect(footer.getByRole("link", { name: /946 453 531/ })).toHaveAttribute("href", "tel:+51946453531");
     await expect(footer.getByRole("link", { name: "Escríbenos al WhatsApp" })).toHaveAttribute("href", /wa\.me\/51912724465/);
     await footer.getByRole("link", { name: "Libro de Reclamaciones" }).click();
     await expect(page).toHaveURL(/\/libro-de-reclamaciones\/$/);

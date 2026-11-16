@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { whatsappUrl } from "./whatsapp";
+import { formatPeruPhone, whatsappUrl } from "./whatsapp";
+
+describe("formatPeruPhone", () => {
+  it("should_group_by_three_when_the_number_is_a_peruvian_mobile", () => {
+    expect(formatPeruPhone("51912724465")).toBe("+51 912 724 465");
+  });
+
+  it("should_return_the_input_when_the_format_is_unknown", () => {
+    expect(formatPeruPhone("12345")).toBe("12345");
+  });
+});
 
 describe("whatsappUrl", () => {
   it("should_keep_only_digits_when_the_number_has_symbols", () => {
