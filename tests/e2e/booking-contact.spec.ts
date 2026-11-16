@@ -72,6 +72,29 @@ test.describe("Contacto", () => {
     expect(whatsappText(url!)).toContain("¿Atienden el sábado por la mañana?");
   });
 
+  test("la agenda por especialidad lleva a Tus datos con profesional, día y hora", async ({ page }) => {
+    await page.goto("/contacto/");
+    const finder = page.locator("[data-appointment-finder]");
+    await finder.getByRole("button", { name: "Nutrición", exact: true }).click();
+    await expect(finder.getByRole("button", { name: /Deivis Astuvilca/ })).toHaveAttribute("aria-pressed", "true");
+
+    await finder.getByRole("button", { name: "Medicina General", exact: true }).click();
+    const team = finder.locator("button[aria-pressed]").filter({ hasText: /^Dr/ });
+    await expect(team).toHaveCount(2);
+    await finder.getByRole("button", { name: /Adela Huamán/ }).click();
+    await expect(finder.getByRole("button", { name: /Adela Huamán/ })).toHaveAttribute("aria-pressed", "true");
+
+    const slot = finder.getByRole("group", { name: /Mañana|Tarde/ }).first().locator("button").last();
+    await slot.click();
+    await expect(slot).toHaveAttribute("aria-pressed", "true");
+    await expect(finder).toContainText("Medicina General con la Dra. Huamán");
+
+    await finder.getByRole("link", { name: "Reservar" }).click();
+    await expect(page).toHaveURL(/servicio=medicina-general&medico=adela-huaman&dia=\d{4}-\d{2}-\d{2}&hora=\d{2}%3A\d{2}/);
+    await expect(page.getByLabel("Nombre y apellido")).toBeVisible();
+    await expect(page.locator("aside")).toContainText("Dra. Adela Huamán");
+  });
+
   test("tiene canales, mapa de la sede y recomendaciones", async ({ page }) => {
     await page.goto("/contacto/#sede");
     await expect(page.locator("#sede iframe")).toHaveAttribute("src", /maps\.google\.com/);

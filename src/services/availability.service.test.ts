@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AvailabilityRepository } from "@/repositories/availability.repository";
-import { createAvailabilityService } from "./availability.service";
+import { createAvailabilityService, groupSlotsByPeriod } from "./availability.service";
 
 /** Repositorio de prueba: los mismos horarios para cualquier fecha. */
 const repoWith = (slots: string[]): AvailabilityRepository => ({
@@ -42,5 +42,19 @@ describe("availabilityService labels", () => {
   it("should_ask_to_consult_when_there_are_no_slots", async () => {
     const service = createAvailabilityService(repoWith([]), at("2026-11-13", 0));
     expect(await service.getNextAvailableLabel("dr")).toBe("Consultar horarios");
+  });
+});
+
+describe("groupSlotsByPeriod", () => {
+  it("should_split_slots_into_morning_and_afternoon_at_1pm", () => {
+    expect(groupSlotsByPeriod(["08:30", "12:30", "13:00", "17:30"])).toEqual([
+      { label: "Mañana", slots: ["08:30", "12:30"] },
+      { label: "Tarde", slots: ["13:00", "17:30"] },
+    ]);
+  });
+
+  it("should_omit_a_period_when_it_has_no_slots", () => {
+    expect(groupSlotsByPeriod(["14:00", "14:30"])).toEqual([{ label: "Tarde", slots: ["14:00", "14:30"] }]);
+    expect(groupSlotsByPeriod([])).toEqual([]);
   });
 });
