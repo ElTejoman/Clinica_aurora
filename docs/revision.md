@@ -7,11 +7,12 @@ Cada sección tiene un código; al dar un comentario, menciónalo (p. ej. "I3: �
 
 ## Estado al día (actualizado: 2026-11-15)
 
-**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 10 en cambios 🔄 · 22 sin revisar ⬜ (de 37 secciones).
+**Avance de la revisión:** 5 aprobadas ✅ (G4, I2, I3, I5, I6) · 11 en cambios 🔄 · 21 sin revisar ⬜ (de 37 secciones).
 
 **Esperando tu aprobación (🔄):** I4 accesos rápidos · I8 testimonios (falta Trustindex) · P1 directorio de staff ·
 P4 horarios y widget de reserva · R1 inicio de la reserva en el paso que falta · B1/B2 blog educativo ·
-C1–C3 contacto reorganizado (agenda por especialidad, sede sin horario, canales + formulario).
+C1–C3 contacto reorganizado (agenda por especialidad, sede sin horario, canales + formulario) ·
+G3 pie de página (horario resumido).
 
 **Decisiones abiertas (tuyas o del cliente):**
 1. ¿Las reservas llegan al WhatsApp de citas (946 453 531) o al general (912 724 465)?
@@ -26,7 +27,7 @@ C1–C3 contacto reorganizado (agenda por especialidad, sede sin horario, canale
 - Subir a GitHub y configurar el despliegue en Hostinger (aún no hay `git push`).
 
 **Siguiente en la revisión:** B1/B2 (blog) y C1–C3 (contacto), recién cambiados; I7 y I9 (inicio, sin revisar),
-P2/P3/P5 (perfil), servicios (S), libro (L), reserva R2–R5, global G1–G3 y G5.
+P2/P3/P5 (perfil), servicios (S), libro (L, siguiente), reserva R2–R5, global G1, G2 y G5.
 
 ## Antes de la revisión
 
@@ -45,7 +46,7 @@ P2/P3/P5 (perfil), servicios (S), libro (L), reserva R2–R5, global G1–G3 y G
 |---|---|---|---|
 | G1 | Barra superior (dirección, teléfonos, redes) | `components/layout/Header.tsx` (`TopBar`) | ⬜ |
 | G2 | Menú principal + desplegable de servicios + menú móvil | `components/layout/Header.tsx` | ⬜ |
-| G3 | Pie de página (contacto, horario, servicios, Libro de Reclamaciones) | `components/layout/Footer.tsx` | ⬜ |
+| G3 | Pie de página (contacto, horario, servicios, Libro de Reclamaciones) | `components/layout/Footer.tsx`, `HoursSummary.tsx` | 🔄 |
 | G4 | Botón flotante de WhatsApp | `components/layout/WhatsAppFloat.tsx` | ✅ |
 | G5 | Estilo general: colores, tipografías, botones | `tailwind.config.ts`, `app/layout.tsx`, `components/ui/` | ⬜ |
 
@@ -117,7 +118,7 @@ P2/P3/P5 (perfil), servicios (S), libro (L), reserva R2–R5, global G1–G3 y G
 - [ ] Qué WhatsApp recibe las citas y cuál las consultas (C1, R5) — el flotante ya quedó fijo en el 912 (G4)
 - [ ] Nombres de los dos retratos sin identificar (P1)
 - [x] Horario de atención de los 5 profesionales (P4)
-- [ ] Confirmar el horario general de la clínica (pie, contacto, "Abierto ahora"): los horarios de los profesionales lo exceden (vie 8:30 corrido, sáb hasta 1:00 p. m., mié tarde 2:00–6:00 p. m.)
+- [ ] Confirmar el horario general de la clínica ("Abierto ahora" del inicio): los horarios de los profesionales lo exceden (vie 8:30 corrido, sáb hasta 1:00 p. m., mié tarde 2:00–6:00 p. m.). El pie ya no lo usa: muestra el resumen lun–vie 8:30 a. m.–6:30 p. m. · sáb 8:30 a. m.–1:00 p. m. (G3)
 - [ ] Foto del Dr. Rondón con el mismo encuadre que el resto (P1): solo existe un recorte cercano con fondo gris; se aclaró el fondo, pero sigue viéndose más grande
 - [ ] Correo corporativo con el dominio nuevo (G3, C1)
 
@@ -146,3 +147,4 @@ P2/P3/P5 (perfil), servicios (S), libro (L), reserva R2–R5, global G1–G3 y G
 | 2026-11-15 | R1 | Si se reserva desde el perfil de un profesional (o desde donde ya se eligió algo) no debe volver al paso 1; solo empieza en "Servicio" si no se eligió nada (p. ej. desde el inicio) | La reserva abre en el primer paso que falta (`resolveStartStep` en `booking.service.ts`, +5 tests): nada → 1 Servicio; servicio → 2 Profesional; profesional → 3 Fecha y hora; profesional + día y hora (widget del perfil) → 4 Tus datos. Si la hora preseleccionada ya no está libre, vuelve sola al paso 3. "Atrás" sigue permitiendo cambiar lo elegido. E2E de reserva actualizadas (inicio en paso 2 desde un servicio, formato de hora 12 h) + 3 nuevas (sin nada → paso 1; widget del perfil → Tus datos con resumen; tarjeta de profesional → Fecha y hora) | Playwright: widget del Dr. Meza → "Tus datos" con "lun 16 · 9:30 a. m." en el resumen; tarjeta de la Dra. Ramirez → Fecha y hora; tarjeta de Sueroterapia → Profesional; "Agendar cita" del menú → Servicio; hora inválida → Fecha y hora; Atrás desde 4 → 3; sin errores de consola; tsc + eslint + 57 unit tests | ee0e6e6 |
 | 2026-11-15 | B1, B2 | Faltaba extraer y embellecer el blog educativo de la referencia (limanaturalhealth.com/blog-educativo/) | La referencia tiene un solo artículo (acupuntura) con el texto en la misma página; se copió íntegro. Índice `/blog-educativo/`: cabecera con el texto de la referencia, artículo destacado horizontal (tema, minutos de lectura, resumen, "Leer artículo" sobre toda la tarjeta), grilla para los siguientes y cierre "Tu bienestar es nuestra prioridad". Artículo `/blog-educativo/<slug>/`: portada real de la clínica (en vez de la foto de banco de la referencia) montada sobre la cabecera, letra capital, beneficios y condiciones en tarjetas con check, aviso "es informativo y no reemplaza una evaluación médica", panel fijo "Tratamiento relacionado" (servicio, Dr. Meza, "Agendar acupuntura" → reserva con el servicio elegido, WhatsApp) y "Sigue leyendo" cuando haya más artículos. Capas `models/article.ts` → `data/articles.ts` → `article.repository` → `blog.service` (relacionados y minutos de lectura, +7 tests); JSON-LD BlogPosting; sitemap; "Blog" en el menú y "Blog educativo" en el pie. G2: el menú se compacta solo entre 1024 y 1279 px (antes "Staff de profesionales" ya se partía en dos líneas a 1024 px) | Playwright: índice y artículo en escritorio 1400 px y móvil 390 px, panel fijo al hacer scroll, menú en una línea a 1024/1100/1180/1280 px, sin scroll horizontal ni errores de consola; E2E completa 110/110 (+5: carga de las 2 páginas, WhatsApp flotante en ambas, menú → artículo → reserva); tsc + eslint + 64 unit tests | d4e4017 |
 | 2026-11-15 | C1, C2, C3 | Redistribuir Contáctanos: sin el enredo de horas; widget de horarios y citas más grande y por especialización; debajo el mapa de la sede, sin horario de atención | Orden nuevo: agenda (#agendar) → sede (#sede) → otros canales (#escribenos). C1: `AppointmentFinder`, una tarjeta en 3 pasos: especialidad (6 servicios con icono; 2 columnas en móvil) → profesional que la atiende, con foto y "Próxima: Lun 16 · 2:30 p. m." (Medicina General, Ozonoterapia y Sueroterapia ofrecen al Dr. Rondón y a la Dra. Huamán) → 7 días y horas separadas en Mañana / Tarde (`groupSlotsByPeriod`, +2 tests). Barra de resumen ("Medicina General con la Dra. Huamán, el mar 17 a las 8:30 a. m.") con "Reservar", que abre /reservar directo en "Tus datos" (R1), y WhatsApp. Reutiliza `useSlotSelection` y la agenda simulada de P4, así que solo ofrece horas dentro del horario de cada profesional. C3: mapa + dirección + "Cómo llegar" + "Antes de tu visita" (las recomendaciones que estaban junto al formulario); ya no muestra el horario por día. C2: canales en lista compacta (`ContactChannels layout="list"`; el Libro de Reclamaciones sigue con tarjetas) junto al formulario "Nos encanta leerte". Se quitó el botón suelto "Reservar en línea" | Playwright: escritorio 1400 px y móvil 390 px (capturas de la página, del widget y de la sede con el mapa cargado); cambio de especialidad y de profesional, la hora elegida pasa al resumen y "Reservar" lleva servicio/médico/día/hora; sin scroll horizontal ni errores de consola. E2E completa: 112 en verde y 2 omitidas por diseño (+2: agenda → Tus datos, en escritorio y móvil); tsc + eslint + 66 unit tests | 9746f8d |
+| 2026-11-15 | G3 | Pasar el pie por revisión UX/UI y mejorarlo; el horario es variable: no mostrar todo el enredo, hacerlo más simple | Revisión UX/UI (10 hallazgos). Horario: de 7 filas con tramos a 3 líneas (lunes a viernes 8:30 a. m.–6:30 p. m. · sábados 8:30 a. m.–1:00 p. m. · domingos cerrado), rango que cubre a todo el staff, con "Cada profesional atiende en días y horas distintos" y "Ver horarios del staff"; `OPENING_HOURS_SUMMARY` en `config/site.ts` + test que falla si un horario de profesional queda fuera. Anillo de foco claro en el pie (el teal no se veía, ≈ 1,5:1). Teléfonos rotulados "Consultas" (912) / "Citas" (946); dirección → cómo llegar en Google Maps. Libro de Reclamaciones junto a la marca (el WhatsApp flotante lo tapaba entre 1280 y 1399 px). Enlaces en "Servicios" y "La clínica" (+ Contacto y sede), 2 columnas en móvil y tablet, áreas táctiles ≥ 28 px; texto de marca corto (ya no repite los servicios); aviso de urgencias en línea propia. Alto: tablet 937 → 697 px, móvil 1367 → 1269 px. Nuevo `HoursSummary`, `formatPeruPhone` (+2 tests). El horario por día sigue disponible en `OpeningHours` | Playwright: escritorio 1400/1280, tablet 820 y móvil 390 px, sin scroll horizontal ni errores de consola; anillo de foco claro; todos los enlaces internos del pie en 200; E2E de inicio (pie actualizado) en verde en una copia aislada; tsc + eslint + 70 unit tests | 1dcc88d |
