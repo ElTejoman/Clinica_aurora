@@ -20,6 +20,7 @@ const ICONS = {
   apple: "M12 7.5c-2-1.8-6-1.3-6.5 2.8S7.2 19 9.5 20c1 .4 1.8-.3 2.5-.3s1.5.7 2.5.3c2.3-1 4.5-5.6 4-9.7S14 5.7 12 7.5zM12 7.5c0-2 1-3.5 3-4",
   plusCircle: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v8M8 12h8",
   plusSquare: "M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM12 8v8M8 12h8",
+  flask: "M9 3h6M10 3v6.5L4.6 18.2A1.9 1.9 0 0 0 6.2 21h11.6a1.9 1.9 0 0 0 1.6-2.8L14 9.5V3M7.2 15h9.6",
 };
 
 export const SERVICES: Service[] = [
@@ -249,6 +250,80 @@ export const SERVICES: Service[] = [
           { title: "Problemas metabólicos", bullets: ["Sobrepeso y obesidad", "Colesterol elevado", "Triglicéridos elevados"] },
           { title: "Prevención y chequeos", bullets: ["Evaluaciones generales", "Controles preventivos", "Orientación sobre hábitos"] },
         ],
+      },
+    ],
+  },
+  {
+    slug: "laboratorio",
+    name: "Laboratorio Clínico",
+    cardTitle: "Laboratorio Clínico",
+    tagline: "Análisis de sangre y exámenes",
+    icon: ICONS.flask,
+    card: { src: "/images/services/laboratorio.webp", alt: "Profesional del laboratorio tomando una muestra de sangre del brazo de una paciente" },
+    highlights: ["Chequeo preventivo", "Hormonas", "Salud cardiovascular"],
+    intro:
+      "Análisis de sangre y exámenes de laboratorio para la prevención, el control y el diagnóstico oportuno. Más de 400 pruebas, desde un hemograma o un perfil lipídico hasta estudios hormonales, inmunológicos y de infecciones, con el precio, la preparación y el tiempo de entrega de cada una.",
+    hero: {
+      src: "/images/banners/banner-laboratorio-1600.webp",
+      srcMobile: "/images/banners/banner-laboratorio-800.webp",
+      alt: "Laboratorio Clínico de Clínica La Aurora: análisis de sangre y exámenes para prevención, control y diagnóstico oportuno",
+      banner: true,
+      size: { width: 1600, height: 684 },
+    },
+    booking: "whatsapp",
+    closing: {
+      title: "Laboratorio Clínico en Lima",
+      heading: "¿Necesitas hacerte análisis?",
+      text: "Escríbenos con tu orden médica o la lista de pruebas y te indicamos el precio, la preparación y el horario para la toma de muestra.",
+    },
+    sections: [
+      {
+        title: "Análisis para cada necesidad",
+        intro: "Algunos de los estudios que más nos piden.",
+        layout: "cards",
+        items: [
+          { title: "Chequeo preventivo", description: "Hemograma, glucosa, colesterol y triglicéridos, orina completa: lo básico para conocer tu estado de salud." },
+          { title: "Hormonas", description: "Perfil tiroideo, hormonas femeninas (estradiol, progesterona, LH, FSH, prolactina), testosterona y cortisol." },
+          { title: "Salud cardiovascular", description: "Perfil lipídico, proteína C reactiva ultrasensible, homocisteína, troponina y pro-BNP." },
+          { title: "Control de salud", description: "Seguimiento de la diabetes (hemoglobina glicosilada), la función renal y hepática, vitaminas y minerales." },
+        ],
+      },
+      {
+        title: "Perfiles de análisis",
+        intro: "Varias pruebas en una sola toma de muestra.",
+        layout: "plans",
+        items: [
+          {
+            title: "Perfil metabólico básico",
+            plan: { price: 398 },
+            bullets: [
+              "Hemograma",
+              "Glucosa",
+              "Colesterol",
+              "Urea",
+              "Creatinina",
+              "Transaminasa oxalacética (TGO)",
+              "Transaminasa pirúvica (TGP)",
+              "Bilirrubinas totales y fraccionadas",
+              "Fosfatasa alcalina",
+              "Proteínas totales y fraccionadas",
+              "Calcio sérico",
+              "Electrolitos (Na, Cl, K)",
+              "Bicarbonato",
+            ],
+          },
+          {
+            title: "Perfil hormonal femenino",
+            plan: { price: 294 },
+            bullets: ["Estradiol", "Progesterona", "LH (hormona luteinizante)", "FSH (hormona foliculoestimulante)", "Prolactina"],
+          },
+        ],
+      },
+      {
+        title: "Tarifario de análisis",
+        intro: "Busca tu prueba, revisa cómo prepararte y cuándo están tus resultados. Marca las que necesitas y envíanos la lista por WhatsApp.",
+        layout: "tests",
+        items: [],
       },
     ],
   },

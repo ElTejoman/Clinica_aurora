@@ -1,12 +1,15 @@
 import type { CSSProperties } from "react";
-import type { ServiceItem, ServiceSection } from "@/models";
+import type { LabTest, Service, ServiceItem, ServiceSection } from "@/models";
+import { LabCatalog } from "@/components/lab/LabCatalog";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
+import { Icon, WhatsAppIcon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { pageContainer } from "@/components/ui/styles";
 import { ROUTES } from "@/config/routes";
 import { SITE } from "@/config/site";
+import { planWhatsAppUrl } from "@/services/booking.service";
+import { isBookable } from "@/services/catalog.service";
 import { cn } from "@/utils/cn";
 import { formatSoles } from "@/utils/format";
 import { balancedColumns } from "@/utils/layout";
@@ -18,21 +21,45 @@ import { balancedColumns } from "@/utils/layout";
  *   "lists" → tarjetas con viñetas (protocolos, sueros) en una grilla
  *             equilibrada: nunca deja una fila casi vacía y centra la última.
  *   "plans" → tarjetas de precio (duración, monto, ahorro, qué incluye y
- *             "Reservar este plan") + métodos de pago. En escritorio ancho,
- *             todos en una fila para compararlos.
+ *             "Reservar este plan", o "Solicitar por WhatsApp" si el servicio
+ *             no tiene agenda) + métodos de pago. En escritorio ancho, todos en
+ *             una fila para compararlos.
+ *   "tests" → tarifario de laboratorio con buscador (`labTests`).
  * Las secciones alternan fondo blanco / menta.
  */
-export function ServiceSections({ sections, serviceSlug }: { sections: ServiceSection[]; serviceSlug: string }) {
+type SectionService = Pick<Service, "slug" | "name" | "booking">;
+
+/** Ancla del tarifario (la usa el botón "Ver tarifario" de la cabecera). */
+export const TESTS_ANCHOR = "tarifario";
+
+export function ServiceSections({ sections, service, labTests = [] }: { sections: ServiceSection[]; service: SectionService; labTests?: LabTest[] }) {
   return (
     <>
       {sections.map((section, i) => (
-        <section key={section.title} data-service-section={section.layout} className={cn("py-16 lg:py-20", i % 2 === 1 && "bg-mist")}>
+        <section
+          key={section.title}
+          id={section.layout === "tests" ? TESTS_ANCHOR : undefined}
+          data-service-section={section.layout}
+          className={cn("scroll-mt-24 py-16 lg:py-20", i % 2 === 1 && "bg-mist")}
+        >
           {section.layout === "cards" && <IndexedSection section={section} />}
           {section.layout === "lists" && <CardGridSection section={section} />}
-          {section.layout === "plans" && <PlansSection section={section} serviceSlug={serviceSlug} />}
+          {section.layout === "plans" && <PlansSection section={section} service={service} />}
+          {section.layout === "tests" && <TestsSection section={section} tests={labTests} />}
         </section>
       ))}
     </>
+  );
+}
+
+function TestsSection({ section, tests }: { section: ServiceSection; tests: LabTest[] }) {
+  return (
+    <div className={pageContainer}>
+      <Reveal>
+        <SectionHeading intro={section.intro}>{section.title}</SectionHeading>
+      </Reveal>
+      <LabCatalog tests={tests} />
+    </div>
   );
 }
 
@@ -91,8 +118,9 @@ function CardGridSection({ section }: { section: ServiceSection }) {
 
 const MAX_PLANS_PER_ROW = 5;
 
-function PlansSection({ section, serviceSlug }: { section: ServiceSection; serviceSlug: string }) {
+function PlansSection({ section, service }: { section: ServiceSection; service: SectionService }) {
   const columns = { "--cols": Math.min(section.items.length, MAX_PLANS_PER_ROW) } as CSSProperties;
+  const anySavings = section.items.some((item) => item.plan?.savings);
   return (
     <div className={pageContainer}>
       <Reveal>
@@ -104,9 +132,9 @@ function PlansSection({ section, serviceSlug }: { section: ServiceSection; servi
             key={item.title}
             data-reveal-item=""
             data-plan=""
-            className="flex w-full sm:w-[calc((100%_-_1rem)_/_2)] lg:w-[calc((100%_-_2rem)_/_3)] xl:w-[calc((100%_-_(var(--cols)_-_1)_*_1rem)_/_var(--cols))]"
+            className="flex w-full max-w-[400px] sm:w-[calc((100%_-_1rem)_/_2)] lg:w-[calc((100%_-_2rem)_/_3)] xl:w-[calc((100%_-_(var(--cols)_-_1)_*_1rem)_/_var(--cols))]"
           >
-            <PlanCard item={item} serviceSlug={serviceSlug} />
+            <PlanCard item={item} service={service} reserveSavingsRow={anySavings} />
           </li>
         ))}
       </Reveal>
@@ -115,25 +143,28 @@ function PlansSection({ section, serviceSlug }: { section: ServiceSection; servi
   );
 }
 
-function PlanCard({ item, serviceSlug }: { item: ServiceItem; serviceSlug: string }) {
+function PlanCard({ item, service, reserveSavingsRow }: { item: ServiceItem; service: SectionService; reserveSavingsRow: boolean }) {
   const plan = item.plan;
   if (!plan) return null;
-  const motivo = `Plan: ${item.title} (${formatSoles(plan.price)})`;
   return (
     <article className="flex w-full flex-col rounded-[22px] border border-line-soft bg-white p-6 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-sage-soft hover:shadow-soft">
-      <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[.8px] text-faint">
-        <Icon name="clock" size={13} />
-        {plan.duration}
-      </span>
-      <h3 className="m-0 mt-2 font-display text-lg font-semibold leading-snug text-ink">{item.title}</h3>
+      {plan.duration && (
+        <span className="mb-2 inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[.8px] text-faint">
+          <Icon name="clock" size={13} />
+          {plan.duration}
+        </span>
+      )}
+      <h3 className="m-0 font-display text-lg font-semibold leading-snug text-ink">{item.title}</h3>
       <div className="mt-4 flex flex-col items-start gap-2 border-b border-dashed border-line-strong pb-5">
         <span className="font-display text-[32px] font-bold leading-none text-teal">{formatSoles(plan.price)}</span>
-        {/* Desde tablet la fila del ahorro existe siempre: así la línea punteada queda alineada entre tarjetas vecinas. */}
-        <span className={cn("h-[26px] items-center", plan.savings ? "flex" : "hidden sm:flex")}>
-          {plan.savings ? (
-            <span className="rounded-full bg-leaf-soft/25 px-2.5 py-1 text-[12px] font-bold text-leaf-ink">Ahorras {formatSoles(plan.savings)}</span>
-          ) : null}
-        </span>
+        {/* Si algún plan de la sección tiene ahorro, desde tablet la fila existe en todos: así la línea punteada queda alineada entre tarjetas vecinas. */}
+        {reserveSavingsRow && (
+          <span className={cn("h-[26px] items-center", plan.savings ? "flex" : "hidden sm:flex")}>
+            {plan.savings ? (
+              <span className="rounded-full bg-leaf-soft/25 px-2.5 py-1 text-[12px] font-bold text-leaf-ink">Ahorras {formatSoles(plan.savings)}</span>
+            ) : null}
+          </span>
+        )}
       </div>
       <ul className="m-0 mb-6 mt-5 flex list-none flex-col gap-2.5 p-0">
         {item.bullets?.map((b) => (
@@ -143,16 +174,40 @@ function PlanCard({ item, serviceSlug }: { item: ServiceItem; serviceSlug: strin
           </li>
         ))}
       </ul>
+      <PlanAction title={item.title} price={plan.price} service={service} />
+    </article>
+  );
+}
+
+/** "Reservar este plan" (con agenda) o "Solicitar por WhatsApp" (sin agenda). */
+function PlanAction({ title, price, service }: { title: string; price: number; service: SectionService }) {
+  const trackAs = { event: "cta_click", props: { location: "service_plan", service: service.slug, plan: title } } as const;
+  if (isBookable(service)) {
+    return (
       <ButtonLink
-        href={ROUTES.booking({ servicio: serviceSlug, motivo })}
+        href={ROUTES.booking({ servicio: service.slug, motivo: `Plan: ${title} (${formatSoles(price)})` })}
         variant="ghost"
         size="sm"
         className="mt-auto w-full"
-        trackAs={{ event: "cta_click", props: { location: "service_plan", service: serviceSlug, plan: item.title } }}
+        trackAs={trackAs}
       >
-        Reservar este plan<span className="sr-only">: {item.title}</span>
+        Reservar este plan<span className="sr-only">: {title}</span>
       </ButtonLink>
-    </article>
+    );
+  }
+  return (
+    <ButtonLink
+      href={planWhatsAppUrl(service, { title, price })}
+      target="_blank"
+      rel="noopener noreferrer"
+      variant="ghost"
+      size="sm"
+      className="mt-auto w-full"
+      trackAs={trackAs}
+    >
+      <WhatsAppIcon size={17} className="text-[#25D366]" />
+      Solicitar por WhatsApp<span className="sr-only">: {title}</span>
+    </ButtonLink>
   );
 }
 

@@ -52,7 +52,7 @@ export default function ContactPage() {
 }
 
 function BookingSection() {
-  const services = catalogService.getServices().map(({ slug, name, icon }) => ({ slug, name, icon }));
+  const services = catalogService.getBookableServices().map(({ slug, name, icon }) => ({ slug, name, icon }));
   const doctors = doctorService.getAll().map(({ slug, name, shortName, specialty, photo, serviceSlugs, modes }) => ({ slug, name, shortName, specialty, photo, serviceSlugs, modes }));
   return (
     <section id="agendar" className={`${pageContainer} scroll-mt-28 py-16`}>

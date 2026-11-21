@@ -10,6 +10,7 @@ const PAGES = [
   { path: "/servicios/nutricion/", h1: /Nutrición/ },
   { path: "/servicios/medicina-funcional/", h1: /Medicina Funcional/ },
   { path: "/servicios/medicina-general/", h1: /Medicina General/ },
+  { path: "/servicios/laboratorio/", h1: /Laboratorio Clínico/ },
   { path: "/staff-de-profesionales/", h1: /Staff de profesionales/ },
   { path: "/staff-de-profesionales/ricardo-meza/", h1: /Ricardo\s*Meza/ },
   { path: "/staff-de-profesionales/adela-huaman/", h1: /Adela\s*Huamán/ },

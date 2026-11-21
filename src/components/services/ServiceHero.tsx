@@ -8,12 +8,16 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Icon, WhatsAppIcon } from "@/components/ui/Icon";
 import { ROUTES } from "@/config/routes";
 import { serviceWhatsAppUrl } from "@/services/booking.service";
+import { isBookable } from "@/services/catalog.service";
+import { TESTS_ANCHOR } from "./ServiceSections";
 
 /**
  * Cabecera de un servicio.
  *   - Con banner (texto ya diseñado en la imagen): banner a todo lo ancho y,
  *     debajo, título + presentación + CTAs.
  *   - Con foto: diseño en dos columnas (texto + foto).
+ * Acción secundaria: "Elegir día y hora" si el servicio tiene agenda; si no
+ * (laboratorio), "Ver tarifario" baja a la lista de análisis.
  */
 export function ServiceHero({ service }: { service: Service }) {
   return service.hero.banner ? <BannerHero service={service} /> : <PhotoHero service={service} />;
@@ -51,21 +55,46 @@ function ServiceActions({ service }: { service: Service }) {
           Agenda aquí
         </a>
       </Magnetic>
-      <ButtonLink href={ROUTES.booking({ servicio: service.slug })} variant="ghost" size="lg" trackAs={{ event: "cta_click", props: { location: "service_hero", service: service.slug } }}>
-        <Icon name="calendar" />
-        Elegir día y hora
-      </ButtonLink>
+      <SecondaryAction service={service} />
     </div>
   );
 }
 
+function SecondaryAction({ service }: { service: Service }) {
+  if (isBookable(service)) {
+    return (
+      <ButtonLink href={ROUTES.booking({ servicio: service.slug })} variant="ghost" size="lg" trackAs={{ event: "cta_click", props: { location: "service_hero", service: service.slug } }}>
+        <Icon name="calendar" />
+        Elegir día y hora
+      </ButtonLink>
+    );
+  }
+  if (!service.sections.some((s) => s.layout === "tests")) return null;
+  return (
+    <ButtonLink href={`#${TESTS_ANCHOR}`} variant="ghost" size="lg" arrow>
+      Ver tarifario
+    </ButtonLink>
+  );
+}
+
+const BANNER_SIZE = { width: 1600, height: 800 };
+
 function BannerHero({ service }: { service: Service }) {
+  const { width, height } = service.hero.size ?? BANNER_SIZE;
   return (
     <section>
       <div className="mx-auto max-w-[1440px] px-2 pt-2 sm:px-3 sm:pt-3">
         <picture>
           {service.hero.srcMobile && <source media="(max-width: 700px)" srcSet={service.hero.srcMobile} />}
-          <img src={service.hero.src} alt={service.hero.alt} width={1600} height={800} fetchPriority="high" className="aspect-[2/1] w-full rounded-[20px] object-cover sm:rounded-[28px]" />
+          <img
+            src={service.hero.src}
+            alt={service.hero.alt}
+            width={width}
+            height={height}
+            fetchPriority="high"
+            style={{ aspectRatio: `${width} / ${height}` }}
+            className="w-full rounded-[20px] object-cover sm:rounded-[28px]"
+          />
         </picture>
       </div>
       <Intro>

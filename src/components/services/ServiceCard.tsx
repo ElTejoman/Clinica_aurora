@@ -4,8 +4,10 @@ import type { Service } from "@/models";
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon, PathIcon } from "@/components/ui/Icon";
 import { ROUTES } from "@/config/routes";
+import { serviceWhatsAppUrl } from "@/services/booking.service";
+import { isBookable } from "@/services/catalog.service";
 
-type ServiceCardData = Pick<Service, "slug" | "cardTitle" | "tagline" | "icon" | "card" | "highlights">;
+type ServiceCardData = Pick<Service, "slug" | "name" | "cardTitle" | "tagline" | "icon" | "card" | "highlights" | "booking">;
 
 /**
  * Tarjeta de servicio: foto con velo teal y el nombre encima (se lee de lejos),
@@ -14,7 +16,7 @@ type ServiceCardData = Pick<Service, "slug" | "cardTitle" | "tagline" | "icon" |
  *
  * Dos acciones: "Conocer más" se estira sobre toda la tarjeta (clic en
  * cualquier parte → página del servicio) y "Agendar" queda por encima y abre
- * la reserva con el servicio ya elegido.
+ * la reserva con el servicio ya elegido (o WhatsApp, si el servicio no tiene agenda).
  */
 export function ServiceCard({ service }: { service: ServiceCardData }) {
   return (
@@ -63,7 +65,9 @@ export function ServiceCard({ service }: { service: ServiceCardData }) {
             <Icon name="arrowRight" className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
           <ButtonLink
-            href={ROUTES.booking({ servicio: service.slug })}
+            {...(isBookable(service)
+              ? { href: ROUTES.booking({ servicio: service.slug }) }
+              : { href: serviceWhatsAppUrl(service), target: "_blank", rel: "noopener noreferrer" })}
             size="sm"
             className="relative z-10 h-11 px-4"
             trackAs={{ event: "cta_click", props: { location: "service_card", service: service.slug } }}

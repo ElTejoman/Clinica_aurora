@@ -1,7 +1,7 @@
-/** Datos de precio de un plan (sección "plans"). Montos en soles. */
+/** Datos de precio de un plan o paquete (sección "plans"). Montos en soles. */
 export interface PlanPricing {
-  /** "1 mes (cada 15 días)" */
-  duration: string;
+  /** "1 mes (cada 15 días)". Opcional: un perfil de análisis no tiene duración. */
+  duration?: string;
   price: number;
   /** Ahorro frente a pagar las consultas por separado. */
   savings?: number;
@@ -21,11 +21,13 @@ export interface ServiceItem {
  *   "cards" → título + descripción ("Problemas de salud que atendemos")
  *   "lists" → título + viñetas (protocolos, sueros)
  *   "plans" → planes con duración, precio y botón de reserva, + métodos de pago
+ *   "tests" → tarifario de laboratorio con buscador (los datos están en
+ *             src/data/lab-tests.ts; `items` queda vacío)
  */
 export interface ServiceSection {
   title: string;
   intro?: string;
-  layout: "cards" | "lists" | "plans";
+  layout: "cards" | "lists" | "plans" | "tests";
   items: ServiceItem[];
 }
 
@@ -53,8 +55,19 @@ export interface Service {
     alt: string;
     /** `true` si la imagen es un banner con el título ya diseñado dentro. */
     banner: boolean;
+    /** Medidas reales del banner cuando no es 2:1 (1600 × 800), para no recortarlo. */
+    size?: { width: number; height: number };
   };
+  /**
+   * Cómo se pide el servicio. Por defecto ("agenda") se reserva con un
+   * profesional, día y hora. "whatsapp": no tiene agenda de profesionales
+   * (laboratorio); se solicita solo por WhatsApp y no aparece en /reservar.
+   */
+  booking?: "agenda" | "whatsapp";
   sections: ServiceSection[];
-  /** Párrafo de cierre opcional ("Ozonoterapia en Lima"). */
-  closing?: { title: string; text: string };
+  /**
+   * Cierre opcional en la banda final: `title` va como etiqueta ("Ozonoterapia
+   * en Lima"), `text` como párrafo y `heading` reemplaza la pregunta por defecto.
+   */
+  closing?: { title: string; text: string; heading?: string };
 }

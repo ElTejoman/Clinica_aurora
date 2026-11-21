@@ -3,16 +3,19 @@ import { isWhatsAppConfigured, OPENING_HOURS } from "@/config/site";
 import { ARTICLES } from "@/data/articles";
 import { DOCTORS } from "@/data/doctors";
 import { RATING, REVIEWS } from "@/data/reviews";
+import { LAB_TESTS } from "@/data/lab-tests";
 import { DOCTOR_SCHEDULES } from "@/data/schedules";
 import { SERVICES } from "@/data/services";
 import { createInMemoryArticleRepository } from "@/repositories/article.repository";
 import { createInMemoryDoctorRepository } from "@/repositories/doctor.repository";
+import { createInMemoryLabTestRepository } from "@/repositories/lab-test.repository";
 import { createInMemoryReviewRepository } from "@/repositories/review.repository";
 import { createInMemoryScheduleRepository } from "@/repositories/schedule.repository";
 import { createInMemoryServiceRepository } from "@/repositories/service.repository";
 import { createBlogService } from "./blog.service";
 import { createCatalogService } from "./catalog.service";
 import { createDoctorService } from "./doctor.service";
+import { createLabService } from "./lab.service";
 
 /**
  * Punto de composición (DIP): aquí, y solo aquí, se decide qué implementación
@@ -34,5 +37,6 @@ export const catalogService = createCatalogService(
   createInMemoryReviewRepository(REVIEWS, RATING),
 );
 export const blogService = createBlogService(createInMemoryArticleRepository(ARTICLES));
+export const labService = createLabService(createInMemoryLabTestRepository(LAB_TESTS));
 /** Horario semanal de cada profesional (bloque "Horario de atención" del perfil). */
 export const scheduleRepository = createInMemoryScheduleRepository(DOCTOR_SCHEDULES, OPENING_HOURS);

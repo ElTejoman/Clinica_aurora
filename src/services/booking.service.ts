@@ -3,7 +3,7 @@ import type { ContactMessage } from "@/models/contact";
 import { SCHEDULE, SITE } from "@/config/site";
 import { buildIcs } from "@/utils/calendar";
 import { formatLongDate } from "@/utils/date";
-import { CONSULT_MODE_LABEL, formatTime12h } from "@/utils/format";
+import { CONSULT_MODE_LABEL, formatSoles, formatTime12h } from "@/utils/format";
 import { whatsappUrl } from "@/utils/whatsapp";
 
 /**
@@ -44,6 +44,11 @@ export function buildBookingWhatsAppUrl(details: BookingDetails): string {
 /** Enlace directo "Agenda aquí" de un servicio, con el mensaje ya iniciado. */
 export function serviceWhatsAppUrl(service: Pick<Service, "name">): string {
   return whatsappUrl(SITE.whatsapp.booking, `Hola, quiero agendar una cita de ${service.name} en ${SITE.name}.`);
+}
+
+/** Solicitud de un plan o perfil por WhatsApp (servicios sin agenda, como el laboratorio). */
+export function planWhatsAppUrl(service: Pick<Service, "name">, plan: { title: string; price: number }): string {
+  return whatsappUrl(SITE.whatsapp.booking, `Hola, me interesa el ${plan.title} (${formatSoles(plan.price)}) de ${service.name} en ${SITE.name}.`);
 }
 
 /** Mensaje del formulario "Nos encanta leerte". */

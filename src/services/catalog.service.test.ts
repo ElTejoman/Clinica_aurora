@@ -4,7 +4,7 @@ import { RATING, REVIEWS } from "@/data/reviews";
 import { SERVICES } from "@/data/services";
 import { createInMemoryReviewRepository } from "@/repositories/review.repository";
 import { createInMemoryServiceRepository } from "@/repositories/service.repository";
-import { createCatalogService } from "./catalog.service";
+import { createCatalogService, isBookable } from "./catalog.service";
 
 const catalog = createCatalogService(createInMemoryServiceRepository(SERVICES), createInMemoryReviewRepository(REVIEWS, RATING));
 
@@ -21,6 +21,14 @@ describe("catalogService", () => {
     expect(catalog.getReviewsFor("nutricion")).toEqual([]);
   });
 
+  it("should_leave_out_whatsapp_only_services_when_listing_bookable_services", () => {
+    const bookable = catalog.getBookableServices().map((s) => s.slug);
+    expect(bookable).not.toContain("laboratorio");
+    expect(bookable).toHaveLength(SERVICES.length - 1);
+    expect(isBookable({ booking: "whatsapp" })).toBe(false);
+    expect(isBookable({})).toBe(true);
+  });
+
   it("should_return_undefined_when_the_service_does_not_exist", () => {
     expect(catalog.getService("no-existe")).toBeUndefined();
   });
@@ -32,8 +40,8 @@ describe("data integrity", () => {
     for (const d of DOCTORS) for (const s of d.serviceSlugs) expect(slugs.has(s), `${d.slug} → ${s}`).toBe(true);
   });
 
-  it("should_have_at_least_one_doctor_for_every_service", () => {
-    for (const s of SERVICES) expect(DOCTORS.some((d) => d.serviceSlugs.includes(s.slug)), s.slug).toBe(true);
+  it("should_have_at_least_one_doctor_for_every_bookable_service", () => {
+    for (const s of SERVICES.filter(isBookable)) expect(DOCTORS.some((d) => d.serviceSlugs.includes(s.slug)), s.slug).toBe(true);
   });
 
   it("should_reference_existing_doctors_from_related_lists", () => {

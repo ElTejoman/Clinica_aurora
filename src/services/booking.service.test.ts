@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { BookingRequest, DayAvailability } from "@/models";
-import { buildBookingMessage, parseBookingPreselection, resolveInitialSlot, resolveStartStep, serviceWhatsAppUrl } from "./booking.service";
+import { buildBookingMessage, parseBookingPreselection, resolveInitialSlot, resolveStartStep, planWhatsAppUrl, serviceWhatsAppUrl } from "./booking.service";
 
 const request: BookingRequest = {
   serviceSlug: "acupuntura",
@@ -39,6 +39,13 @@ describe("serviceWhatsAppUrl", () => {
     const url = new URL(serviceWhatsAppUrl({ name: "Ozonoterapia" }));
     expect(url.hostname).toBe("wa.me");
     expect(url.searchParams.get("text")).toContain("Ozonoterapia");
+  });
+});
+
+describe("planWhatsAppUrl", () => {
+  it("should_mention_the_plan_and_its_price_when_requesting_a_plan", () => {
+    const text = new URL(planWhatsAppUrl({ name: "Laboratorio Clínico" }, { title: "Perfil hormonal femenino", price: 294 })).searchParams.get("text");
+    expect(text).toBe("Hola, me interesa el Perfil hormonal femenino (S/ 294) de Laboratorio Clínico en Clínica La Aurora.");
   });
 });
 

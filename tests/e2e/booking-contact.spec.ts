@@ -31,6 +31,9 @@ test.describe("Reserva", () => {
   test("sin nada elegido abre en el paso de servicio", async ({ page }) => {
     await page.goto("/reservar/");
     await expect(page.locator("h1")).toHaveText("¿Qué servicio necesitas?");
+    // El laboratorio se pide por WhatsApp: no tiene agenda de profesionales
+    await expect(page.getByRole("button", { name: /Sueroterapia/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Laboratorio/ })).toHaveCount(0);
   });
 
   test("desde el widget del perfil abre directo en Tus datos con todo elegido", async ({ page }) => {

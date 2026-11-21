@@ -4,10 +4,12 @@ import { ButtonLink } from "@/components/ui/Button";
 import { WhatsAppIcon } from "@/components/ui/Icon";
 import { pageContainer } from "@/components/ui/styles";
 import { ROUTES } from "@/config/routes";
+import type { Service } from "@/models";
 import { serviceWhatsAppUrl } from "@/services/booking.service";
+import { isBookable } from "@/services/catalog.service";
 
 /** Banda final "Agenda aquí" de cada servicio. `eyebrow` muestra una etiqueta sobre el título (p. ej. "Ozonoterapia en Lima"). */
-export function ServiceCtaBand({ service, eyebrow, title, text }: { service: { slug: string; name: string }; eyebrow?: string; title?: string; text?: string }) {
+export function ServiceCtaBand({ service, eyebrow, title, text }: { service: Pick<Service, "slug" | "name" | "booking">; eyebrow?: string; title?: string; text?: string }) {
   return (
     <section className={`${pageContainer} py-16`}>
       <Reveal className="flex flex-col items-center gap-5 rounded-[28px] bg-teal-deep px-6 py-12 text-center text-night-ice sm:px-14">
@@ -28,9 +30,11 @@ export function ServiceCtaBand({ service, eyebrow, title, text }: { service: { s
               Agenda aquí
             </a>
           </Magnetic>
-          <ButtonLink href={ROUTES.booking({ servicio: service.slug })} variant="light" size="lg">
-            Reservar en línea
-          </ButtonLink>
+          {isBookable(service) && (
+            <ButtonLink href={ROUTES.booking({ servicio: service.slug })} variant="light" size="lg">
+              Reservar en línea
+            </ButtonLink>
+          )}
         </div>
       </Reveal>
     </section>

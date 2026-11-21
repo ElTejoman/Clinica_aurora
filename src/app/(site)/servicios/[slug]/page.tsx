@@ -9,12 +9,12 @@ import { ServiceSections } from "@/components/services/ServiceSections";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { pageContainer } from "@/components/ui/styles";
 import { ROUTES } from "@/config/routes";
-import { catalogService, doctorService } from "@/services/container";
+import { catalogService, doctorService, labService } from "@/services/container";
 
 /**
  * PÁGINA · SERVICIO   (ruta: /servicios/[slug]/)
  * Un HTML por servicio, generado en el build.
- *   cabecera → problemas que atiende / protocolos → quién te atiende →
+ *   cabecera → problemas que atiende / protocolos / planes / tarifario → quién te atiende →
  *   testimonios del servicio → "Agenda aquí" (con el texto de cierre, si lo hay)
  */
 export const dynamicParams = false;
@@ -39,11 +39,12 @@ export default async function ServicePage({ params }: Params) {
   const service = catalogService.getService((await params).slug);
   if (!service) notFound();
   const doctors = doctorService.getByService(service.slug);
+  const labTests = service.sections.some((s) => s.layout === "tests") ? labService.getTests() : [];
 
   return (
     <>
       <ServiceHero service={service} />
-      <ServiceSections sections={service.sections} serviceSlug={service.slug} />
+      <ServiceSections sections={service.sections} service={service} labTests={labTests} />
 
       {doctors.length > 0 && (
         <section className={`${pageContainer} py-16`}>
@@ -64,7 +65,7 @@ export default async function ServicePage({ params }: Params) {
         title="Lo que dicen nuestros pacientes"
         intro="Reseñas reales de Google de pacientes que se atendieron con nosotros."
       />
-      <ServiceCtaBand service={service} eyebrow={service.closing?.title} text={service.closing?.text} />
+      <ServiceCtaBand service={service} eyebrow={service.closing?.title} title={service.closing?.heading} text={service.closing?.text} />
     </>
   );
 }

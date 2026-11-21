@@ -42,6 +42,43 @@ test.describe("Servicios", () => {
     await expect(page).toHaveURL(/servicio=nutricion&motivo=Plan%3A\+Paquete\+de\+3\+controles\+%28S%2F\+420%29/);
   });
 
+  test("laboratorio: busca análisis, los elige y los pide por WhatsApp con el total", async ({ page }) => {
+    await page.goto("/servicios/laboratorio/");
+    await expect(page.getByRole("link", { name: "Elegir día y hora" })).toHaveCount(0);
+    await page.getByRole("link", { name: "Ver tarifario" }).click();
+    await expect(page).toHaveURL(/#tarifario$/);
+
+    const catalog = page.locator("[data-lab-catalog]");
+    const rows = catalog.locator("[data-lab-test]");
+    await expect(rows).toHaveCount(30);
+    await catalog.getByRole("button", { name: /Ver más análisis/ }).click();
+    await expect(rows).toHaveCount(90);
+
+    const search = page.getByLabel("Buscar análisis");
+    await search.fill("HEMOGRAMA");
+    await expect(rows).toHaveCount(1);
+    await catalog.getByLabel("Hemograma", { exact: true }).check();
+    await search.fill("acido urico");
+    await catalog.getByLabel("Ácido úrico", { exact: true }).check();
+    await search.fill("xyz-no-existe");
+    await expect(catalog).toContainText("No encontramos esa prueba");
+
+    const bar = page.getByRole("region", { name: "Análisis elegidos" });
+    await expect(bar).toContainText("2 análisis");
+    await expect(bar).toContainText("S/ 55");
+    const text = whatsappText((await bar.getByRole("link", { name: /Solicitar por WhatsApp/ }).getAttribute("href"))!);
+    for (const part of ["• Ácido úrico (S/ 25)", "• Hemograma (S/ 30)", "*Total referencial:* S/ 55"]) expect(text).toContain(part);
+
+    // Perfiles: se piden por WhatsApp (sin agenda), sin métodos de reserva en línea
+    const profiles = page.locator("[data-plan]");
+    await expect(profiles).toHaveCount(2);
+    const hormonal = profiles.filter({ hasText: "Perfil hormonal femenino" });
+    await expect(hormonal).toContainText("S/ 294");
+    const profileText = whatsappText((await hormonal.getByRole("link", { name: /Solicitar por WhatsApp/ }).getAttribute("href"))!);
+    expect(profileText).toContain("Perfil hormonal femenino (S/ 294)");
+    await expect(page.getByRole("link", { name: "Reservar en línea" })).toHaveCount(0);
+  });
+
   test("muestra a los profesionales que atienden el servicio", async ({ page }) => {
     await page.goto("/servicios/medicina-general/");
     const team = page.locator("section", { hasText: "Nuestros profesionales" });

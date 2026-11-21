@@ -17,9 +17,11 @@ test.describe("Inicio", () => {
     }
   });
 
-  test("lista los 6 servicios con enlace a su página", async ({ page }) => {
+  test("lista los 7 servicios con enlace a su página", async ({ page }) => {
     const cards = page.locator("[data-service-card]");
-    await expect(cards).toHaveCount(6);
+    await expect(cards).toHaveCount(7);
+    // El laboratorio no tiene agenda: su "Agendar" abre WhatsApp
+    await expect(cards.filter({ hasText: "Laboratorio Clínico" }).getByRole("link", { name: /Agendar/ })).toHaveAttribute("href", /^https:\/\/wa\.me\//);
     await cards.filter({ hasText: "Acupuntura" }).getByRole("link", { name: /Conocer más/ }).click();
     await expect(page).toHaveURL(/\/servicios\/acupuntura\/$/);
   });
@@ -69,7 +71,7 @@ test.describe("Inicio", () => {
 });
 
 test.describe("Navegación", () => {
-  test("el menú Servicios despliega los 6 servicios (escritorio)", async ({ page, isMobile }) => {
+  test("el menú Servicios despliega los servicios (escritorio)", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo escritorio");
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Principal" });

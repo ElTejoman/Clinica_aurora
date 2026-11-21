@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function BookingPage() {
   const doctors = doctorService.getAll();
-  const services = catalogService.getServices().map(({ slug, name, tagline, icon }) => ({ slug, name, tagline, icon }));
+  const services = catalogService.getBookableServices().map(({ slug, name, tagline, icon }) => ({ slug, name, tagline, icon }));
 
   return (
     <Suspense fallback={<BookingFlow doctors={doctors} services={services} />}>

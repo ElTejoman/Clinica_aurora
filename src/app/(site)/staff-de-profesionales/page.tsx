@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function StaffPage() {
   const doctors = doctorService.getAll();
-  const services = catalogService.getServices().map(({ slug, name }) => ({ slug, name }));
+  const services = catalogService.getBookableServices().map(({ slug, name }) => ({ slug, name }));
 
   return (
     <>
