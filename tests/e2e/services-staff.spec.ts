@@ -50,13 +50,24 @@ test.describe("Servicios", () => {
 
     const catalog = page.locator("[data-lab-catalog]");
     const rows = catalog.locator("[data-lab-test]");
-    await expect(rows).toHaveCount(30);
-    await catalog.getByRole("button", { name: /Ver más análisis/ }).click();
-    await expect(rows).toHaveCount(90);
+    // Página 1: los 15 más solicitados; luego páginas de 15 en orden alfabético
+    await expect(catalog).toContainText("Los 15 más solicitados");
+    await expect(rows).toHaveCount(15);
+    await expect(rows.first()).toContainText("Hemograma");
+    await expect(rows.first()).not.toContainText("Más solicitado"); // el título ya lo dice
+    await catalog.getByRole("checkbox", { name: /Perfil lipídico/ }).check();
+    await catalog.getByRole("button", { name: "Siguiente" }).click();
+    await expect(rows).toHaveCount(15);
+    await expect(rows.first()).toContainText("17-cetoesteroides");
+    await expect(catalog).toContainText("Página 2 de 29");
+    await catalog.getByRole("button", { name: "Anterior" }).click();
+    await expect(catalog.getByRole("checkbox", { name: /Perfil lipídico/ })).toBeChecked();
+    await catalog.getByRole("checkbox", { name: /Perfil lipídico/ }).uncheck();
 
     const search = page.getByLabel("Buscar análisis");
     await search.fill("HEMOGRAMA");
     await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText("Más solicitado");
     await catalog.getByLabel("Hemograma", { exact: true }).check();
     await search.fill("acido urico");
     await catalog.getByLabel("Ácido úrico", { exact: true }).check();

@@ -16,6 +16,8 @@ export interface Banner {
 /** Carrusel del inicio: banners con el texto ya diseñado (1600×800, versión móvil 800×400). */
 export const HOME_BANNERS: Banner[] = [
   { src: "/images/banners/banner-medicina-integrativa-1600.webp", srcMobile: "/images/banners/banner-medicina-integrativa-800.webp", alt: "Clínica de medicina integrativa: medicina china, terapias naturales, manejo del dolor y salud integral", href: "/servicios/" },
+  // Versión 2:1 del banner del laboratorio (el original es 1600×684): franjas de fondo arriba y abajo, sin recortar el texto.
+  { src: "/images/banners/banner-laboratorio-inicio-1600.webp", srcMobile: "/images/banners/banner-laboratorio-inicio-800.webp", alt: "Laboratorio Clínico: análisis de sangre y exámenes de laboratorio para prevención, control y diagnóstico oportuno", href: "/servicios/laboratorio/" },
   { src: "/images/banners/banner-acupuntura-1600.webp", srcMobile: "/images/banners/banner-acupuntura-800.webp", alt: "Servicio de acupuntura", href: "/servicios/acupuntura/" },
   { src: "/images/banners/banner-ozonoterapia-1600.webp", srcMobile: "/images/banners/banner-ozonoterapia-800.webp", alt: "Servicio de ozonoterapia", href: "/servicios/ozonoterapia/" },
   { src: "/images/banners/banner-nutricion-embarazadas-1600.webp", srcMobile: "/images/banners/banner-nutricion-embarazadas-800.webp", alt: "Servicio de nutrición para embarazadas", href: "/servicios/nutricion/" },

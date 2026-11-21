@@ -7,11 +7,20 @@ import { whatsappUrl } from "@/utils/whatsapp";
 
 /** Tarifario de laboratorio. Las funciones puras de abajo también las usa el buscador (cliente). */
 export interface LabService {
+  /** Los más solicitados primero (marcados `popular`), luego el resto en orden alfabético. */
   getTests(): LabTest[];
 }
 
-export function createLabService(repository: LabTestRepository): LabService {
-  return { getTests: () => repository.findAll() };
+export function createLabService(repository: LabTestRepository, popularNames: readonly string[]): LabService {
+  return { getTests: () => rankLabTests(repository.findAll(), popularNames) };
+}
+
+/** Pone primero los análisis de `popularNames` (en ese orden) y los marca; el resto conserva su orden. */
+export function rankLabTests(tests: readonly LabTest[], popularNames: readonly string[]): LabTest[] {
+  const rank = new Map(popularNames.map((name, i) => [name, i]));
+  const popular = tests.filter((t) => rank.has(t.name)).sort((a, b) => rank.get(a.name)! - rank.get(b.name)!);
+  const rest = tests.filter((t) => !rank.has(t.name));
+  return [...popular.map((t) => ({ ...t, popular: true })), ...rest];
 }
 
 /** Filtra por nombre sin importar tildes ni mayúsculas; todas las palabras deben aparecer, en cualquier orden. */

@@ -14,4 +14,6 @@ export interface LabTest {
   /** Entrega de resultados: "1 día hábil", "8 horas"… */
   resultIn: string;
   preparation: LabPreparation;
+  /** Entre los más solicitados (lo marca el servicio a partir de data/lab-popular.ts). */
+  popular?: boolean;
 }

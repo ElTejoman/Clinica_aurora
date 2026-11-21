@@ -7,13 +7,13 @@ test.describe("Inicio", () => {
 
   test("muestra el carrusel de banners y permite cambiar de banner", async ({ page, isMobile }) => {
     const slider = page.getByRole("region", { name: "Servicios destacados" });
-    await expect(slider.locator("img")).toHaveCount(6);
+    await expect(slider.locator("img")).toHaveCount(7);
     await expect(slider.getByRole("link").first()).toBeVisible();
-    await page.getByRole("button", { name: "Ver banner 3 de 6" }).click();
-    await expect(page.getByRole("button", { name: "Ver banner 3 de 6" })).toHaveAttribute("aria-current", "true");
+    await page.getByRole("button", { name: "Ver banner 3 de 7" }).click();
+    await expect(page.getByRole("button", { name: "Ver banner 3 de 7" })).toHaveAttribute("aria-current", "true");
     if (!isMobile) {
       await page.getByRole("button", { name: "Banner siguiente" }).click();
-      await expect(page.getByRole("button", { name: "Ver banner 4 de 6" })).toHaveAttribute("aria-current", "true");
+      await expect(page.getByRole("button", { name: "Ver banner 4 de 7" })).toHaveAttribute("aria-current", "true");
     }
   });
 

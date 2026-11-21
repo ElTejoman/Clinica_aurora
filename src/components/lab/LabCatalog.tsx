@@ -1,28 +1,41 @@
 "use client";
 
-import { useDeferredValue, useId, useMemo, useState } from "react";
+import { useDeferredValue, useId, useMemo, useRef, useState } from "react";
 import type { LabTest } from "@/models";
 import { Icon, WhatsAppIcon } from "@/components/ui/Icon";
+import { Pagination } from "@/components/ui/Pagination";
 import { track } from "@/lib/analytics";
 import { buildLabRequestWhatsAppUrl, labTotal, searchLabTests } from "@/services/lab.service";
 import { cn } from "@/utils/cn";
 import { formatSoles } from "@/utils/format";
+import { pageCount, pageSlice } from "@/utils/pagination";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 15;
 
 /**
- * Tarifario de laboratorio: buscador sin tildes, cada prueba con precio,
- * preparación y entrega, y selección múltiple que arma un mensaje de WhatsApp
- * con la lista y el total. Muestra 30 resultados y crece con "Ver más".
+ * Tarifario de laboratorio: los más solicitados primero (página 1, con
+ * etiqueta), luego páginas de 15 con Anterior / Siguiente. Buscador sin
+ * tildes; cada prueba con precio, preparación y entrega; la selección se
+ * mantiene al cambiar de página o de búsqueda y arma el WhatsApp con el total.
  */
 export function LabCatalog({ tests }: { tests: LabTest[] }) {
   const [query, setQuery] = useState("");
-  const [limit, setLimit] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReadonlySet<string>>(new Set());
   const deferredQuery = useDeferredValue(query);
+  const listTop = useRef<HTMLParagraphElement>(null);
 
   const results = useMemo(() => searchLabTests(tests, deferredQuery), [tests, deferredQuery]);
   const chosen = useMemo(() => tests.filter((t) => selected.has(t.name)), [tests, selected]);
+  const pages = pageCount(results.length, PAGE_SIZE);
+  const visible = pageSlice(results, page, PAGE_SIZE);
+  const showingPopular = !deferredQuery.trim() && visible.every((t) => t.popular);
+
+  const goTo = (next: number) => {
+    setPage(next);
+    const top = listTop.current?.getBoundingClientRect().top ?? 0;
+    if (top < 0) listTop.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const toggle = (name: string) =>
     setSelected((prev) => {
@@ -37,17 +50,28 @@ export function LabCatalog({ tests }: { tests: LabTest[] }) {
         value={query}
         onChange={(value) => {
           setQuery(value);
-          setLimit(PAGE_SIZE);
+          setPage(1);
         }}
       />
-      <p aria-live="polite" className="mb-0 mt-4 text-sm text-muted">
-        {results.length === 1 ? "1 análisis" : `${results.length} análisis`}
+      <p ref={listTop} aria-live="polite" className="mb-0 mt-5 flex scroll-mt-28 flex-wrap items-baseline justify-between gap-2 text-sm text-muted">
+        <span>
+          {showingPopular ? (
+            <strong className="font-display text-base font-semibold text-ink">Los {visible.length} más solicitados</strong>
+          ) : (
+            <>{results.length === 1 ? "1 análisis" : `${results.length} análisis`}</>
+          )}
+        </span>
+        {pages > 1 && (
+          <span>
+            Página {page} de {pages}
+          </span>
+        )}
       </p>
 
       {results.length > 0 ? (
         <ul className="m-0 mt-3 list-none overflow-hidden rounded-[22px] border border-line-soft bg-white p-0">
-          {results.slice(0, limit).map((test) => (
-            <TestRow key={test.name} test={test} checked={selected.has(test.name)} onToggle={() => toggle(test.name)} />
+          {visible.map((test) => (
+            <TestRow key={test.name} test={test} badge={!showingPopular} checked={selected.has(test.name)} onToggle={() => toggle(test.name)} />
           ))}
         </ul>
       ) : (
@@ -56,17 +80,9 @@ export function LabCatalog({ tests }: { tests: LabTest[] }) {
         </p>
       )}
 
-      {results.length > limit && (
-        <div className="mt-5 flex justify-center">
-          <button
-            type="button"
-            onClick={() => setLimit((n) => n + PAGE_SIZE * 2)}
-            className="h-11 cursor-pointer rounded-full border border-line-strong bg-white px-6 text-sm font-semibold text-ink transition-colors hover:border-teal hover:text-teal"
-          >
-            Ver más análisis ({results.length - limit})
-          </button>
-        </div>
-      )}
+      <div className="mt-5">
+        <Pagination page={page} total={pages} onChange={goTo} label="Páginas del tarifario" />
+      </div>
 
       <p className="mb-0 mt-6 text-center text-[13px] leading-relaxed text-muted">
         Precios en soles por prueba. Las indicaciones son referenciales: confírmalas al agendar, sobre todo si tu médico te dio una orden.
@@ -97,16 +113,22 @@ function SearchBox({ value, onChange }: { value: string; onChange: (value: strin
   );
 }
 
-function TestRow({ test, checked, onToggle }: { test: LabTest; checked: boolean; onToggle: () => void }) {
+/** `badge`: etiqueta "Más solicitado" (se omite en la página de los más solicitados, que ya lo dice en el título). */
+function TestRow({ test, badge, checked, onToggle }: { test: LabTest; badge: boolean; checked: boolean; onToggle: () => void }) {
   const id = useId();
   return (
     <li data-lab-test="" className={cn("border-b border-line-soft px-4 py-4 transition-colors last:border-b-0 sm:px-6", checked && "bg-tint")}>
       <div className="flex items-start gap-3.5">
         <input id={id} type="checkbox" checked={checked} onChange={onToggle} className="mt-1 h-5 w-5 flex-none cursor-pointer accent-teal" />
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <label htmlFor={id} className="cursor-pointer font-display text-[16px] font-semibold leading-snug text-ink">
-            {test.name}
-          </label>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <label htmlFor={id} className="cursor-pointer font-display text-[16px] font-semibold leading-snug text-ink">
+              {test.name}
+            </label>
+            {badge && test.popular && (
+              <span className="rounded-full bg-leaf-soft/25 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[.4px] text-leaf-ink">Más solicitado</span>
+            )}
+          </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-subink">
             <span className="rounded-full bg-mist px-2.5 py-0.5 font-medium text-teal">{test.preparation.summary}</span>
             <span className="inline-flex items-center gap-1.5">

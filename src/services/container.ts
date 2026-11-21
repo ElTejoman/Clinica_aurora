@@ -3,6 +3,7 @@ import { isWhatsAppConfigured, OPENING_HOURS } from "@/config/site";
 import { ARTICLES } from "@/data/articles";
 import { DOCTORS } from "@/data/doctors";
 import { RATING, REVIEWS } from "@/data/reviews";
+import { POPULAR_LAB_TESTS } from "@/data/lab-popular";
 import { LAB_TESTS } from "@/data/lab-tests";
 import { DOCTOR_SCHEDULES } from "@/data/schedules";
 import { SERVICES } from "@/data/services";
@@ -37,6 +38,6 @@ export const catalogService = createCatalogService(
   createInMemoryReviewRepository(REVIEWS, RATING),
 );
 export const blogService = createBlogService(createInMemoryArticleRepository(ARTICLES));
-export const labService = createLabService(createInMemoryLabTestRepository(LAB_TESTS));
+export const labService = createLabService(createInMemoryLabTestRepository(LAB_TESTS), POPULAR_LAB_TESTS);
 /** Horario semanal de cada profesional (bloque "Horario de atención" del perfil). */
 export const scheduleRepository = createInMemoryScheduleRepository(DOCTOR_SCHEDULES, OPENING_HOURS);
