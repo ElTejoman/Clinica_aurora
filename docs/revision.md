@@ -31,8 +31,7 @@ cierre en la banda final · I7/I9 ocultas en el inicio · L1/L2 Libro de Reclama
 - Verificación final (2026-11-15, en una copia aislada para no tocar el `npm run dev`): `npm run check` (tipos, lint y
   77 unitarias) y E2E con 115 en verde y 3 omitidas por diseño, incluidas las de I3, I6, G4, P4, R1, el blog, la agenda
   de contacto, los bloques de servicios, los planes y el libro.
-- **Push listo, programado para el martes 2026-11-17** (a pedido del usuario): `main` va por delante de `origin/main`
-  sin divergencia, así que basta `git push origin main` (fast-forward). Netlify (si ya está importado) desplegará solo.
+- Subido a GitHub el 2026-11-21 (`4ce07f1..7532ab0`): todo lo de S3/S6, I7/I9, el cambio de nombre y el libro.
 - Código en GitHub: `github.com/ElTejoman/Clinica_aurora` (rama `main`). Demo lista para Netlify (`netlify.toml`,
   README §6 "Demo en Netlify"): falta importar el repo en Netlify (no hay acceso desde aquí).
 - Despliegue definitivo en Hostinger: pendiente (dominio + hPanel, README §6).
