@@ -21,7 +21,7 @@ export const ROUTES = {
   doctor: (slug: string) => `/staff-de-profesionales/${slug}/`,
   blog: "/blog-educativo/",
   article: (slug: string) => `/blog-educativo/${slug}/`,
-  contact: (section?: "agendar" | "escribenos" | "sede") => (section ? `/contacto/#${section}` : "/contacto/"),
+  contact: (section?: "escribenos" | "sede") => (section ? `/contacto/#${section}` : "/contacto/"),
   complaints: "/libro-de-reclamaciones/",
   complaintForm: "/libro-de-reclamaciones/hoja/",
   booking: (params?: { servicio?: string; medico?: string; dia?: string; hora?: string; motivo?: string }) =>

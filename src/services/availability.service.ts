@@ -60,23 +60,6 @@ function isBookable(date: string, time: string, now: ZonedNow): boolean {
   return date !== now.date || timeToMinutes(time) > now.minutes + SCHEDULE.sameDayLeadMinutes;
 }
 
-/** Hora (en minutos) desde la que un horario cuenta como "Tarde". */
-const AFTERNOON_FROM = 13 * 60;
-
-export interface SlotPeriod {
-  label: "Mañana" | "Tarde";
-  slots: string[];
-}
-
-/** Separa las horas de un día en Mañana y Tarde (omite el grupo vacío). */
-export function groupSlotsByPeriod(slots: readonly string[]): SlotPeriod[] {
-  const periods: SlotPeriod[] = [
-    { label: "Mañana", slots: slots.filter((t) => timeToMinutes(t) < AFTERNOON_FROM) },
-    { label: "Tarde", slots: slots.filter((t) => timeToMinutes(t) >= AFTERNOON_FROM) },
-  ];
-  return periods.filter((p) => p.slots.length > 0);
-}
-
 export function createAvailabilityService(
   repository: AvailabilityRepository,
   clock: Clock = () => nowInTimeZone(SCHEDULE.timeZone),

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { AppointmentFinder } from "@/components/availability/AppointmentFinder";
 import { ContactChannels } from "@/components/contact/ContactChannels";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { Intro } from "@/components/motion/Intro";
@@ -11,16 +10,14 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { pageContainer } from "@/components/ui/styles";
 import { SITE } from "@/config/site";
 import { VISIT_RECOMMENDATIONS } from "@/data/clinic";
-import { catalogService, doctorService } from "@/services/container";
 
 /**
  * PÁGINA · CONTACTO   (ruta: /contacto/)
- *   agenda por especialidad (#agendar) → sede: mapa + antes de tu visita (#sede)
- *   → otros canales + formulario (#escribenos)
+ *   sede: mapa + antes de tu visita (#sede) → otros canales + formulario (#escribenos)
  */
 export const metadata: Metadata = {
   title: "Contacto",
-  description: `Reserva tu cita en línea por especialidad, escríbenos o visítanos en ${SITE.address}.`,
+  description: `Visítanos en ${SITE.address}, llámanos o escríbenos por WhatsApp.`,
 };
 
 const mapsQuery = encodeURIComponent(SITE.address);
@@ -38,37 +35,21 @@ export default function ContactPage() {
               <SplitLines lines={["Contáctanos"]} />
             </h1>
             <p data-fade="" className="m-0 text-lg leading-relaxed text-muted">
-              Reserva tu cita en línea, visítanos en Miraflores o escríbenos.
+              Visítanos en Miraflores, llámanos o escríbenos.
             </p>
           </div>
         </section>
       </Intro>
 
-      <BookingSection />
       <LocationSection />
       <WriteUsSection />
     </>
   );
 }
 
-function BookingSection() {
-  const services = catalogService.getBookableServices().map(({ slug, name, icon }) => ({ slug, name, icon }));
-  const doctors = doctorService.getAll().map(({ slug, name, shortName, specialty, photo, serviceSlugs, modes }) => ({ slug, name, shortName, specialty, photo, serviceSlugs, modes }));
-  return (
-    <section id="agendar" className={`${pageContainer} scroll-mt-28 py-16`}>
-      <Reveal>
-        <SectionHeading intro="Elige la especialidad, el profesional y el horario que te acomode. Te confirmamos la cita por WhatsApp.">Agenda tu cita</SectionHeading>
-      </Reveal>
-      <Reveal className="mx-auto mt-10 max-w-[1100px]">
-        <AppointmentFinder services={services} doctors={doctors} />
-      </Reveal>
-    </section>
-  );
-}
-
 function LocationSection() {
   return (
-    <section id="sede" className="scroll-mt-28 bg-mist py-16">
+    <section id="sede" className="scroll-mt-28 py-16">
       <div className={pageContainer}>
         <Reveal>
           <SectionHeading intro={SITE.address}>Nuestra sede</SectionHeading>
@@ -112,21 +93,23 @@ function LocationSection() {
 
 function WriteUsSection() {
   return (
-    <section id="escribenos" className={`${pageContainer} scroll-mt-28 py-16`}>
-      <div className="mx-auto grid max-w-[1100px] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-14">
-        <Reveal className="flex flex-col gap-7" stagger={70}>
-          <SectionHeading align="left" intro="Llámanos o escríbenos por el canal que prefieras; también puedes dejarnos tu consulta aquí.">
-            ¿Prefieres escribirnos?
-          </SectionHeading>
-          <ContactChannels layout="list" />
-        </Reveal>
-        <Reveal className="flex flex-col gap-5 self-start rounded-[24px] border border-line bg-white p-6 shadow-soft sm:p-8">
-          <div className="flex flex-col gap-1">
-            <h3 className="m-0 font-display text-xl font-semibold text-ink">Nos encanta leerte</h3>
-            <p className="m-0 text-[15px] text-muted">Te responderemos por WhatsApp lo antes posible.</p>
-          </div>
-          <ContactForm />
-        </Reveal>
+    <section id="escribenos" className="scroll-mt-28 bg-mist py-16">
+      <div className={pageContainer}>
+        <div className="mx-auto grid max-w-[1100px] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-14">
+          <Reveal className="flex flex-col gap-7" stagger={70}>
+            <SectionHeading align="left" intro="Llámanos o escríbenos por el canal que prefieras; también puedes dejarnos tu consulta aquí.">
+              ¿Prefieres escribirnos?
+            </SectionHeading>
+            <ContactChannels layout="list" />
+          </Reveal>
+          <Reveal className="flex flex-col gap-5 self-start rounded-[24px] border border-line bg-white p-6 shadow-soft sm:p-8">
+            <div className="flex flex-col gap-1">
+              <h3 className="m-0 font-display text-xl font-semibold text-ink">Nos encanta leerte</h3>
+              <p className="m-0 text-[15px] text-muted">Te responderemos por WhatsApp lo antes posible.</p>
+            </div>
+            <ContactForm />
+          </Reveal>
+        </div>
       </div>
     </section>
   );
