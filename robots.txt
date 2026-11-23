@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Disallow: /reservar/
+
+Sitemap: https://www.clinicaaurora.pe/sitemap.xml
